@@ -1,0 +1,12 @@
+{
+    "required": [
+        "refresh_token"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "refresh_token": {
+            "type": "string",
+            "minLength": 1
+        }
+    }
+}

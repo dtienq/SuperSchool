@@ -1,0 +1,11 @@
+{
+    "additionalProperties": false,
+    "properties": {
+        "page": {
+            "type": "number"
+        },
+        "pageSize": {
+            "type": "number"
+        }
+    }
+}
