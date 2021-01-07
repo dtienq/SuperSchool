@@ -1,36 +1,31 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const morgan = require('morgan');
+const cors = require('cors');
+const path = require('path');
+const app = express();
+const loginValidation = require('./middlewares/validation.login');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+app.use(cors());
 
-var app = express();
-
-app.use(logger('dev'));
+app.use(morgan('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api/auth', require('./routes/auth.route'));
+app.use('/api/users', loginValidation(), require('./routes/user.route'));
+app.use('/api/category', loginValidation(), require('./routes/category.route'));
+app.use('/api/course', loginValidation(), require('./routes/course.route'));
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+//error handler
+app.use((err, req, res, next) => {
+  console.info("Error occurs: ", err);
+  res.status(500).json({
+    message: "Something wrong, please contact administrators for more information!"
+  })
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, function () {
+  console.log(`Sakila backend api is running at http://localhost:${PORT}`);
 });
-
-module.exports = app;
