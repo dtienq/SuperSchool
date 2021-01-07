@@ -4,19 +4,23 @@ var router = express.Router();
 const categoryModel = require('../models/category.model');
 
 /**
- * @api {post} /api/users/refresh-token Refresh Token
- * @apiName Refresh Token
- * @apiGroup Users
+ * @api {get} /api/category/getByParentId Get Category by parentId
+ * @apiName Get Category by parentId
+ * @apiGroup Category
  *
- * @apiParamExample {json} Request-Example:
- *     {
- *         "refresh_token": "QhnibXASPJRiDt46hDBWQGljURlZnfgkTOV8U6FRCkVqo0P3Rwx4QBjl9DBFyqLYt41jEiKQWjhUCTFn0ESFu2HLGgiu8pAXolHvhCGihEdCBKne3rh4erT5vv3Kc3yjM4EvjQ4Czine7D15oKT5Qh4d5uKgTrHao3BlzceL7HuTL9WKcWMn9YR9OVDoyjGsRwvNXKqE85xaT4XMWtoIdyH2vGCWTiVVF5T4cV2N2Ju4l7bVNrgD5CyXBd4gUFl"
- *     }
+ * @apiParam {Number} parentId parentId = null nếu như là category cấp 1
  *
  * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *         "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNCIsInVzZXJuYW1lIjoidGllbnFkIiwiZnVsbG5hbWUiOiJRdWFjaCBEaW5oIFRpZW4iLCJwaG9uZU51bWJlciI6bnVsbCwiZW1haWwiOm51bGwsImdyb3VwQ29kZSI6IlNUVURFTlQiLCJpYXQiOjE2MDk1MTYxNzV9.zLGJpdGPrGs6BbfL5r6G1OW3xVhrG-cdzZEeczx2hAI"
+ *         "data": [
+ *             {
+ *                 "categoryid": "1",
+ *                 "name": "Lập trình",
+ *                 "code": "CODE",
+ *                 "parentid": null
+ *             }
+ *         ]
  *     }
  */
 router.get('/getByParentId', (req, res, next) => {
@@ -32,5 +36,32 @@ router.get('/getByParentId', (req, res, next) => {
     }
   }).catch(next);
 });
+
+/**
+ * @api {get} /api/category/register/top Top course register
+ * @apiName Top course register
+ * @apiGroup Category
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *         "data": [
+ *             {
+ *                 "categoryid": "2",
+ *                 "name": "C++",
+ *                 "code": "C++",
+ *                 "parentid": "1",
+ *                 "count": "2"
+ *             }
+ *         ]
+ *     }
+ */
+router.get('/register/top', function(req, res, next) {
+  categoryModel.getTopRegister().then(categories => {
+    res.json({
+      data: categories
+    });
+  }).catch(next);
+})
 
 module.exports = router;

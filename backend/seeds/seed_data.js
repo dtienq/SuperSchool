@@ -9,6 +9,6 @@ exports.seed = function(knex) {
         {"code": "STUDENT", "name": "Student"},
         {"code": "TEACHER", "name": "Teacher"}
       ]);
-    })
+    }),
   ]);
 };

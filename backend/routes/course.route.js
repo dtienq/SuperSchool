@@ -5,19 +5,35 @@ var router = express.Router();
 const courseModel = require('../models/course.model');
 
 /**
- * @api {post} /api/users/refresh-token Refresh Token
- * @apiName Refresh Token
- * @apiGroup Users
+ * @api {get} /api/course/findByCategoryId Get course by categoryId
+ * @apiName Get course by categoryId
+ * @apiGroup Courses
  *
+ * @apiParam {Number} categoryId Id của category khóa học.(Bắt buộc)
+ * 
  * @apiParamExample {json} Request-Example:
  *     {
- *         "refresh_token": "QhnibXASPJRiDt46hDBWQGljURlZnfgkTOV8U6FRCkVqo0P3Rwx4QBjl9DBFyqLYt41jEiKQWjhUCTFn0ESFu2HLGgiu8pAXolHvhCGihEdCBKne3rh4erT5vv3Kc3yjM4EvjQ4Czine7D15oKT5Qh4d5uKgTrHao3BlzceL7HuTL9WKcWMn9YR9OVDoyjGsRwvNXKqE85xaT4XMWtoIdyH2vGCWTiVVF5T4cV2N2Ju4l7bVNrgD5CyXBd4gUFl"
+ *         "page": 1, 
+ *         "pageSize": 10
  *     }
  *
  * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *         "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNCIsInVzZXJuYW1lIjoidGllbnFkIiwiZnVsbG5hbWUiOiJRdWFjaCBEaW5oIFRpZW4iLCJwaG9uZU51bWJlciI6bnVsbCwiZW1haWwiOm51bGwsImdyb3VwQ29kZSI6IlNUVURFTlQiLCJpYXQiOjE2MDk1MTYxNzV9.zLGJpdGPrGs6BbfL5r6G1OW3xVhrG-cdzZEeczx2hAI"
+ *         "data": [
+ *             {
+ *                 "courseid": "4",
+ *                 "title": "Lập trình C++ ",
+ *                 "imagePath": null,
+ *                 "description": null,
+ *                 "detailDescription": null,
+ *                 "views": "0",
+ *                 "createddate": "2021-01-02T17:00:00.000Z",
+ *                 "price": "1500000.00",
+ *                 "categoryid": "2",
+ *                 "teacherid": "1"
+ *             }
+ *         ]
  *     }
  */
 router.get('/findByCategoryId', validation(require('../schemas/pagination.json')), (req, res, next) => {
@@ -29,6 +45,135 @@ router.get('/findByCategoryId', validation(require('../schemas/pagination.json')
   courseModel.findByCategoryId(queryParams.categoryId, page, pageSize).then(data => {
     res.json({
       data: data
+    })
+  }).catch(next);
+});
+
+/**
+ * API get 3-4 khóa học nổi bật trong tuần qua
+ */
+
+/**
+ * @api {get} /api/course/views/top Top views
+ * @apiName Top views
+ * @apiGroup Courses
+ *
+ * @apiParam {Number} quantity Số lượng khóa học có lượt view cao nhất (bắt buộc)
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *         "data": [
+ *             {
+ *                 "courseid": "5",
+ *                 "title": "Hướng đối tượng với C++",
+ *                 "imagePath": null,
+ *                 "description": null,
+ *                 "detailDescription": null,
+ *                 "views": "4",
+ *                 "createddate": "2021-01-02T17:00:00.000Z",
+ *                 "price": "500000.00",
+ *                 "categoryid": "2",
+ *                 "teacherid": "1"
+ *             }
+ *         ]
+ *     }
+ */
+router.get('/views/top', function(req, res, next) {
+  var quantity = req.query.quantity;
+
+  courseModel.topView(quantity).then(courses => {
+    res.json({
+      data: courses
+    });
+  }).catch(next);
+})
+
+/**
+ * @api {get} /api/course/register/top Top registration
+ * @apiName Top registration
+ * @apiGroup Courses
+ *
+ * @apiParam {Number} quantity Số lượng khóa học có lượt đăng ký cao nhất (bắt buộc)
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *         "data": [
+ *             {
+ *                 "courseid": "5",
+ *                 "title": "Hướng đối tượng với C++",
+ *                 "imagePath": null,
+ *                 "description": null,
+ *                 "detailDescription": null,
+ *                 "views": "4",
+ *                 "createddate": "2021-01-02T17:00:00.000Z",
+ *                 "price": "500000.00",
+ *                 "categoryid": "2",
+ *                 "teacherid": "1",
+ *                 "countQuantityRegister": "2"
+ *             }
+ *         ]
+ *     }
+ */
+router.get('/register/top', function(req, res, next) {
+  var quantity = req.query.quantity;
+
+  courseModel.topRegister(quantity).then(courses => {
+    res.json({
+      data: courses
+    });
+  }).catch(next);
+})
+
+/**
+ * @api {get} /api/course/search Search courses
+ * @apiName Search courses
+ * @apiGroup Courses
+ *
+ * @apiParamExample {json} Request-Example:
+ *     {
+ *         "pageSize": 10,
+ *         "page": 1,
+ *         "searchString": "",
+ *         "categoryId": 2
+ *     }
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *         "data": [
+ *             {
+ *                 "courseid": "4",
+ *                 "title": "Lập trình C++ ",
+ *                 "imagePath": null,
+ *                 "description": null,
+ *                 "detailDescription": null,
+ *                 "views": "0",
+ *                 "createddate": "2021-01-02T17:00:00.000Z",
+ *                 "price": "1500000.00",
+ *                 "categoryid": "2",
+ *                 "teacherid": "1"
+ *             }
+ *         ]
+ *     }
+ */
+router.post('/search', function(req, res, next) {
+  let searchString = "";
+  let categoryId = null;
+  let page = 1;
+  let pageSize = 10;
+
+  if(req.body) {
+    searchString = req.body.searchString || "";
+    categoryId = req.body.categoryId;
+    page = req.body.page || 1;
+    pageSize = req.body.pageSize || 10;
+  }
+
+  courseModel.searchCourse(searchString, categoryId, page, pageSize).then(courses => {
+    res.json({
+      data: courses
     })
   }).catch(next);
 });
