@@ -1,6 +1,7 @@
 var express = require('express');
 const validation = require('../middlewares/validate.mdw');
 var router = express.Router();
+var rn = require('random-number');
 
 const courseModel = require('../models/course.model');
 
@@ -163,6 +164,8 @@ router.post('/search', function(req, res, next) {
   let categoryId = null;
   let page = 1;
   let pageSize = 10;
+
+  console.info("Random Number", randomNum);
 
   if(req.body) {
     searchString = req.body.searchString || "";
