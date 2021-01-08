@@ -7,7 +7,12 @@ const validation = require('../middlewares/validate.mdw');
 const commonUtils = require('../utils/common');
 const constant = require('../utils/constant');
 const jwt = require('jsonwebtoken');
-
+const bcrypt = require('bcrypt');
+const randomstring = require('randomstring');
+const db = require('../utils/db');
+const { transaction } = require('../utils/db');
+const validateMdw = require('../middlewares/validate.mdw');
+const roleValidation = require('../middlewares/validation.role');
 
 /**
  * @api {post} /api/users/refresh-token Refresh Token
@@ -38,6 +43,74 @@ router.post('/refresh-token', validation(refreshTokenSchema), (req, res, next) =
     } else {
       throw "Refresh token fail";
     }
+  }).catch(next);
+});
+
+router.post('/updateInfo', validation(require('../schemas/updateInfo.json')), (req, res, next) => {
+  let user = req.body;
+  
+  db.transaction(transaction => {
+    if(user.userId != commonUtils.currentUser.userId) {
+      res.status(403).json({
+        message: 'You are not have permission to access this function'
+      });
+    }
+
+    userModel.updateInfo(user, commonUtils.currentUser).then(result => {
+      res.json({
+        message: 'Success'
+      });
+      transaction.commit();
+    }).catch(err => {
+      next(err);
+      transaction.rollback();
+    });
+  });
+});
+
+router.post('/changePassword', validation(require('../schemas/changePassword.json')), (req, res, next) => {
+  let user = req.body;
+
+  db.transaction(transaction => {
+    if (true) {}
+    userModel.findById(commonUtils.currentUser.userId).then(userFromDB => {
+      let encryptedPassword = userFromDB.password;
+  
+      //kiểm tra nhập đúng password hay không
+      let isValid = bcrypt.compareSync(user.oldPassword, encryptedPassword);
+      if(!isValid) {
+        res.status(500).json({
+          message: 'Password incorrect'
+        });
+      } else {
+        if(user.oldPassword == user.newPassword) {
+          return res.status(500).json({
+            message: 'New password must be different from old password'
+          });
+        }
+  
+        user.userId = commonUtils.currentUser.userId;
+        user.password = bcrypt.hashSync(user.newPassword, constant.SALT_ROUNDS);
+        user.refresh_token = randomstring.generate({ length: 255 });
+        userModel.changePassword(user).then(_ => {
+          transaction.commit();
+          res.json({
+            message: 'Success'
+          });
+        }).catch(err => {
+          transaction.rollback();
+          next(err);
+        });
+      }
+    })
+  });  
+})
+
+router.get('/search', roleValidation([constant.USER_GROUP.ADMIN]), function(req, res, next) {
+  userModel.search(req.body).then(users => {
+    res.json({
+      data: users
+    })
   }).catch(next);
 });
 

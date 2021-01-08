@@ -22,5 +22,20 @@ module.exports = {
                     .groupBy('c.categoryid');
 
         return query;
+    },
+    findById: (id) => {
+        let query = db
+                    .from('category')
+                    .where('categoryid', id)
+                    .first();
+
+        return query;
+    },
+    create: (transaction, category) => {
+        return transaction('category').insert({
+            code: category.code,
+            name: category.name,
+            parentid: category.parentId
+        });
     }
 }
