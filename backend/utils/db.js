@@ -1,10 +1,12 @@
+const path = require('path');
+
 const knex = require('knex')({
   client: 'pg',
   searchPath: 'superschool',
   connection: {
     host: 'localhost',
     user: 'postgres',
-    password: '12345678@X',
+    password: '123456',
     database: 'SuperSchool',
     port: 5432
   },

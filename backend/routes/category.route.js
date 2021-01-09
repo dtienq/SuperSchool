@@ -69,7 +69,7 @@ router.get('/register/top', function(req, res, next) {
   }).catch(next);
 });
 
-router.get('/findById/:id', (req, res, next) => {
+router.get('/findById/:id', roleValidation([constant.USER_GROUP.ADMIN]), (req, res, next) => {
   categoryModel.findById(req.params.id).then(category => {
     res.json({
       data: category
@@ -89,6 +89,34 @@ router.post('/create', roleValidation([constant.USER_GROUP.ADMIN]), validateMdw(
       next(err);
     });
   });
-})
+});
+
+router.delete('/delete/:id', roleValidation([constant.USER_GROUP.ADMIN]), (req, res, next) => {
+  db.transaction(transaction => {
+    categoryModel.delete(transaction, req.params.id).then(_ => {
+      transaction.commit();
+      res.json({
+        data: 'Success'
+      });
+    }).catch(err => {
+      transaction.rollback();
+      next(err);
+    });
+  });
+});
+
+router.put('/update', roleValidation([constant.USER_GROUP.ADMIN]), validateMdw(require('../schemas/updateCategory.json')), (req, res, next) => {
+  db.transaction(transaction => {
+    categoryModel.update(transaction, req.body).then(_ => {
+      transaction.commit();
+      res.json({
+        data: 'Success'
+      });
+    }).catch(err => {
+      transaction.rollback();
+      next(err);
+    });
+  });
+});
 
 module.exports = router;

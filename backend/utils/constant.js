@@ -5,6 +5,9 @@ const CONSTANT = {
         ADMIN: 'ADMIN',
         STUDENT: 'STUDENT',
         TEACHER: 'TEACHER'
+    },
+    ERRORS: {
+        SYSTEM_ERROR: 'Something error, please contact your administrators'
     }
 };
 

@@ -55,5 +55,29 @@ module.exports = {
         }
 
         return query;
+    },
+    create: async (transaction, course) => {
+        let videos = course.videos || [];
+        
+        course.videos = undefined;
+
+        let courseId = await transaction('course').insert(course).returning('courseid');
+
+        if(videos && videos.length > 0) {
+            videos.forEach(video => {
+                transaction('coursevideo').insert({
+                    courseid: courseId,
+                    videopath: video.fileName
+                });
+            });
+        }
+        
+        return;
+    },
+    update: (transaction, course) => {
+        return transaction('course').where('courseid', course.courseId).update(course);
+    },
+    delete: (transaction, id) => {
+        return transaction('course').where('courseid', id).del();
     }
 }

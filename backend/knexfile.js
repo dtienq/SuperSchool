@@ -8,7 +8,7 @@ module.exports = {
     connection: {
       host: 'localhost',
       user: 'postgres',
-      password: '12345678@X',
+      password: '123456',
       database: 'SuperSchool',
       port: 5432
     }

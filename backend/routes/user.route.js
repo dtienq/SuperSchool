@@ -4,6 +4,7 @@ var router = express.Router();
 const refreshTokenSchema = require('../schemas/refresh-token.json');
 const userModel = require('../models/user.model');
 const validation = require('../middlewares/validate.mdw');
+const roleValidation = require('../middlewares/validation.role');
 const commonUtils = require('../utils/common');
 const constant = require('../utils/constant');
 const jwt = require('jsonwebtoken');
@@ -12,7 +13,6 @@ const randomstring = require('randomstring');
 const db = require('../utils/db');
 const { transaction } = require('../utils/db');
 const validateMdw = require('../middlewares/validate.mdw');
-const roleValidation = require('../middlewares/validation.role');
 
 /**
  * @api {post} /api/users/refresh-token Refresh Token
@@ -112,6 +112,34 @@ router.get('/search', roleValidation([constant.USER_GROUP.ADMIN]), function(req,
       data: users
     })
   }).catch(next);
+});
+
+router.post('/create', roleValidation([constant.USER_GROUP.ADMIN]), validation(require('../schemas/createUpdateUser.json')), (req, res, next) => {
+  db.transaction(transaction => {
+    //init data before insert
+    let user = {}
+    let requestBody = req.body;
+    
+    if(requestBody) {
+      user.username = requestBody.username || '';
+      user.password = bcrypt.hashSync(requestBody.password, constant.SALT_ROUNDS) || '';
+      user.fullname = requestBody.fullname || '';
+      user.phonenumber = requestBody.phonenumber || '';
+      user.email = requestBody.email || '';
+      user.refresh_token = randomstring.generate({ length: 255 });
+      user.usergroupid = requestBody.userGroupId;
+    }
+
+    userModel.create(transaction, user).then(_ => {
+      transaction.commit();
+      res.json({
+        data: 'Success'
+      });
+    }).catch(err => {
+      transaction.rollback();
+      next(err);
+    });
+  });
 });
 
 module.exports = router;
