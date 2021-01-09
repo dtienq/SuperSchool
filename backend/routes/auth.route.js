@@ -40,10 +40,12 @@ router.post('/login', validation(loginSchema), function (req, res, next) {
                 data.password = undefined;
                 const access_token = jwt.sign(commonUtils.parse2Plain(data), constant.SECRET_KEY);
                 const refresh_token = data.refresh_token;
+                data.refresh_token = undefined;
 
-                res.status(200).json({
+                res.json({
                     access_token: access_token,
-                    refresh_token: refresh_token
+                    refresh_token: refresh_token,
+                    user: data
                 });
             } else {
                 res.status(401).json({

@@ -65,7 +65,9 @@ exports.up = function (knex) {
     knex.schema.createTableIfNotExists('coursevideo', function (table) {
       table.bigIncrements('coursevideoid');
       table.string('videopath').notNullable();
+      table.integer('orderno').notNullable();
       table.bigInteger('courseid').notNullable().references('courseid').inTable('course').onUpdate('CASCADE').onDelete('CASCADE');
+      table.unique('courseid', 'orderno');
     }),
   ])
 };

@@ -190,6 +190,7 @@ router.post('/create', roleValidation([constant.USER_GROUP.ADMIN, constant.USER_
     let requestBody = req.body;
     let now = new Date();
     let publicPath = path.dirname(require.main.filename) + '/public/';
+    var videos = [];
 
     if (requestBody) {
       course.title = requestBody.title || '';
@@ -205,6 +206,7 @@ router.post('/create', roleValidation([constant.USER_GROUP.ADMIN, constant.USER_
         let fileName = publicPath + now.getTime() + '_' + requestBody.image.fileName;
         fs.writeFile(fileName, requestBody.image.data, "binary", function (err) {
           if (err) {
+            transaction.rollback();
             res.status(500).json({
               message: CONSTANT.ERRORS.SYSTEM_ERROR
             })
@@ -214,26 +216,27 @@ router.post('/create', roleValidation([constant.USER_GROUP.ADMIN, constant.USER_
       }
 
       if(requestBody.videos) {
-        var videos = [];
         requestBody.videos.forEach(element => {
           var video = {};
           if(element.data) {
-            video.fileName = publicPath + now.getTime() + '_' + element.fileName;
-            fs.writeFile(video.fileName, element.data, "binary", function (err) {
+            video.fileName = now.getTime() + '_' + element.fileName;
+
+            fs.writeFile(publicPath + video.fileName, element.data, "binary", function (err) {
               if (err) {
+                transaction.rollback();
                 res.status(500).json({
                   message: CONSTANT.ERRORS.SYSTEM_ERROR
                 })
               }
             });
-            videos.push(element);
+
+            videos.push(video);
           }
         });
-        course.videos = videos;
       }
     }
 
-    courseModel.create(transaction, course).then(_ => {
+    courseModel.create(transaction, course, videos).then(_ => {
       transaction.commit();
       res.json({
         data: 'Success'

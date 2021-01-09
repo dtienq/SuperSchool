@@ -22,22 +22,7 @@ app.use('/api/auth', require('./routes/auth.route'));
 app.use('/api/users', loginValidation(), require('./routes/user.route'));
 app.use('/api/category', loginValidation(), require('./routes/category.route'));
 app.use('/api/course', loginValidation(), require('./routes/course.route'));
-
-app.post('/uploadFile', (req, res, next) => {
-  let publicPath = path.dirname(require.main.filename) + '/public/';
-  
-  fs.writeFile(publicPath + req.body.fileName,  req.body.data, "binary", function (err) {
-    if (err) {
-      res.status(500).json({
-        message: CONSTANT.ERRORS.SYSTEM_ERROR
-      })
-    } else {
-      res.json({
-        message: 'Success'
-      })
-    }
-  });
-});
+app.use('/api/course/video', loginValidation(), require('./routes/coursevideo.route'));
 
 //error handler
 app.use((err, req, res, next) => {

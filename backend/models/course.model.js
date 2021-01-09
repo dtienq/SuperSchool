@@ -56,11 +56,7 @@ module.exports = {
 
         return query;
     },
-    create: async (transaction, course) => {
-        let videos = course.videos || [];
-        
-        course.videos = undefined;
-
+    create: async (transaction, course, videos) => {
         let courseId = await transaction('course').insert(course).returning('courseid');
 
         if(videos && videos.length > 0) {
