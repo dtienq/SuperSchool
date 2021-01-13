@@ -1,6 +1,7 @@
 var express = require('express');
 const validation = require('../middlewares/validate.mdw');
 const roleValidation = require('../middlewares/validation.role');
+const formValidation = require('../middlewares/validate.mdw');
 var router = express.Router();
 var rn = require('random-number');
 const fs = require('fs');
@@ -123,8 +124,9 @@ router.get('/views/top', function (req, res, next) {
  */
 router.get('/register/top', function (req, res, next) {
   var quantity = req.query.quantity;
+  var categoryId = req.query.categoryId;
 
-  courseModel.topRegister(quantity).then(courses => {
+  courseModel.topRegister(quantity, categoryId).then(courses => {
     res.json({
       data: courses
     });
@@ -166,8 +168,8 @@ router.get('/register/top', function (req, res, next) {
 router.post('/search', function (req, res, next) {
   let searchString = "";
   let categoryId = null;
-  let page = 1;
-  let pageSize = 10;
+  let page;
+  let pageSize;
 
   if (req.body) {
     searchString = req.body.searchString || "";
@@ -180,6 +182,14 @@ router.post('/search', function (req, res, next) {
     res.json({
       data: courses
     })
+  }).catch(next);
+});
+
+router.get('findById/:id', (req, res, next) => {
+  courseModel.findById(req.params.id).then(course => {
+    res.json({
+      data: course
+    });
   }).catch(next);
 });
 
@@ -215,10 +225,10 @@ router.post('/create', roleValidation([constant.USER_GROUP.ADMIN, constant.USER_
         course.imagePath = fileName;
       }
 
-      if(requestBody.videos) {
+      if (requestBody.videos) {
         requestBody.videos.forEach(element => {
           var video = {};
-          if(element.data) {
+          if (element.data) {
             video.fileName = now.getTime() + '_' + element.fileName;
 
             fs.writeFile(publicPath + video.fileName, element.data, "binary", function (err) {
@@ -290,6 +300,23 @@ router.delete('/delete/:id', roleValidation([constant.USER_GROUP.ADMIN, constant
       next(err);
     });
   });
+});
+
+router.get('/findByTeacherId', formValidation(require('../schemas/pagination.json')), (req, res, next) => {
+  let teacherId = req.body.teacherId;
+  let page;
+  let pageSize;
+
+  if (req.body) {
+    page = req.body.page || 1;
+    pageSize = req.body.pageSize || 10;
+  }
+
+  courseModel.findByTeacherId(teacherId, page, pageSize).then(courses => {
+    res.json({
+      data: courses
+    });
+  }).catch(next);
 });
 
 module.exports = router;

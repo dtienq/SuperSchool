@@ -24,6 +24,24 @@ app.use('/api/category', loginValidation(), require('./routes/category.route'));
 app.use('/api/course', loginValidation(), require('./routes/course.route'));
 app.use('/api/course/video', loginValidation(), require('./routes/coursevideo.route'));
 
+
+
+app.post('/uploadFile', (req, res, next) => {
+  let publicPath = path.dirname(require.main.filename) + '/public/';
+  
+  fs.writeFile(publicPath + req.body.fileName,  req.body.data, "binary", function (err) {
+    if (err) {
+      res.status(500).json({
+        message: CONSTANT.ERRORS.SYSTEM_ERROR
+      })
+    } else {
+      res.json({
+        message: 'Success'
+      })
+    }
+  });
+});
+
 //error handler
 app.use((err, req, res, next) => {
   console.info("Error occurs: ", err);

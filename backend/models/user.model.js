@@ -44,5 +44,8 @@ module.exports = {
         let query = db('user').whereRaw(`lower(fullname) like '%${fullname.toLowerCase()}%'`).orderBy('userid', 'desc');
 
         return query;
+    },
+    getTeacherInfo: (id) => {
+        return db('user').where('userid', id).first();
     }
 }

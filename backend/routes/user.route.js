@@ -114,6 +114,14 @@ router.get('/search', roleValidation([constant.USER_GROUP.ADMIN]), function(req,
   }).catch(next);
 });
 
+router.get('/getTeacherInfo/:id', (req, res, next) => {
+  userModel.getTeacherInfo(req.params.id).then(teacher => {
+    res.json({
+      data: teacher
+    })
+  }).catch(next);
+});
+
 router.post('/create', roleValidation([constant.USER_GROUP.ADMIN]), validation(require('../schemas/createUpdateUser.json')), (req, res, next) => {
   db.transaction(transaction => {
     //init data before insert
