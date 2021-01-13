@@ -1,9 +1,10 @@
+import CoursesCarousel from '@components/CoursesCarousel';
 function index() {
   return (
-    <div>
-      Homepage
-    </div>
-  )
+    <>
+      <CoursesCarousel />
+    </>
+  );
 }
 
 export default index;
