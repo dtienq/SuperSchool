@@ -22,5 +22,37 @@ module.exports = {
                     .groupBy('c.categoryid');
 
         return query;
+    },
+    findById: (id) => {
+        let query = db
+                    .from('category')
+                    .where('categoryid', id)
+                    .first();
+
+        return query;
+    },
+    create: (transaction, category) => {
+        return transaction('category').insert({
+            code: category.code,
+            name: category.name,
+            parentid: category.parentId
+        });
+    },
+    delete: (transaction, id) => {
+        return transaction('category').where('categoryid', id).del();
+    },
+    update: (transaction, category) => {
+        let query = transaction('category').where('categoryid', category.categoryId).update({
+            code: category.code.toUpperCase(),
+            name: category.name
+        });
+
+        if(category.parentId !== undefined) {
+            query.update({
+                parentid: category.parentId
+            });
+        }
+
+        return query;
     }
 }

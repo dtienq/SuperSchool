@@ -1,14 +1,15 @@
 const userModel = require('../models/user.model');
 var express = require('express');
 var router = express.Router();
-const validation  = require('../middlewares/validate.mdw');
+const validation = require('../middlewares/validate.mdw');
 const loginSchema = require('../schemas/login.json');
 const registerSchema = require('../schemas/register.json');
 const jwt = require('jsonwebtoken');
 const commonUtils = require('../utils/common');
 const constant = require('../utils/constant');
-const randomstring = require('randomstring');
 const bcrypt = require('bcrypt');
+const randomstring = require('randomstring');
+const db = require('../utils/db');
 
 /**
  * @api {post} /api/auth/login Đăng nhập
@@ -32,17 +33,19 @@ router.post('/login', validation(loginSchema), function (req, res, next) {
     let userInfo = req.body;
 
     userModel.getByUserName(userInfo.username).then(data => {
-        if(data) {
+        if (data) {
             let isValid = bcrypt.compareSync(userInfo.password, data.password);
             //check password
-            if(isValid) { //TODO
+            if (isValid) {
                 data.password = undefined;
                 const access_token = jwt.sign(commonUtils.parse2Plain(data), constant.SECRET_KEY);
                 const refresh_token = data.refresh_token;
+                data.refresh_token = undefined;
 
-                res.status(401).json({
+                res.json({
                     access_token: access_token,
-                    refresh_token: refresh_token
+                    refresh_token: refresh_token,
+                    user: data
                 });
             } else {
                 res.status(401).json({
@@ -80,21 +83,26 @@ router.post('/login', validation(loginSchema), function (req, res, next) {
 router.post('/register', validation(registerSchema), function (req, res, next) {
     let userInfo = req.body;
 
-    //create refresh_token
-    userInfo.refresh_token = randomstring.generate({length: 255});
+    userInfo.refresh_token = randomstring.generate({ length: 255 });
     userInfo.password = bcrypt.hashSync(userInfo.password, constant.SALT_ROUNDS);
 
-    userModel.create(userInfo).then(data => {
-        if(data) {
-            data.refresh_token = undefined;
-            let access_token = jwt.sign(commonUtils.parse2Plain(data), constant.SECRET_KEY);
+    db.transaction(transaction => {
+        userModel.create(transaction, userInfo).then(data => {
+            let access_token = '';
 
+            data.refresh_token = undefined;
+            access_token = jwt.sign(commonUtils.parse2Plain(data), constant.SECRET_KEY);
+
+            transaction.commit();
             res.json({
                 refresh_token: userInfo.refresh_token,
                 access_token: access_token
             });
-        }
-    }).catch(next);
+        }).catch(err => {
+            transaction.rollback();
+            next(err);
+        });
+    });
 });
 
 module.exports = router;

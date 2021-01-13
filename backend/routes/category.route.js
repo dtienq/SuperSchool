@@ -1,7 +1,12 @@
 var express = require('express');
+const validateMdw = require('../middlewares/validate.mdw');
 var router = express.Router();
 
 const categoryModel = require('../models/category.model');
+const common = require('../utils/common');
+const constant = require('../utils/constant');
+const db = require('../utils/db');
+const roleValidation = require('../middlewares/validation.role');
 
 /**
  * @api {get} /api/category/getByParentId Get Category by parentId
@@ -62,6 +67,56 @@ router.get('/register/top', function(req, res, next) {
       data: categories
     });
   }).catch(next);
+});
+
+router.get('/findById/:id', roleValidation([constant.USER_GROUP.ADMIN]), (req, res, next) => {
+  categoryModel.findById(req.params.id).then(category => {
+    res.json({
+      data: category
+    })
+  }).catch(next);
 })
+
+router.post('/create', roleValidation([constant.USER_GROUP.ADMIN]), validateMdw(require('../schemas/createCategory.json')), (req, res, next) => {
+  db.transaction(transaction => {
+    categoryModel.create(transaction, req.body).then(_ => {
+      transaction.commit();
+      res.json({
+        data: 'Success'
+      });
+    }).catch(err => {
+      transaction.rollback();
+      next(err);
+    });
+  });
+});
+
+router.delete('/delete/:id', roleValidation([constant.USER_GROUP.ADMIN]), (req, res, next) => {
+  db.transaction(transaction => {
+    categoryModel.delete(transaction, req.params.id).then(_ => {
+      transaction.commit();
+      res.json({
+        data: 'Success'
+      });
+    }).catch(err => {
+      transaction.rollback();
+      next(err);
+    });
+  });
+});
+
+router.put('/update', roleValidation([constant.USER_GROUP.ADMIN]), validateMdw(require('../schemas/updateCategory.json')), (req, res, next) => {
+  db.transaction(transaction => {
+    categoryModel.update(transaction, req.body).then(_ => {
+      transaction.commit();
+      res.json({
+        data: 'Success'
+      });
+    }).catch(err => {
+      transaction.rollback();
+      next(err);
+    });
+  });
+});
 
 module.exports = router;

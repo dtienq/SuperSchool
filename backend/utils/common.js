@@ -1,5 +1,5 @@
 module.exports = {
-    currentUser: null,
+    currentUser: {},
     parse2Plain: (object) => {
         if(!object) return null;
 

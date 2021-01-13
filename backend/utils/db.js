@@ -1,3 +1,5 @@
+const path = require('path');
+
 const knex = require('knex')({
   client: 'pg',
   searchPath: 'superschool',
