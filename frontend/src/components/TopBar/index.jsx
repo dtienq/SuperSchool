@@ -6,8 +6,8 @@ function index() {
     <div className="topbar-one">
       <div className="container">
         <div className="topbar-one__left">
-          <Link>phanthanhvi97@gmail.com</Link>
-          <Link>0983345305</Link>
+          <Link className='d-none d-lg-block'>phanthanhvi97@gmail.com</Link>
+          <Link className='d-none d-lg-block'>0983345305</Link>
         </div>
         <div className="topbar-one__right">
           <Link to={'/login'}>Đăng nhập</Link>
