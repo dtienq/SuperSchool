@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Swiper from 'react-id-swiper';
 import 'swiper/css/swiper.css';
 
@@ -40,9 +41,7 @@ function CoursesHightLight() {
                   <p className="banner-one__tag-line">
                     are you ready to learn?
                   </p>
-                  <a href="#" className="thm-btn banner-one__btn">
-                    Learn More
-                  </a>
+                  <Link className="thm-btn banner-one__btn">Learn More</Link>
                 </div>
               </div>
             </div>
@@ -66,9 +65,7 @@ function CoursesHightLight() {
                   <p className="banner-one__tag-line">
                     are you ready to learn?
                   </p>
-                  <a href="#" className="thm-btn banner-one__btn">
-                    Learn More
-                  </a>
+                  <Link className="thm-btn banner-one__btn">Learn More</Link>
                 </div>
               </div>
             </div>
