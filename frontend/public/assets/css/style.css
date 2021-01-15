@@ -489,9 +489,6 @@ a:visited {
   opacity: 1;
   visibility: visible;
 }
-.header-navigation ul.navigation-box > li > ul > li {
-  /* no more nested showen */
-}
 .header-navigation ul.navigation-box > li > ul > li > .sub-menu {
   position: absolute;
   top: 0%;
