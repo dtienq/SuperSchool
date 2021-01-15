@@ -1,46 +1,45 @@
 import React from 'react';
 import Swiper from 'react-id-swiper';
 import { Link } from 'react-router-dom';
-import 'swiper/css/swiper.css'
+import 'swiper/css/swiper.css';
 
 const params = {
-  slidesPerView : 3,
+  slidesPerView: 3,
   loop: true,
   speed: 1000,
-  spaceBetween : 30,
+  spaceBetween: 30,
   autoplay: {
-      delay: 3000,
-      disableOnInteraction: false
+    delay: 3000,
+    disableOnInteraction: false,
   },
   pagination: {
     el: '.swiper-pagination',
-    clickable: true
+    clickable: true,
   },
   breakpoints: {
-      1024:{
-          slidesPerView : 3
-      },
-      768:{
-          slidesPerView : 2
-      },
-      640:{
-          slidesPerView : 2
-
-      },
-      320:{
-          slidesPerView : 1
-      }
-  }
-}
-function index(props) {
+    1024: {
+      slidesPerView: 3,
+    },
+    768: {
+      slidesPerView: 2,
+    },
+    640: {
+      slidesPerView: 2,
+    },
+    320: {
+      slidesPerView: 1,
+    },
+  },
+};
+function index({ type }) {
   return (
     <div>
       <section className="course-one__top-title home-one">
         <div className="container">
           <div className="block-title mb-0">
             <h2 className="block-title__title">
-              Khám phá ngay <br />
-              các khoá học đang hot
+              {type === 'new' && 'Các khoá học mới nhất'}
+              {type === 'bestview' && 'Các khoá học được xem nhiều nhất'}
             </h2>
           </div>
         </div>
@@ -57,9 +56,7 @@ function index(props) {
                     <i className="far fa-heart"></i>
                   </div>
                   <div className="course-one__content">
-                    <Link className="course-one__category">
-                      development
-                    </Link>
+                    <Link className="course-one__category">development</Link>
                     <div className="course-one__admin">
                       <img src="/assets/images/team-1-1.jpg" alt="" />
                       by <a href="/teacher-details">Lou Guerrero</a>
@@ -87,9 +84,7 @@ function index(props) {
                       </Link>
                       <Link>$18</Link>
                     </div>
-                    <Link className="course-one__link">
-                      See Preview
-                    </Link>
+                    <Link className="course-one__link">See Preview</Link>
                   </div>
                 </div>
               </div>
@@ -100,9 +95,7 @@ function index(props) {
                     <i className="far fa-heart"></i>
                   </div>
                   <div className="course-one__content">
-                    <Link className="course-one__category">
-                      It & Software
-                    </Link>
+                    <Link className="course-one__category">It & Software</Link>
                     <div className="course-one__admin">
                       <img src="/assets/images/team-1-2.jpg" alt="" />
                       by <a href="/teacher-details">Cora Diaz</a>
@@ -130,9 +123,7 @@ function index(props) {
                       </Link>
                       <Link>$18</Link>
                     </div>
-                    <Link className="course-one__link">
-                      See Preview
-                    </Link>
+                    <Link className="course-one__link">See Preview</Link>
                   </div>
                 </div>
               </div>
@@ -143,9 +134,7 @@ function index(props) {
                     <i className="far fa-heart"></i>
                   </div>
                   <div className="course-one__content">
-                    <Link className="course-one__category">
-                      marketing
-                    </Link>
+                    <Link className="course-one__category">marketing</Link>
                     <div className="course-one__admin">
                       <img src="/assets/images/team-1-3.jpg" alt="" />
                       by <a href="/teacher-details">Ruth Becker</a>
@@ -173,9 +162,7 @@ function index(props) {
                       </Link>
                       <Link>$18</Link>
                     </div>
-                    <Link className="course-one__link">
-                      See Preview
-                    </Link>
+                    <Link className="course-one__link">See Preview</Link>
                   </div>
                 </div>
               </div>
