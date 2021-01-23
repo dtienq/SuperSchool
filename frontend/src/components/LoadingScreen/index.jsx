@@ -1,4 +1,4 @@
-import { Spinner } from 'reactstrap';
+import { Spinner } from 'antd';
 import './LoadingScreen.scss';
 
 export default function index() {

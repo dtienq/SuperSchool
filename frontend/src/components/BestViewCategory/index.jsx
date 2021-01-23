@@ -5,7 +5,7 @@ import 'swiper/css/swiper.css';
 
 function BestViewCategory() {
   const params = {
-    slidesPerView: 6,
+    slidesPerView: 5,
     loop: true,
     speed: 1000,
     spaceBetween: 30,
@@ -15,7 +15,7 @@ function BestViewCategory() {
     },
     breakpoints: {
       1024: {
-        slidesPerView: 6,
+        slidesPerView: 5,
       },
       768: {
         slidesPerView: 4,
@@ -29,7 +29,7 @@ function BestViewCategory() {
     },
   };
   return (
-    <section className="thm-gray-bg course-category-one">
+    <section className="course-category-one container">
       <div className="container-fluid text-center">
         <div className="block-title text-center">
           <h2 className="block-title__title">Các lĩnh vực được yêu thích</h2>
