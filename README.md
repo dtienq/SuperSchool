@@ -5,6 +5,9 @@ Project môn học Các Công Nghệ Lập Trình Hiện Đại
 - Main(release)
 - Feature/
 
+# Page Structure
+## Guest
+
 # Commit policy
 - Mọi người tạo 1 branch feature dựa trên branch gốc là Main.
 - Mọi commit sẽ push lên branch của mọi người.
