@@ -1,4 +1,5 @@
 import HomePage from '@features/home';
+import CMS from '@features/cms/cms';
 import React, { Suspense } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import LoadingScreen from '@components/LoadingScreen';
@@ -13,6 +14,9 @@ function App() {
         <Switch>
           <Route path="/" exact component={HomePage} />
           <Route path="/courses" exact component={CoursesPage} />
+          <Route path="/manager">
+            <CMS />
+          </Route>
           <Route component={NotFoundPage} />
         </Switch>
       </BrowserRouter>
