@@ -32,7 +32,7 @@ function Footer({ ...props }) {
           <List className={classes.list}>
             <ListItem className={classes.inlineBlock}>
               <a href="#home" className={block}>
-                {rtlActive ? 'الصفحة الرئيسية' : 'Home'}
+                Home
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
@@ -55,11 +55,9 @@ function Footer({ ...props }) {
         <p className={classes.right}>
           &copy; {1900 + new Date().getYear()}{' '}
           <a href="http://www.creative-tim.com" className={anchor}>
-            {rtlActive ? 'توقيت الإبداعية' : 'Creative Tim'}
+            Super School
           </a>
-          {rtlActive
-            ? ', مصنوعة مع الحب لشبكة الإنترنت أفضل'
-            : ', made with love for a better web'}
+          , study is a key to success
         </p>
       </div>
     </footer>

@@ -22,9 +22,12 @@ import Widgets from '@cmsviews/Widgets/Widgets.jsx';
 import UserProfile from '@cmsviews/Pages/UserProfile.jsx';
 import TimelinePage from '@cmsviews/Pages/Timeline.jsx';
 import RTLSupport from '@cmsviews/Pages/RTLSupport.jsx';
-
+import UserRegister from '@cmsviews/Forms/UserRegister.jsx';
 import pagesRoutes from './pages.jsx';
+import CoursesList from '@cmsviews/Tables/CoursesList';
 
+//New
+import Profile from '@cmsviews/Pages/Profile.jsx';
 // material-ui-icons
 import DashboardIcon from 'material-ui-icons/Dashboard';
 import Image from 'material-ui-icons/Image';
@@ -36,12 +39,28 @@ import WidgetsIcon from 'material-ui-icons/Widgets';
 import Timeline from 'material-ui-icons/Timeline';
 import DateRange from 'material-ui-icons/DateRange';
 
+import MainCategoryTables from '@cmsviews/Tables/MainCategoryTables';
+import SubCategoryTables from '@cmsviews/Tables/SubCategoryTables';
+import UserTables from '@cmsviews/Tables/UserTables';
+import CategoryForm from '@cmsviews/Forms/CategoryForm';
 var pages = [
   {
     path: '/manager/timeline-page',
     name: 'Timeline Page',
     mini: 'TP',
     component: TimelinePage,
+  },
+  // User Info
+  {
+    path: '/manager/profile',
+    name: 'Information',
+    component: Profile,
+  },
+  //User Edit
+  {
+    path: '/manager/editprofile',
+    name: 'Edit Information',
+    component: UserProfile,
   },
   {
     path: '/manager/user-page',
@@ -63,6 +82,12 @@ var dashRoutes = [
     name: 'Dashboard',
     icon: DashboardIcon,
     component: Dashboard,
+  },
+  {
+    path: '/manager/courses',
+    name: 'Danh sách khoá học',
+    icon: DashboardIcon,
+    component: CoursesList,
   },
   {
     collapse: true,
@@ -131,6 +156,12 @@ var dashRoutes = [
     icon: ContentPaste,
     views: [
       {
+        path: '/manager/forms/category-form',
+        name: 'Điều chỉnh danh mục',
+        mini: 'CAT',
+        component: CategoryForm,
+      },
+      {
         path: '/manager/forms/regular-forms',
         name: 'Regular Forms',
         mini: 'RF',
@@ -153,6 +184,12 @@ var dashRoutes = [
         name: 'Wizard',
         mini: 'W',
         component: Wizard,
+      },
+      {
+        path: '/manager/forms/user-registation',
+        name: 'Tạo tài khoản',
+        mini: 'REG',
+        component: UserRegister,
       },
     ],
   },
@@ -180,6 +217,27 @@ var dashRoutes = [
         name: 'React Tables',
         mini: 'RT',
         component: ReactTables,
+      },
+      //Category
+      {
+        path: '/manager/tables/maincategory-tables',
+        name: 'Danh mục chính',
+        mini: 'MC',
+        component: MainCategoryTables,
+      },
+      //SubCategory
+      {
+        path: '/manager/tables/subcategory-tables',
+        name: 'Danh mục phụ',
+        mini: 'SC',
+        component: SubCategoryTables,
+      },
+      //User
+      {
+        path: '/manager/tables/user-tables',
+        name: 'Người dùng',
+        mini: 'UR',
+        component: UserTables,
       },
     ],
   },

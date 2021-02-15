@@ -144,7 +144,7 @@ class Sidebar extends React.Component {
               onClick={() => this.openCollapse('openAvatar')}
             >
               <ListItemText
-                primary={rtlActive ? 'تانيا أندرو' : 'Tania Andrew'}
+                primary={rtlActive ? 'تانيا أندرو' : 'Administrator'}
                 secondary={
                   <b
                     className={
@@ -164,7 +164,7 @@ class Sidebar extends React.Component {
               <List className={classes.list + ' ' + classes.collapseList}>
                 <ListItem className={classes.collapseItem}>
                   <NavLink
-                    to="#"
+                    to="/manager/profile"
                     className={
                       classes.itemLink + ' ' + classes.userCollapseLinks
                     }

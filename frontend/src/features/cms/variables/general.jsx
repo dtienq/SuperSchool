@@ -361,8 +361,121 @@ var rtlServer = [
 ];
 
 // ##############################
+// // // data for Category
+// #############################
+
+const maincategory = [
+  {
+    id: 1,
+    name: 'Lập trình',
+    code: 'C1.0',
+    eng: 'Programming',
+  },
+  {
+    id: 2,
+    name: 'Thiết kế đồ hoạ',
+    code: 'C2.0',
+    eng: 'Adobe Basic',
+  },
+  {
+    id: 3,
+    name: 'Thiết kế giao diện',
+    code: 'C3.0',
+    eng: 'UI/UX',
+  },
+];
+
+// ##############################
 // // // data for datatables.net in DataTables view
 // #############################
+const mainCategoryTable = {
+  headerRow: ['STT', 'ID', 'Tên danh mục', 'Tên tiếng anh', 'Mã', 'Thao tác'],
+  footerRow: ['STT', 'ID', 'Category', 'Eng', 'Code', 'Actions'],
+  dataRows: [
+    ['1', '1', 'Lập trình', 'Programming', 'C01'],
+    ['2', '2', 'Thiết kế đồ hoạ', 'Graphic Design', 'C02'],
+    ['3', '3', 'Thiết kế giao diện', 'UI/UX Design', 'C03'],
+  ],
+};
+
+const adminTable = {
+  title: 'Quản trị viên',
+  headerRow: [
+    'STT',
+    'ID',
+    'Email',
+    'Họ tên',
+    'Số điện thoại',
+    'Ngày sinh',
+    'Ngày đăng ký',
+    'Thao tác',
+  ],
+  footerRow: [
+    'STT',
+    'ID',
+    'Email',
+    'Họ tên',
+    'Số điện thoại',
+    'Ngày sinh',
+    'Ngày đăng ký',
+    'Thao tác',
+  ],
+  dataRows: [
+    [
+      '1',
+      '1',
+      'nmquanvn@gmail.com',
+      'Nguyễn Minh Quân',
+      '07856465126',
+      '25/12/1998',
+      '8/2/2020',
+    ],
+    [
+      '1',
+      '1',
+      'ravixxc@gmail.com',
+      'Đào Văn Quyết',
+      '02462445534',
+      '31/12/1998',
+      '8/2/2020',
+    ],
+    [
+      '1',
+      '1',
+      'imlonely@gmail.com',
+      'Trường Vũ',
+      '046434423',
+      '01/01/1998',
+      '8/2/2020',
+    ],
+  ],
+};
+const userTables = [adminTable];
+const subCodeTable = {
+  title: 'Lập trình',
+  parent: '1',
+  headerRow: ['STT', 'ID', 'Tên danh mục', 'Mã', 'Parent', 'Thao tác'],
+  footerRow: ['STT', 'ID', 'Category', 'Code', 'Actions'],
+  dataRows: [
+    ['1', '5', 'Lập trình Java', 'Java Programming', '1'],
+    ['2', '2', 'Lập trình Python', 'Python Programming', '1'],
+    ['3', '3', 'Lập trình Javascript', 'Javascript Programming', '1'],
+  ],
+};
+
+const subGraphicTable = {
+  title: 'Thiết kế đồ hoạ',
+  parent: '2',
+  headerRow: ['STT', 'ID', 'Tên danh mục', 'Mã', 'Thao tác'],
+  footerRow: ['STT', 'ID', 'Category', 'Code', 'Actions'],
+  dataRows: [
+    ['1', '1', 'Photoshop căn bản', 'Adobe Photoshop Basic', '2'],
+    ['2', '2', 'Adobe AfterEffect căn bản', 'Adobe After Effect Basic', '2'],
+    ['3', '3', 'Photoshop nâng cao', 'Adobe Photoshop Advanced', '2'],
+  ],
+};
+
+const subCategoryTables = [subCodeTable, subGraphicTable];
 
 const dataTable = {
   headerRow: ['Name', 'Position', 'Office', 'Age', 'Actions'],
@@ -432,4 +545,8 @@ export {
   rtlServer,
   // data for datatables.net in DataTables view
   dataTable,
+  mainCategoryTable,
+  subCategoryTables,
+  userTables,
+  maincategory,
 };

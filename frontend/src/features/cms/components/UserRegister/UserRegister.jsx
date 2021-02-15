@@ -11,7 +11,7 @@ import Button from '@cmscomponents/CustomButtons/Button.jsx';
 
 import wizardStyle from '@cmsassets/jss/material-dashboard-pro-react/components/wizardStyle.jsx';
 
-class Wizard extends React.Component {
+class UserRegister extends React.Component {
   constructor(props) {
     super(props);
     var width;
@@ -194,7 +194,7 @@ class Wizard extends React.Component {
                     style={{ width: this.state.width }}
                   >
                     <a
-                      href="#"
+                      href="#/reg"
                       className={classes.stepsAnchor}
                       onClick={() => this.navigationStepChange(key)}
                     >
@@ -266,19 +266,19 @@ class Wizard extends React.Component {
   }
 }
 
-Wizard.defaultProps = {
+UserRegister.defaultProps = {
   color: 'rose',
   title: 'Here should go your title',
   subtitle: 'And this would be your subtitle',
-  previousButtonText: 'Previous',
+  previousButtonText: 'Quay lại',
   previousButtonClasses: '',
   nextButtonClasses: '',
-  nextButtonText: 'Next',
+  nextButtonText: 'Tiếp theo',
   finishButtonClasses: '',
-  finishButtonText: 'Finish',
+  finishButtonText: 'Hoàn tất đăng ký',
 };
 
-Wizard.propTypes = {
+UserRegister.propTypes = {
   classes: PropTypes.object.isRequired,
   steps: PropTypes.arrayOf(
     PropTypes.shape({
@@ -307,4 +307,4 @@ Wizard.propTypes = {
   validate: PropTypes.bool,
 };
 
-export default withStyles(wizardStyle)(Wizard);
+export default withStyles(wizardStyle)(UserRegister);
