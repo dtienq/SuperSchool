@@ -23,6 +23,7 @@
     "lodash.omit": "^4.5.0",
     "morgan": "~1.9.1",
     "mysql2": "^2.2.5",
+    "nodemailer": "^6.4.17",
     "pg": "^8.5.1",
     "promise": "^8.1.0",
     "random-number": "0.0.9",
