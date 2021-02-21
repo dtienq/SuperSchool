@@ -42,7 +42,7 @@ function BestViewCategory() {
                   <i className="kipso-icon-desktop"></i>
                 </div>
                 <h3 className="course-category-one__title">
-                  <Link>IT & Software</Link>
+                  <Link to="/">IT & Software</Link>
                 </h3>
               </div>
             </div>
@@ -52,7 +52,7 @@ function BestViewCategory() {
                   <i className="kipso-icon-web-programming"></i>
                 </div>
                 <h3 className="course-category-one__title">
-                  <Link>Development</Link>
+                  <Link to="/">Development</Link>
                 </h3>
               </div>
             </div>
@@ -62,7 +62,7 @@ function BestViewCategory() {
                   <i className="kipso-icon-music-player"></i>
                 </div>
                 <h3 className="course-category-one__title">
-                  <Link>Music</Link>
+                  <Link to="/">Music</Link>
                 </h3>
               </div>
             </div>
@@ -72,7 +72,7 @@ function BestViewCategory() {
                   <i className="kipso-icon-camera"></i>
                 </div>
                 <h3 className="course-category-one__title">
-                  <Link>Photography</Link>
+                  <Link to="/">Photography</Link>
                 </h3>
               </div>
             </div>
@@ -82,7 +82,7 @@ function BestViewCategory() {
                   <i className="kipso-icon-targeting"></i>
                 </div>
                 <h3 className="course-category-one__title">
-                  <Link>Marketing</Link>
+                  <Link to="/">Marketing</Link>
                 </h3>
               </div>
             </div>
@@ -92,7 +92,7 @@ function BestViewCategory() {
                   <i className="kipso-icon-health"></i>
                 </div>
                 <h3 className="course-category-one__title">
-                  <Link>Health & Fitness</Link>
+                  <Link to="/">Health & Fitness</Link>
                 </h3>
               </div>
             </div>
@@ -102,7 +102,7 @@ function BestViewCategory() {
                   <i className="kipso-icon-desktop"></i>
                 </div>
                 <h3 className="course-category-one__title">
-                  <Link>IT & Software</Link>
+                  <Link to="/">IT & Software</Link>
                 </h3>
               </div>
             </div>
@@ -112,7 +112,7 @@ function BestViewCategory() {
                   <i className="kipso-icon-web-programming"></i>
                 </div>
                 <h3 className="course-category-one__title">
-                  <Link>Development</Link>
+                  <Link to="/">Development</Link>
                 </h3>
               </div>
             </div>
@@ -122,7 +122,7 @@ function BestViewCategory() {
                   <i className="kipso-icon-music-player"></i>
                 </div>
                 <h3 className="course-category-one__title">
-                  <Link>Music</Link>
+                  <Link to="/">Music</Link>
                 </h3>
               </div>
             </div>
@@ -132,7 +132,7 @@ function BestViewCategory() {
                   <i className="kipso-icon-camera"></i>
                 </div>
                 <h3 className="course-category-one__title">
-                  <Link>Photography</Link>
+                  <Link to="/">Photography</Link>
                 </h3>
               </div>
             </div>

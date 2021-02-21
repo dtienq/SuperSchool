@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-function Index() {
+function NavOne() {
   const [sticky, setSticky] = useState(false);
 
   const mobileMenu = () => {
@@ -60,7 +60,7 @@ function Index() {
         <div className="container clearfix">
           <div className="logo-box clearfix">
             <Link to="/">
-              <Link className="navbar-brand">
+              <Link to="/" className="navbar-brand">
                 <img
                   src="/assets/images/logo-dark.png"
                   className="main-logo"
@@ -70,16 +70,16 @@ function Index() {
               </Link>
             </Link>
             <div className="header__social">
-              <Link>
+              <Link to="/">
                 <i className="fab fa-twitter"></i>
               </Link>
-              <Link>
+              <Link to="/">
                 <i className="fab fa-facebook-square"></i>
               </Link>
-              <Link>
+              <Link to="/">
                 <i className="fab fa-pinterest-p"></i>
               </Link>
-              <Link>
+              <Link to="/">
                 <i className="fab fa-instagram"></i>
               </Link>
             </div>
@@ -90,40 +90,40 @@ function Index() {
           <div className="main-navigation">
             <ul className=" navigation-box">
               <li className="current">
-                <Link>
+                <Link to="/">
                   <a>Home</a>
                 </Link>
                 <ul className="sub-menu">
                   <li>
-                    <Link>
+                    <Link to="/">
                       <a>Home 01</a>
                     </Link>
                   </li>
                   <li>
-                    <Link>
+                    <Link to="/">
                       <a>Home 02</a>
                     </Link>
                   </li>
                   <li>
-                    <Link>
+                    <Link to="/">
                       <a>Home 03</a>
                     </Link>
                   </li>
                   <li>
-                    <Link>Header Versions</Link>
+                    <Link to="/">Header Versions</Link>
                     <ul className="sub-menu">
                       <li>
-                        <Link>
+                        <Link to="/">
                           <a>Header 01</a>
                         </Link>
                       </li>
                       <li>
-                        <Link>
+                        <Link to="/">
                           <a>Header 02</a>
                         </Link>
                       </li>
                       <li>
-                        <Link>
+                        <Link to="/">
                           <a>Header 03</a>
                         </Link>
                       </li>
@@ -132,25 +132,25 @@ function Index() {
                 </ul>
               </li>
               <li>
-                <Link>Pages</Link>
+                <Link to="/">Pages</Link>
                 <ul className="sub-menu">
                   <li>
-                    <Link>
+                    <Link to="/">
                       <a>About Page</a>
                     </Link>
                   </li>
                   <li>
-                    <Link>
+                    <Link to="/">
                       <a>Gallery</a>
                     </Link>
                   </li>
                   <li>
-                    <Link>
+                    <Link to="/">
                       <a>Pricing Plans</a>
                     </Link>
                   </li>
                   <li>
-                    <Link>
+                    <Link to="/">
                       <a>FAQ'S</a>
                     </Link>
                   </li>
@@ -160,58 +160,58 @@ function Index() {
                 <a>Courses</a>
                 <ul className="sub-menu">
                   <li>
-                    <Link href="/courses">
+                    <Link to="/">
                       <a>Courses</a>
                     </Link>
                   </li>
                   <li>
-                    <Link href="/course-details">
+                    <Link to="/">
                       <a>Courses Details</a>
                     </Link>
                   </li>
                 </ul>
               </li>
               <li>
-                <Link href="/teachers">
+                <Link to="/teachers">
                   <a>Teachers</a>
                 </Link>
                 <ul className="sub-menu">
                   <li>
-                    <Link>
+                    <Link to="/">
                       <a>Teachers</a>
                     </Link>
                   </li>
                   <li>
-                    <Link>
+                    <Link to="/">
                       <a>Teachers Details</a>
                     </Link>
                   </li>
                   <li>
-                    <Link>
+                    <Link to="/">
                       <a>Become Teacher</a>
                     </Link>
                   </li>
                 </ul>
               </li>
               <li>
-                <Link href="/news">
+                <Link to="/news">
                   <a>News</a>
                 </Link>
                 <ul className="sub-menu">
                   <li>
-                    <Link>
+                    <Link to="/">
                       <a>News Page</a>
                     </Link>
                   </li>
                   <li>
-                    <Link>
+                    <Link to="/">
                       <a>News Details</a>
                     </Link>
                   </li>
                 </ul>
               </li>
               <li>
-                <Link>
+                <Link to="/">
                   <a>Contact</a>
                 </Link>
               </li>
@@ -220,7 +220,7 @@ function Index() {
           <div className="right-side-box">
             <a
               className="header__search-btn search-popup__toggler search-toggle"
-              href="#"
+              to="#"
             >
               <i className="kipso-icon-magnifying-glass"></i>
             </a>
@@ -244,4 +244,4 @@ function Index() {
   );
 }
 
-export default Index;
+export default NavOne;

@@ -1,6 +1,9 @@
 import axios from 'axios';
 import queryString from 'query-string';
+import store from '../app/store';
+import { logout } from '@app/userSlice';
 
+const { dispatch } = store;
 const axiosClient = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   timeout: 10000,
@@ -9,6 +12,16 @@ const axiosClient = axios.create({
   },
   paramsSerializer: (params) => queryString.stringify(params),
 });
+
+let isRefreshing = false;
+let subscribers = [];
+function subscribeTokenRefresh(cb) {
+  subscribers.push(cb);
+}
+function onRefreshed(token) {
+  subscribers.map((cb) => cb(token));
+}
+
 axiosClient.interceptors.request.use(
   (config) => {
     const token = getLocalToken();
@@ -27,23 +40,34 @@ axiosClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      return refreshToken()
-        .then((result) => {
-          if (result.status === 200) {
+    const { config: originalRequest, response } = error;
+    const status = response?.status;
+    if (status === 401 && !originalRequest._retry) {
+      if (!isRefreshing) {
+        isRefreshing = true;
+        originalRequest._retry = true;
+        return refreshToken()
+          .then((result) => {
+            isRefreshing = false;
             const token = result?.data?.access_token;
             localStorage.setItem('token', token);
-            axiosClient.defaults.headers.Authorization = token;
-            return axiosClient(originalRequest);
-          } else {
-            console.log('refresh token that bai, log out');
-          }
-        })
-        .catch(() => console.log('log out luon ne'));
+            originalRequest.headers.Authorization = token;
+            axiosClient(originalRequest);
+            onRefreshed(token);
+            subscribers = [];
+          })
+          .catch((err) => {
+            dispatch(logout());
+            console.log(err);
+          });
+      }
+      return new Promise((resolve) => {
+        subscribeTokenRefresh((token) => {
+          originalRequest.headers.Authorization = token;
+          resolve(axiosClient(originalRequest));
+        });
+      });
     }
-    return Promise.reject(error);
   }
 );
 function getLocalRefreshToken() {
@@ -60,4 +84,5 @@ function refreshToken() {
     access_token: getLocalToken(),
   });
 }
+
 export default axiosClient;

@@ -5,7 +5,7 @@ import CoursesHightLight from '@components/CoursesHightLight';
 import BestViewCategory from '@components/BestViewCategory';
 import Footer from '@components/Footer';
 
-function index() {
+function HomePage() {
   return (
     <>
       <TopBar />
@@ -19,4 +19,4 @@ function index() {
   );
 }
 
-export default index;
+export default HomePage;

@@ -34,7 +34,9 @@ function CoursesHightLight() {
                     nổi bật nhất
                   </h3>
                   <p className="banner-one__tag-line">Bạn sẳn sàng học chưa?</p>
-                  <Link className="thm-btn banner-one__btn">Xem chi tiết</Link>
+                  <Link to="/" className="thm-btn banner-one__btn">
+                    Xem chi tiết
+                  </Link>
                 </div>
               </div>
             </div>
@@ -51,7 +53,9 @@ function CoursesHightLight() {
                     nổi bật nhất
                   </h3>
                   <p className="banner-one__tag-line">Bạn sẳn sàng học chưa?</p>
-                  <Link className="thm-btn banner-one__btn">Xem chi tiết</Link>
+                  <Link to="/" className="thm-btn banner-one__btn">
+                    Xem chi tiết
+                  </Link>
                 </div>
               </div>
             </div>

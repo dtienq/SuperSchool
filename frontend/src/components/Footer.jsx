@@ -9,7 +9,7 @@ const Footer = () => {
         <div className="site-footer__bottom">
           <div className="container">
             <p className="site-footer__copy">
-              &copy; Copyright 2021 by <Link>SuperSchool.com</Link>
+              &copy; Copyright 2021 by <Link to="/">SuperSchool.com</Link>
             </p>
             <div className="site-footer__social">
               <div
@@ -19,16 +19,16 @@ const Footer = () => {
                 <i className="kipso-icon-top-arrow"></i>
               </div>
 
-              <Link>
+              <Link to="/">
                 <i className="fab fa-twitter"></i>
               </Link>
-              <Link>
+              <Link to="/">
                 <i className="fab fa-facebook-square"></i>
               </Link>
-              <Link>
+              <Link to="/">
                 <i className="fab fa-pinterest-p"></i>
               </Link>
-              <Link>
+              <Link to="/">
                 <i className="fab fa-instagram"></i>
               </Link>
             </div>
