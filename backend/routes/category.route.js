@@ -19,9 +19,16 @@ const roleValidation = require('../middlewares/validation.role');
  *     {
  *         "data": [
  *             {
- *                 "categoryId": "1",
+ *                 "categoryId": "4",
  *                 "categoryName": "Lập trình",
- *                 "children": []
+ *                 "parentId": null,
+ *                 "children": [
+ *                     {
+ *                         "categoryId": "5",
+ *                         "categoryName": "Lập trình Python",
+ *                         "parentId": "4"
+ *                     }
+ *                 ]
  *             }
  *         ]
  *     }
