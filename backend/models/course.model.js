@@ -94,5 +94,13 @@ module.exports = {
     },
     delete: (transaction, id) => {
         return transaction('course').where('courseid', id).del();
+    },
+    getTopByColumnName: (quantity, columnName) => {
+        let query = db('course');
+
+        query.orderBy(columnName, 'desc');
+        query.limit(quantity);
+
+        return query;
     }
 }

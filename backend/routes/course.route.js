@@ -11,6 +11,38 @@ const constant = require('../utils/constant');
 const db = require('../utils/db');
 
 /**
+ * @api {get} /api/course/top10View Top 10 khóa học được xem nhiều nhất
+ *
+ *
+ *    {
+ *        "data": [
+ *            {
+ *                "courseid": "3",
+ *                "title": "Lập trình Java căn bản",
+ *                "imagePath": null,
+ *                "description": "",
+ *                "detailDescription": "",
+ *                "views": "0",
+ *                "createddate": "2021-01-09T09:22:06.842Z",
+ *                "updateddate": null,
+ *                "price": "1200000.00",
+ *                "categoryid": "6",
+ *                "teacherid": "4",
+ *                "status": "INCOMPLETE"
+ *            }
+ *        ]
+ *    }
+ */
+router.get('/top10View', (req, res, next) => {
+  courseModel.getTopByColumnName(10, 'views').then(courses => {
+    res.json({
+      data: courses
+    })
+  });
+});
+
+
+/**
  * @api {get} /api/course/findByCategoryId Get course by categoryId
  * @apiName Get course by categoryId
  * @apiGroup Courses
