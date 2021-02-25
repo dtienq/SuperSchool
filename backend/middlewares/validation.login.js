@@ -6,6 +6,8 @@ module.exports = () => (req, res, next) => {
     try {
         const access_token = req.header('Access-Token');
 
+        console.log(access_token);
+
         commonUtils.currentUser = jwt.verify(access_token, constant.SECRET_KEY);
 
         next();

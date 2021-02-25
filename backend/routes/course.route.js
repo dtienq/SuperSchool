@@ -56,10 +56,6 @@ router.get('/findByCategoryId', validation(require('../schemas/pagination.json')
 });
 
 /**
- * API get 3-4 khóa học nổi bật trong tuần qua
- */
-
-/**
  * @api {get} /api/course/views/top Top views
  * @apiName Top views
  * @apiGroup Courses
@@ -185,14 +181,68 @@ router.post('/search', function (req, res, next) {
   }).catch(next);
 });
 
-router.get('findById/:id', (req, res, next) => {
+/**
+ * @api {get} /api/course/findById/:id Find course by id
+ * @apiName Find course by id
+ * @apiGroup Courses
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *         "data": {
+ *             "courseid": "3",
+ *             "title": "Lập trình Java căn bản",
+ *             "imagePath": null,
+ *             "description": "",
+ *             "detailDescription": "",
+ *             "views": "0",
+ *             "createddate": "2021-01-09T09:22:06.842Z",
+ *             "updateddate": null,
+ *             "price": "1200000.00",
+ *             "categoryid": "6",
+ *             "teacherid": "4",
+ *             "status": "INCOMPLETE"
+ *         }
+ *     }
+ */
+router.get('/findById/:id', (req, res, next) => {
   courseModel.findById(req.params.id).then(course => {
-    res.json({
-      data: course
-    });
+    if(!course.courseid) {
+      throw "Not found";
+    } else {
+      res.json({
+        data: course
+      });
+    }
   }).catch(next);
 });
 
+/**
+ * @api {get} /api/course/create Create a course
+ * @apiName Create a course
+ * @apiGroup Courses
+ * 
+ * @apiParams
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *         "data": {
+ *             "courseid": "3",
+ *             "title": "Lập trình Java căn bản",
+ *             "imagePath": null,
+ *             "description": "",
+ *             "detailDescription": "",
+ *             "views": "0",
+ *             "createddate": "2021-01-09T09:22:06.842Z",
+ *             "updateddate": null,
+ *             "price": "1200000.00",
+ *             "categoryid": "6",
+ *             "teacherid": "4",
+ *             "status": "INCOMPLETE"
+ *         }
+ *     }
+ */
 router.post('/create', roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]), validation(require('../schemas/createUpdateCourse.json')), (req, res, next) => {
   db.transaction(transaction => {
     //init data before insert
