@@ -5,7 +5,7 @@ module.exports = {
         return db('user');
     },
     getByUserName: (username) => {
-        return db.from('user as u').innerJoin('usergroup as g', 'u.usergroupid', 'g.usergroupid').select('u.userid as userId', 'u.username', 'u.fullname', 'u.phonenumber as phoneNumber', 'u.email', 'u.refresh_token', 'g.code as groupCode', 'u.password').where('username', username).first();
+        return db.from('user as u').innerJoin('usergroup as g', 'u.usergroupid', 'g.usergroupid').select('u.userid as userId', 'u.username', 'u.fullname', 'u.email', 'u.refresh_token', 'g.code as groupCode', 'u.password').where('username', username).first();
     },
     findById: (id) => {
         return db('user').where('userid', id).first();

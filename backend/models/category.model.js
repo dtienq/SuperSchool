@@ -1,6 +1,13 @@
 const db = require('../utils/db');
 
 module.exports = {
+    getListCategory: () => {
+        let query =  db('category');
+
+        query.orderByRaw('parentid nulls first');
+
+        return query.select('categoryid as categoryId', 'name as categoryName', 'parentid as parentId');
+    },
     findByParentId: (parentId) => {
         let query =  db('category');
 
@@ -10,7 +17,7 @@ module.exports = {
             query.where('parentid', null);
         }
 
-        return query;
+        return query.select('categoryid as categoryId', 'name as categoryName', 'parentid as parentId');
     },
     getTopRegister: () => {
         let query = db

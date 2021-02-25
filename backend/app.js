@@ -41,7 +41,6 @@ app.post('/uploadFile', (req, res) => {
 
 //error handler
 app.use((err, req, res) => {
-  // console.info("Error occurs: ", err.error);
   res.status(500).json({
     message: "Something wrong, please contact administrators for more information!"
   })

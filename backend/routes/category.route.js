@@ -9,38 +9,46 @@ const db = require('../utils/db');
 const roleValidation = require('../middlewares/validation.role');
 
 /**
- * @api {get} /api/category/getByParentId Get Category by parentId
- * @apiName Get Category by parentId
+ * @api {get} /api/category Lấy danh sách category
+ * @apiName Lấy danh sách category
  * @apiGroup Category
  *
- * @apiParam {Number} parentId parentId = null nếu như là category cấp 1
  *
  * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 200 OK
  *     {
  *         "data": [
  *             {
- *                 "categoryid": "1",
- *                 "name": "Lập trình",
- *                 "code": "CODE",
- *                 "parentid": null
+ *                 "categoryId": "1",
+ *                 "categoryName": "Lập trình",
+ *                 "children": []
  *             }
  *         ]
  *     }
  */
-router.get('/getByParentId', (req, res, next) => {
-  let queryParams = req.query;
-
-  categoryModel.findByParentId(queryParams.parentId).then(data => {
+router.get('/', (req, res, next) => {
+  categoryModel.getListCategory(null).then(data => {
     if(data) {
       res.json({
-          data: data
-      })
+          data: customizeListCategory(data)
+      });
     } else {
       throw "Refresh token fail";
     }
   }).catch(next);
 });
+
+function customizeListCategory(categoryList) {
+  //get parent category
+  let parentCategories = categoryList.filter(category => category.parentId == null);
+  let children = categoryList.filter(category => category.parentId != null);
+
+  parentCategories.forEach(parent => {
+    parent.children = children.filter(category => category.parentId == parent.categoryId);
+  });
+
+  return parentCategories;
+}
 
 /**
  * @api {get} /api/category/register/top Top course register
