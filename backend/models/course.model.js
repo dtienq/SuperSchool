@@ -95,10 +95,10 @@ module.exports = {
     delete: (transaction, id) => {
         return transaction('course').where('courseid', id).del();
     },
-    getTopByColumnName: (quantity, columnName) => {
+    getTopByColumnName: (quantity, columnName, order) => {
         let query = db('course');
 
-        query.orderBy(columnName, 'desc');
+        query.orderBy(columnName, order);
         query.limit(quantity);
 
         return query;

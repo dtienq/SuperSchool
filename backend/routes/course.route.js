@@ -12,8 +12,11 @@ const db = require('../utils/db');
 
 /**
  * @api {get} /api/course/top10View Top 10 khóa học được xem nhiều nhất
+ * @apiName Top 10 khóa học được xem nhiều nhất
+ * @apiGroup Courses
  *
- *
+ * @apiSuccessExample {json} Success-Response:
+ *    HTTP/1.1 200 OK
  *    {
  *        "data": [
  *            {
@@ -34,7 +37,41 @@ const db = require('../utils/db');
  *    }
  */
 router.get('/top10View', (req, res, next) => {
-  courseModel.getTopByColumnName(10, 'views').then(courses => {
+  courseModel.getTopByColumnName(10, 'views', 'desc').then(courses => {
+    res.json({
+      data: courses
+    })
+  });
+});
+
+/**
+ * @api {get} /api/course/top10Newest Top 10 khóa học mới nhất
+ * @apiName Top 10 khóa học mới nhất
+ * @apiGroup Courses
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *    HTTP/1.1 200 OK
+ *    {
+ *        "data": [
+ *            {
+ *                "courseid": "3",
+ *                "title": "Lập trình Java căn bản",
+ *                "imagePath": null,
+ *                "description": "",
+ *                "detailDescription": "",
+ *                "views": "0",
+ *                "createddate": "2021-01-09T09:22:06.842Z",
+ *                "updateddate": null,
+ *                "price": "1200000.00",
+ *                "categoryid": "6",
+ *                "teacherid": "4",
+ *                "status": "INCOMPLETE"
+ *            }
+ *        ]
+ *    }
+ */
+router.get('/top10Newest', (req, res, next) => {
+  courseModel.getTopByColumnName(10, 'createddate', 'desc').then(courses => {
     res.json({
       data: courses
     })
