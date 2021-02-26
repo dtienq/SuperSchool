@@ -685,18 +685,6 @@ a:visited {
   position: relative;
   color: #fff;
 }
-.header__search-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -5px;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 1px solid #2da397;
-  -webkit-transition: all .4s ease;
-  transition: all .4s ease;
-}
 .header__search-btn:hover {
   color: #fff;
 }
@@ -925,18 +913,6 @@ a:visited {
 .banner-wrapper .banner-carousel-btn [class*=banner-carousel-btn__] i {
   font-size: 22px;
 }
-.banner-wrapper .banner-carousel-btn [class*=banner-carousel-btn__]::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  border: 2px solid #fff;
-  border-radius: 50%;
-  -webkit-transition: all .4s ease;
-  transition: all .4s ease;
-}
-
 .banner-carousel-btn__left-btn {
   left: 5%;
 }
@@ -3893,18 +3869,6 @@ a:visited {
   margin-right: auto;
   position: relative;
 }
-.course-category-one__icon:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -10px;
-  width: 100%;
-  height: 100%;
-  border: 2px solid #f16101;
-  border-radius: 50%;
-  -webkit-transition: all .4s ease;
-  transition: all .4s ease;
-}
 .course-category-one__icon i {
   font-size: 56px;
   line-height: 112px;
@@ -4404,18 +4368,6 @@ a:visited {
 .site-footer__scroll-top i {
   font-size: 22px;
   color: #012237;
-}
-.site-footer__scroll-top::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -5px;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  -webkit-transition: all .4s ease;
-  transition: all .4s ease;
 }
 .site-footer__scroll-top:hover {
   color: #f16101;
