@@ -80,7 +80,7 @@ router.get('/top10Newest', (req, res, next) => {
 
 
 /**
- * @api {get} /api/course/findByCategoryId Get course by categoryId
+ * @api {get} /api/course/findByCategoryId/:categoryId Get course by categoryId
  * @apiName Get course by categoryId
  * @apiGroup Courses
  *
@@ -97,68 +97,34 @@ router.get('/top10Newest', (req, res, next) => {
  *     {
  *         "data": [
  *             {
- *                 "courseid": "4",
- *                 "title": "Lập trình C++ ",
- *                 "imagePath": null,
- *                 "description": null,
- *                 "detailDescription": null,
- *                 "views": "0",
- *                 "createddate": "2021-01-02T17:00:00.000Z",
- *                 "price": "1500000.00",
- *                 "categoryid": "2",
- *                 "teacherid": "1"
+ *                 "title": "Lập trình Java căn bản",
+ *                 "categoryName": "Lập trình Java",
+ *                 "teacherName": "Bùi Xuân Bách",
+ *                 "ratingavg": null,
+ *                 "ratingcount": "0",
+ *                 "image": null,
+ *                 "originalPrice": "1200000.00",
+ *                 "discountPrice": null
  *             }
- *         ]
+ *         ],
+ *         "totalItems": "1"
  *     }
  */
-router.get('/findByCategoryId', validation(require('../schemas/pagination.json')), (req, res, next) => {
-  let queryParams = req.query;
+router.get('/findByCategoryId/:categoryId', validation(require('../schemas/pagination.json')), (req, res, next) => {
+  let params = req.params;
   let body = req.body;
   let page = body.page;
   let pageSize = body.pageSize;
 
-  courseModel.findByCategoryId(queryParams.categoryId, page, pageSize).then(data => {
-    res.json({
-      data: data
-    })
-  }).catch(next);
-});
-
-/**
- * @api {get} /api/course/views/top Top views
- * @apiName Top views
- * @apiGroup Courses
- *
- * @apiParam {Number} quantity Số lượng khóa học có lượt view cao nhất (bắt buộc)
- *
- * @apiSuccessExample {json} Success-Response:
- *     HTTP/1.1 200 OK
- *     {
- *         "data": [
- *             {
- *                 "courseid": "5",
- *                 "title": "Hướng đối tượng với C++",
- *                 "imagePath": null,
- *                 "description": null,
- *                 "detailDescription": null,
- *                 "views": "4",
- *                 "createddate": "2021-01-02T17:00:00.000Z",
- *                 "price": "500000.00",
- *                 "categoryid": "2",
- *                 "teacherid": "1"
- *             }
- *         ]
- *     }
- */
-router.get('/views/top', function (req, res, next) {
-  var quantity = req.query.quantity;
-
-  courseModel.topView(quantity).then(courses => {
-    res.json({
-      data: courses
+  courseModel.findByCategoryId(params.categoryId, page, pageSize).then(data => {
+    courseModel.countByCategoryId(params.categoryId).then(totalItems => {
+      res.json({
+        data: data,
+        totalItems: totalItems.count
+      })
     });
   }).catch(next);
-})
+});
 
 /**
  * @api {get} /api/course/register/top Top registration
@@ -208,7 +174,9 @@ router.get('/register/top', function (req, res, next) {
  *         "pageSize": 10,
  *         "page": 1,
  *         "searchString": "",
- *         "categoryId": 2
+ *         "categoryId": 2,
+ *         "orderBy": "a",
+ *         "orderType": "ASC"
  *     }
  *
  * @apiSuccessExample {json} Success-Response:
@@ -231,28 +199,27 @@ router.get('/register/top', function (req, res, next) {
  *     }
  */
 router.post('/search', function (req, res, next) {
-  let searchString = "";
-  let categoryId = null;
-  let page;
-  let pageSize;
+  let body = {};
 
   if (req.body) {
-    searchString = req.body.searchString || "";
-    categoryId = req.body.categoryId;
-    page = req.body.page || 1;
-    pageSize = req.body.pageSize || 10;
+    body = req.body;
   }
 
-  courseModel.searchCourse(searchString, categoryId, page, pageSize).then(courses => {
-    res.json({
-      data: courses
-    })
+  let result = courseModel.searchCourse(body);
+
+  result[0].then(courses => {
+    result[1].then(countCourses => {
+      res.json({
+        data: courses,
+        totalItems: +countCourses.totalItems
+      });
+    });
   }).catch(next);
 });
 
 /**
- * @api {get} /api/course/findById/:id Find course by id
- * @apiName Find course by id
+ * @api {get} /api/course/findById/:id Xem chi tiết khóa học
+ * @apiName Xem chi tiết khóa học
  * @apiGroup Courses
  *
  * @apiSuccessExample {json} Success-Response:
@@ -276,6 +243,7 @@ router.post('/search', function (req, res, next) {
  */
 router.get('/findById/:id', (req, res, next) => {
   courseModel.findById(req.params.id).then(course => {
+    console.log(course);
     if(!course.courseid) {
       throw "Not found";
     } else {

@@ -47,6 +47,7 @@ exports.up = function (knex) {
       table.string('comment').notNullable();
       table.integer('rating').notNullable();
       table.bigInteger('courseid').notNullable().references('courseid').inTable('course').onUpdate('CASCADE').onDelete('CASCADE');
+      table.bigInteger('userid').notNullable().references('userid').inTable('user').onUpdate('CASCADE').onDelete('CASCADE');
       table.timestamp('createddate').notNullable();
       table.timestamp('updateddate');
     }),
