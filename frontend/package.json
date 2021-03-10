@@ -4,8 +4,16 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.4.0",
+<<<<<<< HEAD
     "@popperjs/core": "^2.6.0",
     "@reduxjs/toolkit": "^1.5.0",
+=======
+    "@material-ui/core": "^4.11.3",
+    "@material-ui/styles": "^4.11.3",
+    "@popperjs/core": "^2.6.0",
+    "@reduxjs/toolkit": "^1.5.0",
+    "@unicef/material-ui-currency-textfield": "^0.8.6",
+>>>>>>> master
     "antd": "^4.10.3",
     "axios": "^0.21.1",
     "chartist": "0.10.1",
@@ -32,6 +40,10 @@
     "react-jvectormap": "0.0.2",
     "react-nouislider": "2.0.1",
     "react-popper": "^0.8.0",
+<<<<<<< HEAD
+=======
+    "react-quill": "^1.3.5",
+>>>>>>> master
     "react-redux": "^7.2.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
@@ -44,7 +56,11 @@
     "yup": "^0.28.3"
   },
   "scripts": {
+<<<<<<< HEAD
     "start": "cross-env PORT=3001 react-app-rewired start",
+=======
+    "start": "cross-env PORT=3002 react-app-rewired start",
+>>>>>>> master
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
     "eject": "react-scripts eject"

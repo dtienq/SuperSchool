@@ -25,6 +25,10 @@ import RTLSupport from '@cmsviews/Pages/RTLSupport.jsx';
 import UserRegister from '@cmsviews/Forms/UserRegister.jsx';
 import pagesRoutes from './pages.jsx';
 import CoursesList from '@cmsviews/Tables/CoursesList';
+<<<<<<< HEAD
+=======
+import AddCourse from '@cmsviews/Forms/AddCourse.jsx';
+>>>>>>> master
 
 //New
 import Profile from '@cmsviews/Pages/Profile.jsx';
@@ -90,6 +94,15 @@ var dashRoutes = [
     component: CoursesList,
   },
   {
+<<<<<<< HEAD
+=======
+    path: '/manager/add-course',
+    name: 'Thêm khoá học',
+    icon: DashboardIcon,
+    component: AddCourse,
+  },
+  {
+>>>>>>> master
     collapse: true,
     path: '-page',
     name: 'Pages',
