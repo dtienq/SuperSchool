@@ -4,7 +4,7 @@ const constant = require('../utils/constant');
 
 module.exports = () => (req, res, next) => {
     try {
-        const access_token = req.header('Access-Token');
+        const access_token = req.token;
 
         commonUtils.currentUser = jwt.verify(access_token, constant.SECRET_KEY);
 

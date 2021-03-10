@@ -7,8 +7,10 @@ const loginValidation = require('./middlewares/validation.login');
 const fs = require('fs');
 const CONSTANT = require('./utils/constant');
 var bodyParser = require('body-parser');
+const bearerToken = require('express-bearer-token');
 
 app.use(cors());
+app.use(bearerToken());
 
 app.use('/public', express.static('public')); 
 app.use(bodyParser({limit: '1tb'}));
