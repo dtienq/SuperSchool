@@ -20,7 +20,7 @@ app.use(express.json());
 
 app.use('/api/auth', require('./routes/auth.route'));
 app.use('/api/users', loginValidation(), require('./routes/user.route'));
-app.use('/api/category', loginValidation(), require('./routes/category.route'));
+app.use('/api/category', require('./routes/category.route'));
 app.use('/api/course', loginValidation(), require('./routes/course.route'));
 app.use('/api/course/video', loginValidation(), require('./routes/coursevideo.route'));
 
@@ -42,10 +42,10 @@ app.post('/uploadFile', (req, res) => {
 });
 
 //error handler
-app.use((err, req, res) => {
+app.use((req, res, next) => {
   res.status(500).json({
     message: "Something wrong, please contact administrators for more information!"
-  })
+  });
 });
 
 
