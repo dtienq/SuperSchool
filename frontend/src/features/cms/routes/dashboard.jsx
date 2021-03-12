@@ -130,7 +130,7 @@ var dashRoutes = [
       {
         path: '/manager/users/student',
         name: 'Tài khoản Học viên',
-        mini: 'SU',
+        mini: 'STU',
         component: StudentTable,
       },
     ],
