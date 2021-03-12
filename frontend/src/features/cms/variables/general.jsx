@@ -549,4 +549,5 @@ export {
   subCategoryTables,
   userTables,
   maincategory,
+  adminTable,
 };

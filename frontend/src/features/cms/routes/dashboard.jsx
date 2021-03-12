@@ -25,7 +25,12 @@ import RTLSupport from '@cmsviews/Pages/RTLSupport.jsx';
 import UserRegister from '@cmsviews/Forms/UserRegister.jsx';
 import pagesRoutes from './pages.jsx';
 import CoursesList from '@cmsviews/Tables/CoursesList';
+import AddCourse from '@cmsviews/Forms/AddCourse.jsx';
 
+// Users
+import AdminTable from '@cmsviews/UsersManagement/AdminTable.jsx';
+import StudentTable from '@cmsviews/UsersManagement/StudentTable.jsx';
+import TeacherTable from '@cmsviews/UsersManagement/TeacherTable.jsx';
 //New
 import Profile from '@cmsviews/Pages/Profile.jsx';
 // material-ui-icons
@@ -38,7 +43,7 @@ import Place from 'material-ui-icons/Place';
 import WidgetsIcon from 'material-ui-icons/Widgets';
 import Timeline from 'material-ui-icons/Timeline';
 import DateRange from 'material-ui-icons/DateRange';
-
+import GroupIcon from 'material-ui-icons/Group';
 import MainCategoryTables from '@cmsviews/Tables/MainCategoryTables';
 import SubCategoryTables from '@cmsviews/Tables/SubCategoryTables';
 import UserTables from '@cmsviews/Tables/UserTables';
@@ -90,6 +95,12 @@ var dashRoutes = [
     component: CoursesList,
   },
   {
+    path: '/manager/add-course',
+    name: 'Thêm khoá học',
+    icon: DashboardIcon,
+    component: AddCourse,
+  },
+  {
     collapse: true,
     path: '-page',
     name: 'Pages',
@@ -99,52 +110,28 @@ var dashRoutes = [
   },
   {
     collapse: true,
-    path: '/manager/components',
-    name: 'Components',
-    state: 'openComponents',
-    icon: Apps,
+    path: '/manager/users',
+    name: 'Quản Lý Tài Khoản',
+    state: 'openUsers',
+    icon: GroupIcon,
     views: [
       {
-        path: '/manager/components/buttons',
-        name: 'Buttons',
-        mini: 'B',
-        component: Buttons,
+        path: '/manager/users/admin',
+        name: 'Tài khoản Admin',
+        mini: 'AD',
+        component: AdminTable,
       },
       {
-        path: '/manager/components/grid-system',
-        name: 'Grid System',
-        mini: 'GS',
-        component: GridSystem,
+        path: '/manager/users/teacher',
+        name: 'Tài khoản Giáo viên',
+        mini: 'TE',
+        component: TeacherTable,
       },
       {
-        path: '/manager/components/panels',
-        name: 'Panels',
-        mini: 'P',
-        component: Panels,
-      },
-      {
-        path: '/manager/components/sweet-alert',
-        name: 'Sweet Alert',
-        mini: 'SA',
-        component: SweetAlert,
-      },
-      {
-        path: '/manager/components/notifications',
-        name: 'Notifications',
-        mini: 'N',
-        component: Notifications,
-      },
-      {
-        path: '/manager/components/icons',
-        name: 'Icons',
-        mini: 'I',
-        component: Icons,
-      },
-      {
-        path: '/manager/components/typography',
-        name: 'Typography',
-        mini: 'T',
-        component: Typography,
+        path: '/manager/users/student',
+        name: 'Tài khoản Học viên',
+        mini: 'STU',
+        component: StudentTable,
       },
     ],
   },
