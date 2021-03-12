@@ -19,7 +19,7 @@ export default function TeacherTable(props) {
     return adminTable.dataRows.map((prop, key) => {
       return {
         r_id: key,
-        stt: prop[0],
+        //stt: prop[0],
         id: prop[1],
         email: prop[2],
         fullname: prop[3],
@@ -113,10 +113,10 @@ export default function TeacherTable(props) {
                     data={state.data}
                     filterable
                     columns={[
-                      {
-                        Header: 'STT',
-                        accessor: 'stt',
-                      },
+                      // {
+                      //   Header: 'STT',
+                      //   accessor: 'stt',
+                      // },
                       {
                         Header: 'ID',
                         accessor: 'id',
@@ -133,10 +133,10 @@ export default function TeacherTable(props) {
                         Header: 'Số điện thoại',
                         accessor: 'sdt',
                       },
-                      {
-                        Header: 'Ngày sinh',
-                        accessor: 'dob',
-                      },
+                      // {
+                      //   Header: 'Ngày sinh',
+                      //   accessor: 'dob',
+                      // },
                       {
                         Header: 'Ngày đăng ký',
                         accessor: 'reg',

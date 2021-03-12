@@ -24,9 +24,9 @@ import TimelinePage from '@cmsviews/Pages/Timeline.jsx';
 import RTLSupport from '@cmsviews/Pages/RTLSupport.jsx';
 import UserRegister from '@cmsviews/Forms/UserRegister.jsx';
 import pagesRoutes from './pages.jsx';
-import CoursesList from '@cmsviews/Tables/CoursesList';
+import CoursesList from '@cmsviews/CourseManagement/CoursesList';
 import AddCourse from '@cmsviews/Forms/AddCourse.jsx';
-
+import ListIcon from 'material-ui-icons/List';
 // Users
 import AdminTable from '@cmsviews/UsersManagement/AdminTable.jsx';
 import StudentTable from '@cmsviews/UsersManagement/StudentTable.jsx';
@@ -44,10 +44,10 @@ import WidgetsIcon from 'material-ui-icons/Widgets';
 import Timeline from 'material-ui-icons/Timeline';
 import DateRange from 'material-ui-icons/DateRange';
 import GroupIcon from 'material-ui-icons/Group';
-import MainCategoryTables from '@cmsviews/Tables/MainCategoryTables';
-import SubCategoryTables from '@cmsviews/Tables/SubCategoryTables';
+import MainCategoryTables from '@cmsviews/CategoryManagement/MainCategoryTables';
+import SubCategoryTables from '@cmsviews/CategoryManagement/SubCategoryTables';
 import UserTables from '@cmsviews/Tables/UserTables';
-import CategoryForm from '@cmsviews/Forms/CategoryForm';
+import CategoryForm from '@cmsviews/CategoryManagement/CategoryForm';
 var pages = [
   {
     path: '/manager/timeline-page',
@@ -83,32 +83,6 @@ var pages = [
 
 var dashRoutes = [
   {
-    path: '/manager/dashboard',
-    name: 'Dashboard',
-    icon: DashboardIcon,
-    component: Dashboard,
-  },
-  {
-    path: '/manager/courses',
-    name: 'Danh sách khoá học',
-    icon: DashboardIcon,
-    component: CoursesList,
-  },
-  {
-    path: '/manager/add-course',
-    name: 'Thêm khoá học',
-    icon: DashboardIcon,
-    component: AddCourse,
-  },
-  {
-    collapse: true,
-    path: '-page',
-    name: 'Pages',
-    state: 'openPages',
-    icon: Image,
-    views: pages,
-  },
-  {
     collapse: true,
     path: '/manager/users',
     name: 'Quản Lý Tài Khoản',
@@ -133,8 +107,68 @@ var dashRoutes = [
         mini: 'STU',
         component: StudentTable,
       },
+      {
+        path: '/manager/users/add-user',
+        name: 'Tạo tài khoản',
+        mini: 'REG',
+        component: UserRegister,
+      },
     ],
   },
+  {
+    collapse: true,
+    path: '/manager/category',
+    name: 'Quản lý danh mục',
+    state: 'openCategory',
+    icon: ContentPaste,
+    views: [
+      {
+        path: '/manager/category/main-category',
+        name: 'Danh mục chính',
+        mini: 'MN',
+        component: MainCategoryTables,
+      },
+      {
+        path: '/manager/category/sub-category',
+        name: 'Danh mục phụ',
+        mini: 'SB',
+        component: SubCategoryTables,
+      },
+      {
+        path: '/manager/category/category-edit',
+        name: 'Điều chỉnh danh mục',
+        mini: 'ED',
+        component: CategoryForm,
+      },
+    ],
+  },
+  {
+    path: '/manager/courses',
+    name: 'Quản lý khóa học',
+    icon: ListIcon,
+    component: CoursesList,
+  },
+  {
+    path: '/manager/dashboard',
+    name: 'Dashboard',
+    icon: DashboardIcon,
+    component: Dashboard,
+  },
+  {
+    path: '/manager/add-course',
+    name: 'Thêm khoá học',
+    icon: DashboardIcon,
+    component: AddCourse,
+  },
+  {
+    collapse: true,
+    path: '-page',
+    name: 'Pages',
+    state: 'openPages',
+    icon: Image,
+    views: pages,
+  },
+
   {
     collapse: true,
     path: '/manager/forms',

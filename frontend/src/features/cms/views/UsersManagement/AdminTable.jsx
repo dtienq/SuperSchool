@@ -19,12 +19,11 @@ export default function AdminTable(props) {
     return adminTable.dataRows.map((prop, key) => {
       return {
         r_id: key,
-        stt: prop[0],
         id: prop[1],
         email: prop[2],
         fullname: prop[3],
         sdt: prop[4],
-        dob: prop[5],
+        //dob: prop[5],
         reg: prop[6],
         actions: (
           // we've added some custom button actions
@@ -114,10 +113,6 @@ export default function AdminTable(props) {
                     filterable
                     columns={[
                       {
-                        Header: 'STT',
-                        accessor: 'stt',
-                      },
-                      {
                         Header: 'ID',
                         accessor: 'id',
                       },
@@ -132,10 +127,6 @@ export default function AdminTable(props) {
                       {
                         Header: 'Số điện thoại',
                         accessor: 'sdt',
-                      },
-                      {
-                        Header: 'Ngày sinh',
-                        accessor: 'dob',
                       },
                       {
                         Header: 'Ngày đăng ký',
