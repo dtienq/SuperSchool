@@ -46,6 +46,7 @@ function StepThree({ onChangeTitle, currentEmail }) {
     } catch (error) {
       throw error;
     }
+    setLoading(false);
   };
   useEffect(() => {
     onChangeTitle('Đăng ký thông tin người dùng');

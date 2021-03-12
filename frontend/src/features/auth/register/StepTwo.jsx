@@ -72,9 +72,15 @@ function StepTwo({ onChangeTitle, onSetCurrentStep, currentEmail }) {
     };
     try {
       const res = await userApi.confirmOTP(dataToSend);
-      if (res?.status) onSetCurrentStep((prev) => prev + 1);
-    } catch (error) {}
-    // setLoading(false);
+      if (res?.status) {
+        onSetCurrentStep((prev) => prev + 1);
+      } else {
+        setMessageServer('Mã OTP không chính xác');
+      }
+    } catch (error) {
+      setMessageServer('Xác thực OTP thất bại');
+    }
+    setLoading(false);
   };
   const handleResendOTP = async () => {
     setResendLoading(true);

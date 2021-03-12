@@ -46,7 +46,7 @@ function StepOne({ onSetCurrentStep, onSetCurrentEmail }) {
         setMessageServer(res?.message);
       }
     } catch (error) {}
-    // setLoading(false);
+    setLoading(false);
   };
   return (
     <Spin spinning={loading}>
