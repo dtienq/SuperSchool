@@ -2,12 +2,30 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { logout } from '@app/userSlice';
+import { Menu, Dropdown } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 
 function Topbar() {
   const dispatch = useDispatch();
   const isLogin = useSelector(({ userReducer }) => userReducer?.isLogin);
   const currentUser = useSelector(
     ({ userReducer }) => userReducer?.user?.fullname
+  );
+  const menu = (
+    <Menu>
+      <Menu.Item>
+        <Link to="/profile">Trang cá nhân</Link>
+      </Menu.Item>
+      <Menu.Item>
+        <Link to="love-courses">Khoá học yêu thích</Link>
+      </Menu.Item>
+      <Menu.Item>
+        <Link to="studying-courses">Khoá học đang theo học</Link>
+      </Menu.Item>
+      <Menu.Item onClick={() => dispatch(logout())}>
+        <div>Đăng xuất</div>
+      </Menu.Item>
+    </Menu>
   );
   return (
     <div className="topbar-one">
@@ -22,16 +40,16 @@ function Topbar() {
         </div>
         <div className="topbar-one__right">
           {isLogin ? (
-            <>
-              <div style={{ color: '#fff' }}>Xin chào {currentUser}</div>
+            <Dropdown overlay={menu}>
               <div
-                className="ml-4"
+                className="ant-dropdown-link"
+                onClick={(e) => e.preventDefault()}
                 style={{ color: '#fff', cursor: 'pointer' }}
-                onClick={() => dispatch(logout())}
               >
-                Đăng xuất
+                Xin chào {currentUser}
+                <DownOutlined />
               </div>
-            </>
+            </Dropdown>
           ) : (
             <>
               <Link to="/login">Đăng nhập</Link>

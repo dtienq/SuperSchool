@@ -61,37 +61,26 @@ function NavOne() {
           <div className="logo-box clearfix">
             <Link to="/">
               <Link to="/" className="navbar-brand">
-                <img
-                  src="/assets/images/logo-dark.png"
-                  className="main-logo"
-                  width="128"
-                  alt="Awesome Image"
-                />
+                <div
+                  style={{
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    color: 'orange',
+                  }}
+                >
+                  SuperSchool
+                </div>
               </Link>
             </Link>
-            <div className="header__social">
-              <Link to="/">
-                <i className="fab fa-twitter"></i>
-              </Link>
-              <Link to="/">
-                <i className="fab fa-facebook-square"></i>
-              </Link>
-              <Link to="/">
-                <i className="fab fa-pinterest-p"></i>
-              </Link>
-              <Link to="/">
-                <i className="fab fa-instagram"></i>
-              </Link>
-            </div>
             <button className="menu-toggler">
               <span className="kipso-icon-menu"></span>
             </button>
           </div>
           <div className="main-navigation">
             <ul className=" navigation-box">
-              <li className="current">
+              <li>
                 <Link to="/">
-                  <a>Home</a>
+                  <a>Lập trình</a>
                 </Link>
                 <ul className="sub-menu">
                   <li>
@@ -132,7 +121,7 @@ function NavOne() {
                 </ul>
               </li>
               <li>
-                <Link to="/">Pages</Link>
+                <Link to="/">IT và phần mềm</Link>
                 <ul className="sub-menu">
                   <li>
                     <Link to="/">
@@ -157,7 +146,7 @@ function NavOne() {
                 </ul>
               </li>
               <li>
-                <a>Courses</a>
+                <a>Văn phòng</a>
                 <ul className="sub-menu">
                   <li>
                     <Link to="/">
@@ -173,7 +162,7 @@ function NavOne() {
               </li>
               <li>
                 <Link to="/teachers">
-                  <a>Teachers</a>
+                  <a>Đồ hoạ</a>
                 </Link>
                 <ul className="sub-menu">
                   <li>
@@ -195,7 +184,7 @@ function NavOne() {
               </li>
               <li>
                 <Link to="/news">
-                  <a>News</a>
+                  <a>Tiếng anh</a>
                 </Link>
                 <ul className="sub-menu">
                   <li>
@@ -209,11 +198,6 @@ function NavOne() {
                     </Link>
                   </li>
                 </ul>
-              </li>
-              <li>
-                <Link to="/">
-                  <a>Contact</a>
-                </Link>
               </li>
             </ul>
           </div>
