@@ -343,7 +343,7 @@ function CoursesList(props) {
                   <ImagePriceCard
                     image={item.imagePath}
                     title={item.title}
-                    text={item.description}
+                    text={item.description + '\n' + item.teacherName}
                     price={item.status}
                     statIcon={UpdateIcon}
                     statText={`Cập nhật:${item.updateDate}`}
@@ -447,7 +447,7 @@ function CoursesList(props) {
                   <ImagePriceCard
                     image={item.imagePath}
                     title={item.title}
-                    text={item.description}
+                    text={item.description + '\n' + item.teacherName}
                     price={item.status}
                     statIcon={UpdateIcon}
                     statText={`Cập nhật:${item.updateDate}`}
