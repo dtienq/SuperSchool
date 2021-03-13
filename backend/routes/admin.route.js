@@ -53,7 +53,16 @@ router.get('/deleteteacher/:userId',(req,res,next) =>{
         })
     }).catch(next);
 });
+//without tree
+router.get('/getallcourse', (req,res,next) =>{
+    categoryModel.getParentCategory().then(data =>{
+        res.json({
+            data
+        })
+    }).catch(next);
+});
 
+//with tree.
 router.get('/getcourse', (req, res, next) => {
     categoryModel.getListCategory(null).then(data => {
       if(data) 
