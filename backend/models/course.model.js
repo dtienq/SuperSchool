@@ -1,4 +1,5 @@
 const db = require('../utils/db');
+const commonUtils = require('../utils/common');
 
 module.exports = {
     findByCategoryId: (categoryId, page, pageSize) => {
@@ -111,9 +112,12 @@ module.exports = {
         let pageSize = body.pageSize;
         let orderBy = body.orderBy;
         let orderType = body.orderType;
+        let fullText = body.fullText;
 
         let query = db.select(db.raw(' c.*, case when maxCourse.courseid = c.courseid then true else false end as "isBestSeller"\n' +
             'from course c \n' +
+            'inner join category ca \n' +
+            'on c.categoryid = ca.categoryid \n' +
             'left join (\n' +
             '\tselect sc0.courseid, count(distinct sc0.studentid) as totalStudents\n' +
             '\tfrom student_course sc0\n' +
@@ -124,6 +128,10 @@ module.exports = {
             'on c.courseid = maxcourse.courseid and maxCourse.totalStudents > 0 '));
 
         query.where('title', 'like', `%${searchString}%`);
+
+        if(fullText) {
+            query.whereRaw(`to_tsvector(c.title || ' ' || ca.name) @@ plainto_tsquery('${fullText}')`);
+        }
 
         if (categoryId) {
             query.where('categoryid', categoryId);
@@ -176,5 +184,19 @@ module.exports = {
         query.limit(quantity);
 
         return query;
+    },
+    topHighlight: (quantity) => {
+        let mondayOfLastWeek = commonUtils.getMondayOfLastWeek();
+        let sundayOfLastWeek = commonUtils.getSundayOfLastWeek();
+
+        let query = db('course as c');
+
+        query.innerJoin('student_course as sc', 'sc.courseid', 'c.courseid');
+        query.select(db.raw('count(sc.studentcourseid) as totalStudents'));
+
+        query.where('sc.createddate', '>=', mondayOfLastWeek);
+        query.where('sc.createddate', '<=', sundayOfLastWeek);
+
+        return query.select('c.*').groupBy('c.courseid').limit(quantity);
     }
-}
+};

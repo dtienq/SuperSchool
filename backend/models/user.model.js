@@ -1,5 +1,7 @@
 const db = require('../utils/db');
 
+
+
 module.exports = {
     findAll: () => {
         return db('user');
