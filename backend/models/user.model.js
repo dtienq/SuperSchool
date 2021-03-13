@@ -1,8 +1,34 @@
+const randomString = require("randomstring");
+const { returning } = require("../utils/db");
+const knex = require("../utils/db");
 const db = require("../utils/db");
 
 module.exports = {
   findAll: () => {
     return db("user");
+  },
+  getUserbyGroupId: (groupId) => {
+    return db("user").where("usergroupid",groupId)
+  },
+  toggleStatus: (userId,status) => {
+    return db("user").where("userid",userId).update({
+      status: status,
+    });
+  },
+  addTeacher: (fullname,email,picture,password,refresh_token) =>{
+    // var password = randomString.generate({length:20});
+    return db("user").insert({
+      username: email,
+      password,
+      fullname,
+      email,
+      refresh_token,
+      usergroupid: 3,
+      picture,
+    }).returning("userid");
+  },
+  removeTeacher: (userId) =>{
+    return db("user").where("userid",userId).delete();
   },
   getByUserEmail: (email) => {
     return db
