@@ -1,5 +1,6 @@
 const userModel = require("../models/user.model");
 const randomString = require("randomstring");
+const categoryModel = require("../models/category.model")
 var express = require('express');
 // const courseModel = require("../models/course.model");
 var router = express.Router();
@@ -52,5 +53,27 @@ router.get('/deleteteacher/:userId',(req,res,next) =>{
         })
     }).catch(next);
 });
+
+router.get('/getcourse', (req, res, next) => {
+    categoryModel.getListCategory(null).then(data => {
+      if(data) 
+        res.json({
+            data: customizeListCategory(data)
+        });
+    //   } else {
+    //     throw "Refresh token fail";
+    //   }
+    }).catch(next);
+  });
+
+function customizeListCategory(categoryList) {
+    //get parent category
+    let parentCategories = categoryList.filter(category => category.parentId == null);
+    let children = categoryList.filter(category => category.parentId != null);
+    parentCategories.forEach(parent => {
+      parent.children = children.filter(category => category.parentId == parent.categoryId);
+    });
+    return parentCategories;
+};
 
 module.exports = router;
