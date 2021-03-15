@@ -31,17 +31,32 @@ const roleValidation = require('../middlewares/validation.role');
 router.get('/getByParentId', (req, res, next) => {
   let queryParams = req.query;
 
-  categoryModel.findByParentId(queryParams.parentId).then(data => {
-    if(data) {
-      res.json({
-          data: data
-      })
-    } else {
-      throw "Refresh token fail";
-    }
-  }).catch(next);
+  categoryModel
+    .findByParentId(queryParams.parentId)
+    .then((data) => {
+      if (data) {
+        res.json({
+          data: data,
+        });
+      } else {
+        throw 'Refresh token fail';
+      }
+    })
+    .catch(next);
 });
 
+router.get('/getTree', (req, res, next) => {
+  categoryModel
+    .getTree()
+    .then((data) => {
+      if (data) {
+        res.json({ data: data });
+      } else {
+        throw 'Refresh token fail';
+      }
+    })
+    .catch(next);
+});
 /**
  * @api {get} /api/category/register/top Top course register
  * @apiName Top course register
@@ -61,62 +76,89 @@ router.get('/getByParentId', (req, res, next) => {
  *         ]
  *     }
  */
-router.get('/register/top', function(req, res, next) {
-  categoryModel.getTopRegister().then(categories => {
-    res.json({
-      data: categories
-    });
-  }).catch(next);
-});
-
-router.get('/findById/:id', roleValidation([constant.USER_GROUP.ADMIN]), (req, res, next) => {
-  categoryModel.findById(req.params.id).then(category => {
-    res.json({
-      data: category
+router.get('/register/top', function (req, res, next) {
+  categoryModel
+    .getTopRegister()
+    .then((categories) => {
+      res.json({
+        data: categories,
+      });
     })
-  }).catch(next);
-})
+    .catch(next);
+});
 
-router.post('/create', roleValidation([constant.USER_GROUP.ADMIN]), validateMdw(require('../schemas/createCategory.json')), (req, res, next) => {
-  db.transaction(transaction => {
-    categoryModel.create(transaction, req.body).then(_ => {
-      transaction.commit();
-      res.json({
-        data: 'Success'
-      });
-    }).catch(err => {
-      transaction.rollback();
-      next(err);
+router.get(
+  '/findById/:id',
+  roleValidation([constant.USER_GROUP.ADMIN]),
+  (req, res, next) => {
+    categoryModel
+      .findById(req.params.id)
+      .then((category) => {
+        res.json({
+          data: category,
+        });
+      })
+      .catch(next);
+  }
+);
+
+router.post(
+  '/create',
+  validateMdw(require('../schemas/createCategory.json')),
+  (req, res, next) => {
+    db.transaction((transaction) => {
+      categoryModel
+        .create(transaction, req.body)
+        .then((_) => {
+          transaction.commit();
+          res.json({
+            data: 'Success',
+          });
+        })
+        .catch((err) => {
+          transaction.rollback();
+          next(err);
+        });
     });
+  }
+);
+
+router.delete('/delete/:id', (req, res, next) => {
+  db.transaction((transaction) => {
+    categoryModel
+      .delete(transaction, req.params.id)
+      .then((_) => {
+        transaction.commit();
+        res.json({
+          data: 'Success',
+        });
+      })
+      .catch((err) => {
+        transaction.rollback();
+        next(err);
+      });
   });
 });
 
-router.delete('/delete/:id', roleValidation([constant.USER_GROUP.ADMIN]), (req, res, next) => {
-  db.transaction(transaction => {
-    categoryModel.delete(transaction, req.params.id).then(_ => {
-      transaction.commit();
-      res.json({
-        data: 'Success'
-      });
-    }).catch(err => {
-      transaction.rollback();
-      next(err);
+router.put(
+  '/update',
+  validateMdw(require('../schemas/updateCategory.json')),
+  (req, res, next) => {
+    db.transaction((transaction) => {
+      categoryModel
+        .update(transaction, req.body)
+        .then((_) => {
+          transaction.commit();
+          res.json({
+            data: 'Success',
+          });
+        })
+        .catch((err) => {
+          transaction.rollback();
+          next(err);
+        });
     });
-  });
-});
-
-router.put('/update', roleValidation([constant.USER_GROUP.ADMIN]), validateMdw(require('../schemas/updateCategory.json')), (req, res, next) => {
-  db.transaction(transaction => {
-    categoryModel.update(transaction, req.body).then(_ => {
-      transaction.commit();
-      res.json({
-        data: 'Success'
-      });
-    }).catch(err => {
-      transaction.rollback();
-      next(err);
-    });
-  });
-});
+  }
+);
 
 module.exports = router;
