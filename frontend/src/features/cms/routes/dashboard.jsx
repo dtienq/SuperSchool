@@ -48,6 +48,7 @@ import MainCategoryTables from '@cmsviews/CategoryManagement/MainCategoryTables'
 import SubCategoryTables from '@cmsviews/CategoryManagement/SubCategoryTables';
 import UserTables from '@cmsviews/Tables/UserTables';
 import CategoryForm from '@cmsviews/CategoryManagement/CategoryForm';
+
 var pages = [
   {
     path: '/manager/timeline-page',
@@ -110,7 +111,7 @@ var dashRoutes = [
       {
         path: '/manager/users/add-user',
         name: 'Tạo tài khoản',
-        mini: 'REG',
+        mini: 'RG',
         component: UserRegister,
       },
     ],
@@ -135,7 +136,7 @@ var dashRoutes = [
         component: SubCategoryTables,
       },
       {
-        path: '/manager/category/category-edit',
+        path: '/manager/category/category-form',
         name: 'Điều chỉnh danh mục',
         mini: 'ED',
         component: CategoryForm,

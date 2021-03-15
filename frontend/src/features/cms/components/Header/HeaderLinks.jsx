@@ -1,16 +1,13 @@
 import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import { Manager, Target, Popper } from 'react-popper';
 import { Link } from 'react-router-dom';
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
 
 import IconButton from 'material-ui/IconButton';
-import Hidden from 'material-ui/Hidden';
 import HomeIcon from 'material-ui-icons/Home';
 // material-ui-icons
-import ArrowBackIcon from 'material-ui-icons/ArrowBack';
 // core components
 
 import headerLinksStyle from '@cmsassets/jss/material-dashboard-pro-react/components/headerLinksStyle';

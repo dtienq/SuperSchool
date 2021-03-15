@@ -15,6 +15,7 @@ import Edit from 'material-ui-icons/Edit';
 import ArtTrack from 'material-ui-icons/ArtTrack';
 import UpdateIcon from 'material-ui-icons/Update';
 // core components
+import Pagination from '@material-ui/lab/Pagination';
 import GridContainer from '@cmscomponents/Grid/GridContainer.jsx';
 import ItemGrid from '@cmscomponents/Grid/ItemGrid.jsx';
 import Button from '@cmscomponents/CustomButtons/Button.jsx';
@@ -22,13 +23,14 @@ import HeaderCard from '@cmscomponents/Cards/HeaderCard.jsx';
 import ImagePriceCard from '@cmscomponents/Cards/ImagePriceCard.jsx';
 import CustomInput from '@cmscomponents/CustomInput/CustomInput.jsx';
 import InputAdornment from 'material-ui/Input/InputAdornment';
-
 import SearchIcon from 'material-ui-icons/Search';
+import PublicIcon from 'material-ui-icons/Public';
+import VpnLockIcon from 'material-ui-icons/VpnLock';
 import dashboardStyle from '@cmsassets/jss/material-dashboard-pro-react/views/dashboardStyle';
-
+import categoryApi from '@api/categoryApi';
+import coursesApi from '@api/coursesApi';
 function CoursesList(props) {
   let location = useLocation();
-  console.log(location);
   const [state, setState] = useState({
     category: location.state
       ? location.state.maincat
@@ -45,127 +47,67 @@ function CoursesList(props) {
     listsubcategory: [],
     data: [],
   });
+  const [page, setPage] = useState({
+    first: 0,
+    last: 0,
+    page: 1,
+    totalCourses: 0,
+    limit: 2,
+  });
 
+  const pageHandle = (event, value) => {
+    setPage({
+      ...page,
+      page: value,
+      first: value * page.limit - page.limit,
+      last: value * page.limit - 1,
+    });
+  };
+  const between = (x, min, max) => {
+    return x >= min && x <= max;
+  };
   useEffect(() => {
-    const fetchData = {
-      category: state.category,
-      subcategory: state.subcategory,
-      listcategory: [
-        { id: 1, name: 'Lập trình' },
-        { id: 2, name: 'Thiết kế đố hoạ' },
-      ],
-      listsubcategory: [
-        { id: 3, name: 'Lập trình Java' },
-        { id: 4, name: 'Lập trình Android' },
-      ],
-      search: '',
-      data: [
-        {
-          courseid: 1,
-          imagePath:
-            'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg',
-          title: 'Lập trình Python',
-          description:
-            'This Python For Beginners Course Teaches You The Python Language Fast. Includes Python Online Training With Python 3',
-          detailDescription: `What you'll learn
-              Have a fundamental understanding of the Python programming language.
-              Have the skills and understanding of Python to confidently apply for Python programming jobs.
-              Acquire the pre-requisite Python skills to move into specific branches - Machine Learning, Data Science, etc..
-              Add the Python Object-Oriented Programming (OOP) skills to your résumé.
-              Understand how to create your own Python programs.
-              Learn Python from experienced professional software developers.
-              Understand both Python 2 and Python 3.`,
-          views: '50',
-          price: '100000',
-          categoryId: 3,
-          parentcategoryId: 1,
-          teacherId: '4',
-          status: 'INCOMPLETE',
-          teacherName: 'Damond James',
-          updateDate: '26/01/2021',
-          promotion: 'FREE',
-        },
-        {
-          courseid: 2,
-          imagePath:
-            'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg',
-          title: 'Lập trình Java',
-          description:
-            'This Python For Beginners Course Teaches You The Python Language Fast. Includes Python Online Training With Python 3',
-          detailDescription: `What you'll learn
-              Have a fundamental understanding of the Python programming language.
-              Have the skills and understanding of Python to confidently apply for Python programming jobs.
-              Acquire the pre-requisite Python skills to move into specific branches - Machine Learning, Data Science, etc..
-              Add the Python Object-Oriented Programming (OOP) skills to your résumé.
-              Understand how to create your own Python programs.
-              Learn Python from experienced professional software developers.
-              Understand both Python 2 and Python 3.`,
-          views: '50',
-          price: '200000',
-          categoryId: 4,
-          parentcategoryId: 1,
-          teacherId: '4',
-          status: 'INCOMPLETE',
-          teacherName: 'Damond James',
-          updateDate: '26/01/2021',
-          promotion: 'FREE',
-        },
-        {
-          courseid: 3,
-          imagePath:
-            'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg',
-          title: 'Thiết kế Powerpoint',
-          description:
-            'This Python For Beginners Course Teaches You The Python Language Fast. Includes Python Online Training With Python 3',
-          detailDescription: `What you'll learn
-              Have a fundamental understanding of the Python programming language.
-              Have the skills and understanding of Python to confidently apply for Python programming jobs.
-              Acquire the pre-requisite Python skills to move into specific branches - Machine Learning, Data Science, etc..
-              Add the Python Object-Oriented Programming (OOP) skills to your résumé.
-              Understand how to create your own Python programs.
-              Learn Python from experienced professional software developers.
-              Understand both Python 2 and Python 3.`,
-          views: '50',
-          price: '200000',
-          categoryId: 4,
-          parentcategoryId: 1,
-          teacherId: '4',
-          status: 'INCOMPLETE',
-          teacherName: 'Damond James',
-          updateDate: '26/01/2021',
-          promotion: 'FREE',
-        },
-        {
-          courseid: 2,
-          imagePath:
-            'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg',
-          title: 'Lập trình Java',
-          description:
-            'This Python For Beginners Course Teaches You The Python Language Fast. Includes Python Online Training With Python 3',
-          detailDescription: `What you'll learn
-              Have a fundamental understanding of the Python programming language.
-              Have the skills and understanding of Python to confidently apply for Python programming jobs.
-              Acquire the pre-requisite Python skills to move into specific branches - Machine Learning, Data Science, etc..
-              Add the Python Object-Oriented Programming (OOP) skills to your résumé.
-              Understand how to create your own Python programs.
-              Learn Python from experienced professional software developers.
-              Understand both Python 2 and Python 3.`,
-          views: '50',
-          price: '200000',
-          categoryId: 3,
-          parentcategoryId: 1,
-          teacherId: '4',
-          status: 'INCOMPLETE',
-          teacherName: 'Damond James',
-          updateDate: '26/01/2021',
-          promotion: 'FREE',
-        },
-      ],
-    };
-    setState(fetchData);
+    setTimeout(async () => {
+      try {
+        const fetch_maincat = await categoryApi.getMain();
+        let fetch_subcat = [];
+        if (state.category != '' && state.subcategory != '') {
+          fetch_subcat = await categoryApi.getSubCategoryByParentId(
+            state.category
+          );
+        }
+        const fetch_data = await coursesApi.getCoursesByAdmin();
+        const fetchData = {
+          category: state.category,
+          subcategory: state.subcategory,
+          listcategory: fetch_maincat.data,
+          listsubcategory: state.subcategory != '' ? fetch_subcat.data : [],
+          search: '',
+          data: fetch_data.data,
+        };
+        setState(fetchData);
+        setPage({
+          ...page,
+          first: page.page * page.limit - page.limit,
+          last: page.page * page.limit - 1,
+          totalCourses: fetch_data.data.length,
+          totalPages: Math.ceil(fetch_data.data.length / page.limit),
+        });
+      } catch (err) {
+        alert(err.message);
+      }
+    }, 200);
   }, []);
-  const handleCategorySelect = (event) => {
-    setState({ ...state, subcategory: '', category: event.target.value });
+  const handleCategorySelect = async (event) => {
+    const subdata = await categoryApi.getSubCategoryByParentId(
+      event.target.value
+    );
+    setState({
+      ...state,
+      listsubcategory: subdata.data,
+      subcategory: '',
+      category: event.target.value,
+    });
   };
   const handleSubCategorySelect = (event) => {
     setState({ ...state, subcategory: event.target.value });
@@ -174,6 +116,7 @@ function CoursesList(props) {
   return (
     <div>
       {console.log(state)}
+      {console.log(page)}
       <GridContainer>
         <ItemGrid xs={12}>
           <HeaderCard
@@ -219,13 +162,13 @@ function CoursesList(props) {
                           Tất cả
                         </MenuItem>
                         {state.listcategory.map((prop) =>
-                          prop.id === state.category ? (
+                          +prop.categoryid === state.category ? (
                             <MenuItem
                               classes={{
                                 root: classes.selectMenuItem,
                                 selected: classes.selectMenuItemSelected,
                               }}
-                              value={prop.id}
+                              value={+prop.categoryid}
                               selected={true}
                             >
                               {prop.name}
@@ -236,7 +179,7 @@ function CoursesList(props) {
                                 root: classes.selectMenuItem,
                                 selected: classes.selectMenuItemSelected,
                               }}
-                              value={prop.id}
+                              value={+prop.categoryid}
                             >
                               {prop.name}
                             </MenuItem>
@@ -278,17 +221,30 @@ function CoursesList(props) {
                         >
                           Tất cả
                         </MenuItem>
-                        {state.listsubcategory.map((prop) => (
-                          <MenuItem
-                            classes={{
-                              root: classes.selectMenuItem,
-                              selected: classes.selectMenuItemSelected,
-                            }}
-                            value={prop.id}
-                          >
-                            {prop.name}
-                          </MenuItem>
-                        ))}
+                        {state.listsubcategory.map((prop) =>
+                          +prop.categoryid === state.subcategory ? (
+                            <MenuItem
+                              classes={{
+                                root: classes.selectMenuItem,
+                                selected: classes.selectMenuItemSelected,
+                              }}
+                              selected={true}
+                              value={+prop.categoryid}
+                            >
+                              {prop.name}
+                            </MenuItem>
+                          ) : (
+                            <MenuItem
+                              classes={{
+                                root: classes.selectMenuItem,
+                                selected: classes.selectMenuItemSelected,
+                              }}
+                              value={prop.categoryid}
+                            >
+                              {prop.name}
+                            </MenuItem>
+                          )
+                        )}
                       </Select>
                     </FormControl>
                   </ItemGrid>
@@ -336,162 +292,180 @@ function CoursesList(props) {
               .toLowerCase()
               .includes(state.search.toLowerCase())
           )
-          .map(function (item) {
-            if (state.category === '' && state.subcategory === '') {
-              return (
-                <ItemGrid xs={12} sm={12} md={4}>
-                  <ImagePriceCard
-                    image={item.imagePath}
-                    title={item.title}
-                    text={item.description + '\n' + item.teacherName}
-                    price={item.status}
-                    statIcon={UpdateIcon}
-                    statText={`Cập nhật:${item.updateDate}`}
-                    hover
-                    underImage={
-                      <div>
-                        <Tooltip
-                          id="tooltip-top"
-                          title="View"
-                          placement="bottom"
-                          classes={{ tooltip: classes.tooltip }}
-                        >
-                          <Button color="defaultNoBackground" justIcon>
-                            <ArtTrack className={classes.underChartIcons} />
-                          </Button>
-                        </Tooltip>
-                        <Tooltip
-                          id="tooltip-top"
-                          title="Edit"
-                          placement="bottom"
-                          classes={{ tooltip: classes.tooltip }}
-                        >
-                          <Button color="successNoBackground" justIcon>
-                            <Refresh className={classes.underChartIcons} />
-                          </Button>
-                        </Tooltip>
-                        <Tooltip
-                          id="tooltip-top"
-                          title="Remove"
-                          placement="bottom"
-                          classes={{ tooltip: classes.tooltip }}
-                        >
-                          <Button color="dangerNoBackground" justIcon>
-                            <Edit className={classes.underChartIcons} />
-                          </Button>
-                        </Tooltip>
-                      </div>
-                    }
-                  />
-                </ItemGrid>
-              );
+          .map(function (item, index) {
+            if (between(index, page.first, page.last)) {
+              if (state.category === '' && state.subcategory === '') {
+                return (
+                  <ItemGrid xs={12} sm={12} md={4}>
+                    <ImagePriceCard
+                      image={item.imagePath}
+                      title={item.title}
+                      text={item.description}
+                      price={item.status}
+                      statIcon={UpdateIcon}
+                      statText={`Cập nhật:${item.teachername}`}
+                      hover
+                      underImage={
+                        <div>
+                          <Tooltip
+                            id="tooltip-top"
+                            title="Xem"
+                            placement="bottom"
+                            classes={{ tooltip: classes.tooltip }}
+                          >
+                            <Button color="defaultNoBackground" justIcon>
+                              <ArtTrack className={classes.underChartIcons} />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip
+                            id="tooltip-top"
+                            title="Trực tuyến"
+                            placement="bottom"
+                            classes={{ tooltip: classes.tooltip }}
+                          >
+                            <Button color="successNoBackground" justIcon>
+                              <PublicIcon className={classes.underChartIcons} />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip
+                            id="tooltip-top"
+                            title="Đình chỉ"
+                            placement="bottom"
+                            classes={{ tooltip: classes.tooltip }}
+                          >
+                            <Button color="dangerNoBackground" justIcon>
+                              <VpnLockIcon
+                                className={classes.underChartIcons}
+                              />
+                            </Button>
+                          </Tooltip>
+                        </div>
+                      }
+                    />
+                  </ItemGrid>
+                );
+              }
+              if (
+                state.category !== '' &&
+                state.category === +item.parentid &&
+                state.subcategory === ''
+              ) {
+                return (
+                  <ItemGrid xs={12} sm={12} md={4}>
+                    <ImagePriceCard
+                      image={item.imagePath}
+                      title={item.title}
+                      text={item.description}
+                      price={item.status}
+                      statIcon={UpdateIcon}
+                      statText={`Cập nhật:${item.updateddate}`}
+                      hover
+                      underImage={
+                        <div>
+                          <Tooltip
+                            id="tooltip-top"
+                            title="Xem"
+                            placement="bottom"
+                            classes={{ tooltip: classes.tooltip }}
+                          >
+                            <Button color="defaultNoBackground" justIcon>
+                              <ArtTrack className={classes.underChartIcons} />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip
+                            id="tooltip-top"
+                            title="Edit"
+                            placement="bottom"
+                            classes={{ tooltip: classes.tooltip }}
+                          >
+                            <Button color="successNoBackground" justIcon>
+                              <PublicIcon className={classes.underChartIcons} />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip
+                            id="tooltip-top"
+                            title="Remove"
+                            placement="bottom"
+                            classes={{ tooltip: classes.tooltip }}
+                          >
+                            <Button color="dangerNoBackground" justIcon>
+                              <VpnLockIcon
+                                className={classes.underChartIcons}
+                              />
+                            </Button>
+                          </Tooltip>
+                        </div>
+                      }
+                    />
+                  </ItemGrid>
+                );
+              } else if (
+                state.subcategory !== '' &&
+                item.categoryid === state.subcategory
+              ) {
+                return (
+                  <ItemGrid xs={12} sm={12} md={4}>
+                    <ImagePriceCard
+                      image={item.imagePath}
+                      title={item.title}
+                      text={item.description}
+                      price={item.status}
+                      statIcon={UpdateIcon}
+                      statText={`Cập nhật:${item.teachername}`}
+                      hover
+                      underImage={
+                        <div>
+                          <Tooltip
+                            id="tooltip-top"
+                            title="View"
+                            placement="bottom"
+                            classes={{ tooltip: classes.tooltip }}
+                          >
+                            <Button color="defaultNoBackground" justIcon>
+                              <ArtTrack className={classes.underChartIcons} />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip
+                            id="tooltip-top"
+                            title="Edit"
+                            placement="bottom"
+                            classes={{ tooltip: classes.tooltip }}
+                          >
+                            <Button color="successNoBackground" justIcon>
+                              <PublicIcon className={classes.underChartIcons} />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip
+                            id="tooltip-top"
+                            title="Remove"
+                            placement="bottom"
+                            classes={{ tooltip: classes.tooltip }}
+                          >
+                            <Button color="dangerNoBackground" justIcon>
+                              <VpnLockIcon
+                                className={classes.underChartIcons}
+                              />
+                            </Button>
+                          </Tooltip>
+                        </div>
+                      }
+                    />
+                  </ItemGrid>
+                );
+              }
+              return <div></div>;
             }
-            if (
-              state.category !== '' &&
-              state.category === +item.parentcategoryId &&
-              state.subcategory === ''
-            ) {
-              return (
-                <ItemGrid xs={12} sm={12} md={4}>
-                  <ImagePriceCard
-                    image={item.imagePath}
-                    title={item.title}
-                    text={item.description}
-                    price={item.status}
-                    statIcon={UpdateIcon}
-                    statText={`Cập nhật:${item.updateDate}`}
-                    hover
-                    underImage={
-                      <div>
-                        <Tooltip
-                          id="tooltip-top"
-                          title="View"
-                          placement="bottom"
-                          classes={{ tooltip: classes.tooltip }}
-                        >
-                          <Button color="defaultNoBackground" justIcon>
-                            <ArtTrack className={classes.underChartIcons} />
-                          </Button>
-                        </Tooltip>
-                        <Tooltip
-                          id="tooltip-top"
-                          title="Edit"
-                          placement="bottom"
-                          classes={{ tooltip: classes.tooltip }}
-                        >
-                          <Button color="successNoBackground" justIcon>
-                            <Refresh className={classes.underChartIcons} />
-                          </Button>
-                        </Tooltip>
-                        <Tooltip
-                          id="tooltip-top"
-                          title="Remove"
-                          placement="bottom"
-                          classes={{ tooltip: classes.tooltip }}
-                        >
-                          <Button color="dangerNoBackground" justIcon>
-                            <Edit className={classes.underChartIcons} />
-                          </Button>
-                        </Tooltip>
-                      </div>
-                    }
-                  />
-                </ItemGrid>
-              );
-            } else if (
-              state.subcategory !== '' &&
-              item.categoryId === state.subcategory
-            ) {
-              return (
-                <ItemGrid xs={12} sm={12} md={4}>
-                  <ImagePriceCard
-                    image={item.imagePath}
-                    title={item.title}
-                    text={item.description + '\n' + item.teacherName}
-                    price={item.status}
-                    statIcon={UpdateIcon}
-                    statText={`Cập nhật:${item.updateDate}`}
-                    hover
-                    underImage={
-                      <div>
-                        <Tooltip
-                          id="tooltip-top"
-                          title="View"
-                          placement="bottom"
-                          classes={{ tooltip: classes.tooltip }}
-                        >
-                          <Button color="defaultNoBackground" justIcon>
-                            <ArtTrack className={classes.underChartIcons} />
-                          </Button>
-                        </Tooltip>
-                        <Tooltip
-                          id="tooltip-top"
-                          title="Edit"
-                          placement="bottom"
-                          classes={{ tooltip: classes.tooltip }}
-                        >
-                          <Button color="successNoBackground" justIcon>
-                            <Refresh className={classes.underChartIcons} />
-                          </Button>
-                        </Tooltip>
-                        <Tooltip
-                          id="tooltip-top"
-                          title="Remove"
-                          placement="bottom"
-                          classes={{ tooltip: classes.tooltip }}
-                        >
-                          <Button color="dangerNoBackground" justIcon>
-                            <Edit className={classes.underChartIcons} />
-                          </Button>
-                        </Tooltip>
-                      </div>
-                    }
-                  />
-                </ItemGrid>
-              );
-            }
-            return <div></div>;
           })}
+      </GridContainer>
+      <GridContainer>
+        <ItemGrid xs={12} sm={12} md={4} />
+        <ItemGrid xs={12} sm={12} md={4}>
+          <Pagination
+            count={page.totalPages}
+            pages={page}
+            onChange={pageHandle}
+          />
+        </ItemGrid>
       </GridContainer>
     </div>
   );

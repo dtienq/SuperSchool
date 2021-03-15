@@ -31,6 +31,7 @@ export default function AdminTable(props) {
             {/* use this button to add a like kind of action */}
             <IconButton
               onClick={() => {
+                console.log(state.dataRows);
                 let obj = state.data.find((o) => o.r_id === key);
                 alert(
                   "You've clicked LIKE button on \n{ \nName: " +

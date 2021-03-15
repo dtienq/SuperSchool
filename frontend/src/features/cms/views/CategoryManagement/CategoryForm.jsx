@@ -21,11 +21,11 @@ import HeaderCard from '@cmscomponents/Cards/HeaderCard.jsx';
 import CustomInput from '@cmscomponents/CustomInput/CustomInput.jsx';
 import Button from '@cmscomponents/CustomButtons/Button.jsx';
 import NavPills from '@cmscomponents/NavPills/NavPills.jsx';
-import { maincategory } from '@cmsvariables/general.jsx';
 // style for this view
 
 import extendedFormsStyle from '@cmsassets/jss/material-dashboard-pro-react/views/extendedFormsStyle.jsx';
 import { InputLabel } from 'material-ui';
+import categoryApi from '@api/categoryApi';
 
 class CategoryForm extends React.Component {
   constructor(props) {
@@ -57,11 +57,17 @@ class CategoryForm extends React.Component {
         categorySelect: this.props.location.state.sub.parent
           ? +this.props.location.state.sub.parent
           : '',
+        mainCode: this.props.location.state.main.code
+          ? this.props.location.state.main.code
+          : '',
+        subCode: this.props.location.state.sub.code
+          ? this.props.location.state.sub.code
+          : '',
         checkedMain: false,
         checkedSub: false,
         alert: null,
         show: false,
-        listcategory: maincategory,
+        listcategory: [],
       };
     } else
       this.state = {
@@ -79,15 +85,20 @@ class CategoryForm extends React.Component {
         checkedSub: false,
         alert: null,
         show: false,
-        listcategory: maincategory,
+        listcategory: [],
       };
+  }
+  componentDidMount() {
+    categoryApi.getMain().then((data) => {
+      this.setState({ listcategory: data.data });
+    });
   }
   hideAlert() {
     this.setState({ alert: null });
   }
-  mainSubmit() {
-    const { mainName, mainEng, checkedMain } = this.state;
-    if (mainName === '' || mainEng === '') {
+  async mainSubmit() {
+    const { mainName, mainEng, mainCode, checkedMain } = this.state;
+    if (mainName === '' || mainEng === '' || mainCode === '') {
       this.setState({
         alert: (
           <SweetAlert
@@ -120,10 +131,38 @@ class CategoryForm extends React.Component {
       setTimeout(this.hideAlert, 2000);
     } else {
       //Thêm category vào db và hiện thông báo
+      if (this.state.main) {
+        try {
+          const data = await categoryApi.updateCategory({
+            categoryId: parseInt(this.state.main.id),
+            name: this.state.mainName,
+            code: this.state.mainCode,
+            english: this.state.mainEng,
+          });
+          this.props.history.push({
+            pathname: '/manager/category/main-category',
+          });
+        } catch (err) {
+          alert(err.message);
+        }
+      } else if (!this.state.main) {
+        try {
+          await categoryApi.createCategory({
+            name: this.state.mainName,
+            code: this.state.mainCode,
+            english: this.state.mainEng,
+          });
+          this.props.history.push({
+            pathname: '/manager/category/main-category',
+          });
+        } catch (err) {
+          alert(err.message);
+        }
+      }
     }
   }
-  subSubmit() {
-    const { categorySelect, subName, subEng, checkedSub } = this.state;
+  async subSubmit() {
+    const { categorySelect, subName, subEng, subCode, checkedSub } = this.state;
     if (categorySelect === '') {
       this.setState({
         alert: (
@@ -141,7 +180,7 @@ class CategoryForm extends React.Component {
           </SweetAlert>
         ),
       });
-    } else if (subName === '' || subEng === '') {
+    } else if (subName === '' || subEng === '' || subCode === '') {
       this.setState({
         alert: (
           <SweetAlert
@@ -174,6 +213,37 @@ class CategoryForm extends React.Component {
       setTimeout(this.hideAlert, 2000);
     } else {
       //Thêm category vào db và hiện thông báo
+      if (!this.state.sub && !this.state.main) {
+        try {
+          await categoryApi.createCategory({
+            name: this.state.subName,
+            code: this.state.subCode,
+            english: this.state.subEng,
+            parentId: +this.state.categorySelect,
+          });
+          this.props.history.push({
+            pathname: '/manager/category/sub-category',
+          });
+        } catch (err) {
+          alert(err.message);
+        }
+      }
+      if (this.state.sub && !this.state.main) {
+        try {
+          await categoryApi.updateCategory({
+            categoryId: this.state.sub.id,
+            name: this.state.subName,
+            code: this.state.subCode,
+            english: this.state.subEng,
+            parentId: +this.state.categorySelect,
+          });
+          this.props.history.push({
+            pathname: '/manager/category/sub-category',
+          });
+        } catch (err) {
+          alert(err.message);
+        }
+      }
     }
   }
   handleSimple = (event) => {
@@ -257,6 +327,21 @@ class CategoryForm extends React.Component {
                                       }),
                                   }}
                                 />
+                                <CustomInput
+                                  labelText="Nhập mã định danh"
+                                  id="cate_code"
+                                  formControlProps={{
+                                    fullWidth: true,
+                                  }}
+                                  inputProps={{
+                                    type: 'text',
+                                    onChange: (e) =>
+                                      this.setState({
+                                        mainCode: e.target.value,
+                                      }),
+                                    defaultValue: this.state.main.code,
+                                  }}
+                                />
                                 <div className={classes.checkboxAndRadio}>
                                   <FormControlLabel
                                     control={
@@ -299,118 +384,138 @@ class CategoryForm extends React.Component {
                           tabButton: 'Danh mục con',
                           tabContent: (
                             <span>
-                              <form>
-                                <ItemGrid xs={12}>
-                                  <FormControl
-                                    fullWidth
-                                    className={classes.selectFormControl}
-                                  >
-                                    <InputLabel
-                                      htmlFor="simple-select"
-                                      className={classes.selectLabel}
+                              <div id="subadd">
+                                <form>
+                                  <ItemGrid xs={12}>
+                                    <FormControl
+                                      fullWidth
+                                      className={classes.selectFormControl}
                                     >
-                                      Chọn danh mục chính
-                                    </InputLabel>
-                                    <Select
-                                      MenuProps={{
-                                        className: classes.selectMenu,
-                                      }}
-                                      classes={{
-                                        select: classes.select,
-                                      }}
-                                      value={this.state.categorySelect}
-                                      onChange={this.handleSimple}
-                                      inputProps={{
-                                        name: 'categorySelect',
-                                        id: 'simple-select',
-                                      }}
-                                    >
-                                      <MenuItem
-                                        disabled
+                                      <InputLabel
+                                        htmlFor="simple-select"
+                                        className={classes.selectLabel}
+                                      >
+                                        Chọn danh mục chính
+                                      </InputLabel>
+                                      <Select
+                                        MenuProps={{
+                                          className: classes.selectMenu,
+                                        }}
                                         classes={{
-                                          root: classes.selectMenuItem,
+                                          select: classes.select,
+                                        }}
+                                        value={this.state.categorySelect}
+                                        onChange={this.handleSimple}
+                                        inputProps={{
+                                          name: 'categorySelect',
+                                          id: 'simple-select',
                                         }}
                                       >
-                                        Chọn danh mục
-                                      </MenuItem>
-                                      {this.state.listcategory.map((item) => (
                                         <MenuItem
+                                          disabled
                                           classes={{
                                             root: classes.selectMenuItem,
-                                            selected:
-                                              classes.selectMenuItemSelected,
                                           }}
-                                          value={item.id}
                                         >
-                                          {item.name}
+                                          Chọn danh mục
                                         </MenuItem>
-                                      ))}
-                                    </Select>
-                                  </FormControl>
-                                  <CustomInput
-                                    labelText="Nhập tên danh mục con"
-                                    id="cat_name"
-                                    formControlProps={{
-                                      fullWidth: true,
-                                    }}
-                                    inputProps={{
-                                      type: 'text',
-                                      onChange: (e) =>
-                                        this.setState({
-                                          subName: e.target.value,
-                                        }),
-                                    }}
-                                  />
-                                  <CustomInput
-                                    labelText="Nhập tên tiếng anh"
-                                    id="cate_name"
-                                    formControlProps={{
-                                      fullWidth: true,
-                                    }}
-                                    inputProps={{
-                                      type: 'text',
-                                      onChange: (e) =>
-                                        this.setState({
-                                          subEng: e.target.value,
-                                        }),
-                                    }}
-                                  />
-                                  <div className={classes.checkboxAndRadio}>
-                                    <FormControlLabel
-                                      control={
-                                        <Checkbox
-                                          tabIndex={-1}
-                                          onClick={() => this.handleToggleSub()}
-                                          checkedIcon={
-                                            <Check
-                                              className={classes.checkedIcon}
-                                            />
-                                          }
-                                          icon={
-                                            <Check
-                                              className={classes.uncheckedIcon}
-                                            />
-                                          }
-                                          classes={{
-                                            checked: classes.checked,
-                                          }}
-                                        />
-                                      }
-                                      classes={{
-                                        label: classes.label,
+                                        {this.state.listcategory.map((item) => (
+                                          <MenuItem
+                                            classes={{
+                                              root: classes.selectMenuItem,
+                                              selected:
+                                                classes.selectMenuItemSelected,
+                                            }}
+                                            value={item.categoryid}
+                                          >
+                                            {item.name}
+                                          </MenuItem>
+                                        ))}
+                                      </Select>
+                                    </FormControl>
+                                    <CustomInput
+                                      labelText="Nhập tên danh mục con"
+                                      id="cat_name"
+                                      formControlProps={{
+                                        fullWidth: true,
                                       }}
-                                      label="Đồng ý"
+                                      inputProps={{
+                                        type: 'text',
+                                        onChange: (e) =>
+                                          this.setState({
+                                            subName: e.target.value,
+                                          }),
+                                      }}
                                     />
-                                  </div>
-                                  <Button
-                                    id="sub-sumit"
-                                    onClick={() => this.subSubmit()}
-                                    color="rose"
-                                  >
-                                    Submit
-                                  </Button>
-                                </ItemGrid>
-                              </form>
+                                    <CustomInput
+                                      labelText="Nhập tên tiếng anh"
+                                      id="cate_name"
+                                      formControlProps={{
+                                        fullWidth: true,
+                                      }}
+                                      inputProps={{
+                                        type: 'text',
+                                        onChange: (e) =>
+                                          this.setState({
+                                            subEng: e.target.value,
+                                          }),
+                                      }}
+                                    />
+                                    <CustomInput
+                                      labelText="Nhập mã định danh"
+                                      id="cate_code"
+                                      formControlProps={{
+                                        fullWidth: true,
+                                      }}
+                                      inputProps={{
+                                        type: 'text',
+                                        onChange: (e) =>
+                                          this.setState({
+                                            subCode: e.target.value,
+                                          }),
+                                      }}
+                                    />
+                                    <div className={classes.checkboxAndRadio}>
+                                      <FormControlLabel
+                                        control={
+                                          <Checkbox
+                                            tabIndex={-1}
+                                            onClick={() =>
+                                              this.handleToggleSub()
+                                            }
+                                            checkedIcon={
+                                              <Check
+                                                className={classes.checkedIcon}
+                                              />
+                                            }
+                                            icon={
+                                              <Check
+                                                className={
+                                                  classes.uncheckedIcon
+                                                }
+                                              />
+                                            }
+                                            classes={{
+                                              checked: classes.checked,
+                                            }}
+                                          />
+                                        }
+                                        classes={{
+                                          label: classes.label,
+                                        }}
+                                        label="Đồng ý"
+                                      />
+                                    </div>
+                                    <Button
+                                      id="sub-sumit"
+                                      onClick={() => this.subSubmit()}
+                                      color="rose"
+                                    >
+                                      Submit
+                                    </Button>
+                                  </ItemGrid>
+                                </form>
+                              </div>
                             </span>
                           ),
                         },
@@ -434,7 +539,7 @@ class CategoryForm extends React.Component {
                                       this.setState({
                                         mainName: e.target.value,
                                       }),
-                                    value: this.state.main.name,
+                                    defaultValue: this.state.main.name,
                                   }}
                                 />
                                 <CustomInput
@@ -449,7 +554,22 @@ class CategoryForm extends React.Component {
                                       this.setState({
                                         mainEng: e.target.value,
                                       }),
-                                    value: this.state.main.eng,
+                                    defaultValue: this.state.main.eng,
+                                  }}
+                                />
+                                <CustomInput
+                                  labelText="Nhập mã định danh"
+                                  id="cate_code"
+                                  formControlProps={{
+                                    fullWidth: true,
+                                  }}
+                                  inputProps={{
+                                    type: 'text',
+                                    onChange: (e) =>
+                                      this.setState({
+                                        mainCode: e.target.value,
+                                      }),
+                                    defaultValue: this.state.main.code,
                                   }}
                                 />
                                 <div className={classes.checkboxAndRadio}>
@@ -476,7 +596,7 @@ class CategoryForm extends React.Component {
                                     classes={{
                                       label: classes.label,
                                     }}
-                                    label="Đồng ý thêm danh mục mới"
+                                    label="Đồng ý sửa đổi danh mục"
                                   />
                                 </div>
                                 <Button
@@ -498,133 +618,155 @@ class CategoryForm extends React.Component {
                           tabContent: (
                             <span>
                               <form>
-                                <ItemGrid xs={12}>
-                                  <FormControl
-                                    fullWidth
-                                    className={classes.selectFormControl}
-                                  >
-                                    <InputLabel
-                                      htmlFor="simple-select"
-                                      className={classes.selectLabel}
+                                <div id="subedit">
+                                  <ItemGrid xs={12}>
+                                    <FormControl
+                                      fullWidth
+                                      className={classes.selectFormControl}
                                     >
-                                      Chọn danh mục chính
-                                    </InputLabel>
-                                    <Select
-                                      MenuProps={{
-                                        className: classes.selectMenu,
-                                      }}
-                                      classes={{
-                                        select: classes.select,
-                                      }}
-                                      value={this.state.categorySelect}
-                                      onChange={this.handleSimple}
-                                      inputProps={{
-                                        name: 'categorySelect',
-                                        id: 'simple-select',
-                                      }}
-                                    >
-                                      <MenuItem
-                                        disabled
+                                      <InputLabel
+                                        htmlFor="simple-select"
+                                        className={classes.selectLabel}
+                                      >
+                                        Chọn danh mục chính
+                                      </InputLabel>
+                                      <Select
+                                        MenuProps={{
+                                          className: classes.selectMenu,
+                                        }}
                                         classes={{
-                                          root: classes.selectMenuItem,
+                                          select: classes.select,
+                                        }}
+                                        value={this.state.categorySelect}
+                                        onChange={this.handleSimple}
+                                        inputProps={{
+                                          name: 'categorySelect',
+                                          id: 'simple-select',
                                         }}
                                       >
-                                        Chọn danh mục
-                                      </MenuItem>
-                                      {this.state.listcategory.map((item) =>
-                                        item.id ===
-                                        this.state.categorySelect ? (
-                                          <MenuItem
-                                            classes={{
-                                              root: classes.selectMenuItem,
-                                              selected:
-                                                classes.selectMenuItemSelected,
-                                            }}
-                                            value={item.id}
-                                            selected={true}
-                                          >
-                                            {item.name}
-                                          </MenuItem>
-                                        ) : (
-                                          <MenuItem
-                                            classes={{
-                                              root: classes.selectMenuItem,
-                                              selected:
-                                                classes.selectMenuItemSelected,
-                                            }}
-                                            value={item.id}
-                                          >
-                                            {item.name}
-                                          </MenuItem>
-                                        )
-                                      )}
-                                    </Select>
-                                  </FormControl>
-                                  <CustomInput
-                                    labelText="Nhập tên danh mục con"
-                                    id="cat_name"
-                                    formControlProps={{
-                                      fullWidth: true,
-                                    }}
-                                    inputProps={{
-                                      type: 'text',
-                                      onChange: (e) =>
-                                        this.setState({
-                                          subName: e.target.value,
-                                        }),
-                                      value: this.state.sub.name,
-                                    }}
-                                  />
-                                  <CustomInput
-                                    labelText="Nhập tên tiếng anh"
-                                    id="cate_name"
-                                    formControlProps={{
-                                      fullWidth: true,
-                                    }}
-                                    inputProps={{
-                                      type: 'text',
-                                      onChange: (e) =>
-                                        this.setState({
-                                          subEng: e.target.value,
-                                        }),
-                                      value: this.state.sub.eng,
-                                    }}
-                                  />
-                                  <div className={classes.checkboxAndRadio}>
-                                    <FormControlLabel
-                                      control={
-                                        <Checkbox
-                                          tabIndex={-1}
-                                          onClick={() => this.handleToggleSub()}
-                                          checkedIcon={
-                                            <Check
-                                              className={classes.checkedIcon}
-                                            />
-                                          }
-                                          icon={
-                                            <Check
-                                              className={classes.uncheckedIcon}
-                                            />
-                                          }
+                                        <MenuItem
+                                          disabled
                                           classes={{
-                                            checked: classes.checked,
+                                            root: classes.selectMenuItem,
                                           }}
-                                        />
-                                      }
-                                      classes={{
-                                        label: classes.label,
+                                        >
+                                          Chọn danh mục
+                                        </MenuItem>
+
+                                        {this.state.listcategory.map((item) =>
+                                          +item.categoryid ===
+                                          this.state.categorySelect ? (
+                                            <MenuItem
+                                              classes={{
+                                                root: classes.selectMenuItem,
+                                                selected:
+                                                  classes.selectMenuItemSelected,
+                                              }}
+                                              value={+item.categoryid}
+                                              selected={true}
+                                            >
+                                              {item.name}
+                                            </MenuItem>
+                                          ) : (
+                                            <MenuItem
+                                              classes={{
+                                                root: classes.selectMenuItem,
+                                                selected:
+                                                  classes.selectMenuItemSelected,
+                                              }}
+                                              value={item.categoryid}
+                                            >
+                                              {item.name}
+                                            </MenuItem>
+                                          )
+                                        )}
+                                      </Select>
+                                    </FormControl>
+                                    <CustomInput
+                                      labelText="Nhập tên danh mục con"
+                                      id="cat_name"
+                                      formControlProps={{
+                                        fullWidth: true,
                                       }}
-                                      label="Đồng ý"
+                                      inputProps={{
+                                        type: 'text',
+                                        onChange: (e) =>
+                                          this.setState({
+                                            subName: e.target.value,
+                                          }),
+                                        defaultValue: this.state.sub.name,
+                                      }}
                                     />
-                                  </div>
-                                  <Button
-                                    id="sub-sumit"
-                                    onClick={() => this.subSubmit()}
-                                    color="rose"
-                                  >
-                                    Submit
-                                  </Button>
-                                </ItemGrid>
+                                    <CustomInput
+                                      labelText="Nhập tên tiếng anh"
+                                      id="cate_name"
+                                      formControlProps={{
+                                        fullWidth: true,
+                                      }}
+                                      inputProps={{
+                                        type: 'text',
+                                        onChange: (e) =>
+                                          this.setState({
+                                            subEng: e.target.value,
+                                          }),
+                                        defaultValue: this.state.sub.eng,
+                                      }}
+                                    />
+                                    <CustomInput
+                                      labelText="Nhập mã danh mục"
+                                      id="cate_code"
+                                      formControlProps={{
+                                        fullWidth: true,
+                                      }}
+                                      inputProps={{
+                                        type: 'text',
+                                        onChange: (e) =>
+                                          this.setState({
+                                            subCode: e.target.value,
+                                          }),
+                                        defaultValue: this.state.sub.code,
+                                      }}
+                                    />
+                                    <div className={classes.checkboxAndRadio}>
+                                      <FormControlLabel
+                                        control={
+                                          <Checkbox
+                                            tabIndex={-1}
+                                            onClick={() =>
+                                              this.handleToggleSub()
+                                            }
+                                            checkedIcon={
+                                              <Check
+                                                className={classes.checkedIcon}
+                                              />
+                                            }
+                                            icon={
+                                              <Check
+                                                className={
+                                                  classes.uncheckedIcon
+                                                }
+                                              />
+                                            }
+                                            classes={{
+                                              checked: classes.checked,
+                                            }}
+                                          />
+                                        }
+                                        classes={{
+                                          label: classes.label,
+                                        }}
+                                        label="Đồng ý"
+                                      />
+                                    </div>
+                                    <Button
+                                      id="sub-sumit"
+                                      onClick={() => this.subSubmit()}
+                                      color="rose"
+                                    >
+                                      Submit
+                                    </Button>
+                                  </ItemGrid>
+                                </div>
                               </form>
                             </span>
                           ),

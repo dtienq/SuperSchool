@@ -15,92 +15,112 @@ import IconCard from '@cmscomponents/Cards/IconCard.jsx';
 import IconButton from '@cmscomponents/CustomButtons/IconButton.jsx';
 import Button from '@cmscomponents/CustomButtons/Button.jsx';
 import { mainCategoryTable } from '@cmsvariables/general.jsx';
+import categoryApi from '@api/categoryApi';
 class MainCategoryTables extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: mainCategoryTable.dataRows.map((prop, key) => {
-        return {
-          r_id: key,
-          stt: prop[0],
-          id: prop[1],
-          name: prop[2],
-          eng: prop[3],
-          code: prop[4],
-          actions: (
-            // we've added some custom button actions
-            <div className="actions-right">
-              {/* use this button to add a like kind of action */}
-              <IconButton
-                onClick={() => {
-                  let obj = this.state.data.find((o) => o.r_id === key);
-                  console.log(this.props);
-                  this.props.history.push({
-                    pathname: '/manager/forms/category-form/',
-                    state: {
-                      main: {
-                        id: obj.id,
-                        name: obj.name,
-                        eng: obj.eng,
-                        code: obj.code,
-                      },
-                      sub: false,
-                    },
-                  });
-                }}
-                color="infoNoBackground"
-                customClass="like"
-              >
-                <EditIcon />
-              </IconButton>{' '}
-              {/* use this button to add a edit kind of action */}
-              <IconButton
-                onClick={() => {
-                  let obj = this.state.data.find((o) => o.r_id === key);
-                  this.props.history.push({
-                    pathname: '/manager/courses',
-                    state: {
-                      maincat: obj.id,
-                      subcat: '',
-                    },
-                  });
-                }}
-                color="warningNoBackground"
-                customClass="edit"
-              >
-                <Dvr />
-              </IconButton>{' '}
-              {/* use this button to remove the data row */}
-              <IconButton
-                onClick={() => {
-                  var data = this.state.data;
-                  data.find((o, i) => {
-                    if (o.r_id === key) {
-                      // here you should add some custom code so you can delete the data
-                      // from this component and from your server as well
-                      data.splice(i, 1);
-                      console.log(data);
-                      return true;
-                    }
-                    return false;
-                  });
-                  this.setState({ data: data });
-                }}
-                color="dangerNoBackground"
-                customClass="remove"
-              >
-                <Close />
-              </IconButton>{' '}
-            </div>
-          ),
-        };
-      }),
+      data: false,
+      table: [],
     };
+    this.createTable = this.createTable.bind(this);
+  }
+  createTable(table) {
+    return table.dataRows.map((prop, key) => {
+      return {
+        r_id: key,
+        id: prop[0],
+        name: prop[2],
+        eng: prop[3],
+        code: prop[1],
+        actions: (
+          // we've added some custom button actions
+          <div className="actions-right">
+            {/* use this button to add a like kind of action */}
+            <IconButton
+              onClick={() => {
+                let obj = this.state.table.find((o) => o.r_id === key);
+                console.log(this.props);
+                this.props.history.push({
+                  pathname: '/manager/category/category-form/',
+                  state: {
+                    main: {
+                      id: obj.id,
+                      name: obj.name,
+                      eng: obj.eng,
+                      code: obj.code,
+                    },
+                    sub: false,
+                  },
+                });
+              }}
+              color="infoNoBackground"
+              customClass="like"
+            >
+              <EditIcon />
+            </IconButton>{' '}
+            {/* use this button to add a edit kind of action */}
+            <IconButton
+              onClick={() => {
+                let obj = this.state.table.find((o) => o.r_id === key);
+                this.props.history.push({
+                  pathname: '/manager/courses',
+                  state: {
+                    maincat: obj.id,
+                    subcat: '',
+                  },
+                });
+              }}
+              color="warningNoBackground"
+              customClass="edit"
+            >
+              <Dvr />
+            </IconButton>{' '}
+            {/* use this button to remove the data row */}
+            <IconButton
+              onClick={() => {
+                var data = this.state.table;
+                data.find((o, i) => {
+                  if (o.r_id === key) {
+                    // here you should add some custom code so you can delete the data
+                    // from this component and from your server as well
+                    categoryApi
+                      .deleteCategory(o.id)
+                      .then((res) => {
+                        data.splice(i, 1);
+                        console.log(data);
+                        this.setState({ data: data });
+                        return true;
+                      })
+                      .catch((err) => {
+                        alert(err);
+                      });
+                  }
+                  return false;
+                });
+              }}
+              color="dangerNoBackground"
+              customClass="remove"
+            >
+              <Close />
+            </IconButton>{' '}
+          </div>
+        ),
+      };
+    });
+  }
+  componentDidMount() {
+    categoryApi
+      .mainCategoryTableFill()
+      .then((data) =>
+        this.setState({ data: data, table: this.createTable(data) })
+      );
   }
   render() {
     return (
       <GridContainer>
         <ItemGrid xs={12}>
+          {console.log(this.state.data)}
           <IconCard
             icon={Assignment}
             title="Bảng danh mục chính"
@@ -122,16 +142,16 @@ class MainCategoryTables extends React.Component {
                 <GridContainer>
                   <ItemGrid xs={12}>
                     <ReactTable
-                      data={this.state.data}
+                      data={this.state.table}
                       filterable
                       columns={[
                         {
-                          Header: 'STT',
-                          accessor: 'stt',
-                        },
-                        {
                           Header: 'ID',
                           accessor: `id`,
+                        },
+                        {
+                          Header: 'Mã danh mục',
+                          accessor: 'code',
                         },
                         {
                           Header: 'Tên danh mục',
@@ -141,10 +161,7 @@ class MainCategoryTables extends React.Component {
                           Header: 'Tên tiếng anh',
                           accessor: 'eng',
                         },
-                        {
-                          Header: 'Mã danh mục',
-                          accessor: 'code',
-                        },
+
                         {
                           Header: 'Hành động',
                           accessor: 'actions',

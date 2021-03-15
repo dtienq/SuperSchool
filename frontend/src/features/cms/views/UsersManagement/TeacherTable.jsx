@@ -1,47 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 // react component for creating dynamic tables
 import ReactTable from 'react-table';
 // material-ui-icons
 import AirplayIcon from 'material-ui-icons/Airplay';
 import Dvr from 'material-ui-icons/Dvr';
-import Close from 'material-ui-icons/Close';
 import EditIcon from 'material-ui-icons/Edit';
+
+import LockIcon from 'material-ui-icons/Lock';
+import LockOpenIcon from 'material-ui-icons/LockOpen';
 // core components
 import GridContainer from '@cmscomponents/Grid/GridContainer.jsx';
 import ItemGrid from '@cmscomponents/Grid/ItemGrid.jsx';
 import IconCard from '@cmscomponents/Cards/IconCard.jsx';
 import IconButton from '@cmscomponents/CustomButtons/IconButton.jsx';
-
-import { adminTable } from '@cmsvariables/general.jsx';
-
-export default function TeacherTable(props) {
-  const createTable = (adminTable) => {
-    return adminTable.dataRows.map((prop, key) => {
+import userApi from '@api/userApi.js';
+export default function TeacherTable() {
+  const [state, setState] = useState({
+    title: '',
+    data: [],
+    table: [],
+  });
+  let changeStatus = useRef(null);
+  changeStatus.current = async (id, status) => {
+    try {
+      await userApi.userToogleStatus(id, status);
+      let newdata = await userApi.userGroupTableFill(3);
+      setState({
+        ...state,
+        data: newdata,
+        table: createTable(newdata),
+      });
+      console.log(state);
+    } catch (err) {
+      alert('Không thể đổi trạng thái tài khoản');
+    }
+  };
+  const createTable = (table) => {
+    return table.dataRows.map((prop, key) => {
       return {
         r_id: key,
-        //stt: prop[0],
-        id: prop[1],
-        email: prop[2],
-        fullname: prop[3],
-        sdt: prop[4],
-        dob: prop[5],
-        reg: prop[6],
+        id: prop[0],
+        email: prop[1],
+        fullname: prop[2],
+        status: prop[3],
         actions: (
           // we've added some custom button actions
           <div className="actions-right">
             {/* use this button to add a like kind of action */}
             <IconButton
               onClick={() => {
-                let obj = state.data.find((o) => o.r_id === key);
-                alert(
-                  "You've clicked LIKE button on \n{ \nName: " +
-                    obj.id +
-                    ', \name: ' +
-                    obj.name +
-                    ', \ncode: ' +
-                    obj.reg +
-                    '\n}.'
-                );
+                //alert(prop[0]);
               }}
               color="infoNoBackground"
               customClass="like"
@@ -50,53 +58,66 @@ export default function TeacherTable(props) {
             </IconButton>{' '}
             {/* use this button to add a edit kind of action */}
             <IconButton
-              onClick={() => {
-                let obj = state.data.find((o) => o.r_id === key);
-                alert(
-                  "You've clicked EDIT button on \n{ \nName: " +
-                    obj.id +
-                    ', \nname: ' +
-                    obj.name +
-                    ', \ncode: ' +
-                    obj.reg +
-                    '\n}.'
-                );
-              }}
+              // onClick={() => {
+              //   let obj = state.data.find((o) => o.r_id === key);
+              //   alert(
+              //     "You've clicked EDIT button on \n{ \nName: " +
+              //       obj.id +
+              //       ', \nname: ' +
+              //       obj.name +
+              //       ', \ncode: ' +
+              //       obj.reg +
+              //       '\n}.'
+              //   );
+              // }}
               color="warningNoBackground"
               customClass="edit"
             >
               <Dvr />
             </IconButton>{' '}
             {/* use this button to remove the data row */}
-            <IconButton
-              onClick={() => {
-                var data = state.data;
-                data.find((o, i) => {
-                  if (o.r_id === key) {
-                    // here you should add some custom code so you can delete the data
-                    // from this component and from your server as well
-                    data.splice(i, 1);
-                    return true;
-                  }
-                  return false;
-                });
-                //check
-                setState({ data: state.data });
-              }}
-              color="dangerNoBackground"
-              customClass="remove"
-            >
-              <Close />
-            </IconButton>{' '}
+            {prop[3] === 'Đang hoạt động' && (
+              <IconButton
+                onClick={async () => {
+                  let id = prop[0];
+                  await changeStatus.current(id, false);
+                  //check
+                }}
+                color="dangerNoBackground"
+                customClass="remove"
+              >
+                <LockIcon />
+              </IconButton>
+            )}
+            {prop[3] === 'Đã khoá' && (
+              <IconButton
+                onClick={async () => {
+                  let id = prop[0];
+                  await changeStatus.current(id, true);
+                  //check
+                }}
+                color="dangerNoBackground"
+                customClass="remove"
+              >
+                <LockOpenIcon />
+              </IconButton>
+            )}{' '}
           </div>
         ),
       };
     });
   };
-  const [state, setState] = useState({
-    title: adminTable.title,
-    data: createTable(adminTable),
-  });
+
+  useEffect(function () {
+    setTimeout(async function () {
+      const resultTable = await userApi.userGroupTableFill(3);
+      setState({
+        title: resultTable.title,
+        data: resultTable,
+        table: createTable(resultTable),
+      });
+    }, 200);
+  }, []);
 
   return (
     <GridContainer>
@@ -110,13 +131,9 @@ export default function TeacherTable(props) {
               <GridContainer>
                 <ItemGrid xs={12}>
                   <ReactTable
-                    data={state.data}
+                    data={state.table}
                     filterable
                     columns={[
-                      // {
-                      //   Header: 'STT',
-                      //   accessor: 'stt',
-                      // },
                       {
                         Header: 'ID',
                         accessor: 'id',
@@ -130,16 +147,8 @@ export default function TeacherTable(props) {
                         accessor: 'fullname',
                       },
                       {
-                        Header: 'Số điện thoại',
-                        accessor: 'sdt',
-                      },
-                      // {
-                      //   Header: 'Ngày sinh',
-                      //   accessor: 'dob',
-                      // },
-                      {
-                        Header: 'Ngày đăng ký',
-                        accessor: 'reg',
+                        Header: 'Trạng thái',
+                        accessor: 'status',
                       },
                       {
                         Header: 'Hành động',
@@ -149,8 +158,8 @@ export default function TeacherTable(props) {
                       },
                     ]}
                     defaultPageSize={10}
-                    showPaginationTop
-                    showPaginationBottom={false}
+                    showPaginationTop={false}
+                    showPaginationBottom={true}
                     className="-striped -highlight"
                   />
                 </ItemGrid>
