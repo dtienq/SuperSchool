@@ -12,6 +12,8 @@ const CoursesPage = React.lazy(() => import('@features/courses/index'));
 const LoginPage = React.lazy(() => import('@features/auth/login'));
 const RegisterPage = React.lazy(() => import('@features/auth/register'));
 const ContactPage = React.lazy(() => import('@features/home/ContactPage'));
+const SearchPage = React.lazy(() => import('@features/search/SearchPage'));
+
 function App() {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -40,6 +42,7 @@ function App() {
             <Route path="/login" exact component={LoginPage} />
             <Route path="/register" exact component={RegisterPage} />
             <Route path="/contact" exact component={ContactPage} />
+            <Route path="/search" component={SearchPage} />
             <Route component={NotFoundPage} />
           </Switch>
         </BrowserRouter>

@@ -1,13 +1,16 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Input } from 'antd';
 
 const { Search } = Input;
 
 function NavOne() {
   const [sticky, setSticky] = useState(false);
-  const onSearch = (value) => console.log(value);
+  const history = useHistory();
+  const onSearch = (keyword) => {
+    history.push(`/search/keyword=${keyword}`);
+  };
 
   const mobileMenu = () => {
     let mainNavToggler = document.querySelector('.menu-toggler');

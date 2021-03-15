@@ -53,13 +53,7 @@ function Topbar() {
   return (
     <div className="topbar-one">
       <div className="container">
-        <div
-          className="topbar-one__left d-flex align-items-center font-weight-bold"
-          style={{ color: '#fff' }}
-        >
-          <div className="d-none d-lg-block mr-3">phanthanhvi97@gmail.com</div>
-          <div className="d-none d-lg-block">0983345305</div>
-        </div>
+        <div />
         <div className="topbar-one__right d-flex align-items-center">
           {isLogin ? (
             <Dropdown overlay={menu}>
