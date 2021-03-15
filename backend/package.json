@@ -32,5 +32,8 @@
     "randomstring": "^1.1.5",
     "swagger-autogen": "^2.3.4",
     "swagger-ui-express": "^4.1.4"
+  },
+  "devDependencies": {
+    "prettier": "^2.2.1"
   }
 }

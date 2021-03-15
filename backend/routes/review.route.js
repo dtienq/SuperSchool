@@ -9,6 +9,7 @@ const courseModel = require('../models/course.model');
 const constant = require('../utils/constant');
 const db = require('../utils/db');
 const reviewModel = require('../models/review.model');
+const commonUtils = require('../utils/common');
 
 router.get('/findByCourseId', (req, res, next) => {
     let courseId = req.body.courseId;
@@ -16,6 +17,25 @@ router.get('/findByCourseId', (req, res, next) => {
     reviewModel.findByCourseId(courseId).then(reviews => {
         res.json({
             data: reviews
+        })
+    }).catch(next);
+});
+
+router.post('/', (req, res, next) => {
+    const {courseId, comment, rating} = req.body;
+    const {userId} = commonUtils.currentUser;
+    const review = {
+        courseId,
+        comment,
+        rating,
+        userId,
+        createdDate: new Date(),
+        updatedDate: new Date()
+    };
+
+    reviewModel.create(review).then(result => {
+        res.json({
+            data: result[0]
         })
     }).catch(next);
 });

@@ -22,7 +22,10 @@ app.use('/api/auth', require('./routes/auth.route'));
 app.use('/api/users', loginValidation(), require('./routes/user.route'));
 app.use('/api/category', require('./routes/category.route'));
 app.use('/api/course', require('./routes/course.route'));
+app.use('/api/course/review', loginValidation(), require('./routes/review.route'));
 app.use('/api/course/video', loginValidation(), require('./routes/coursevideo.route'));
+app.use('/api/course/favorite', loginValidation(), require('./routes/favorite-course.route'));
+app.use('/api/register-course', loginValidation(), require('./routes/course-student.route'));
 
 
 app.post('/uploadFile', (req, res) => {
