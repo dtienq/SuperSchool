@@ -1,7 +1,7 @@
 module.exports = {
-    currentUser: {},
-    parse2Plain: (object) => {
-        if(!object) return null;
+  currentUser: {},
+  parse2Plain: (object) => {
+    if (!object) return null;
 
         return JSON.parse(JSON.stringify(object));
     },
@@ -34,5 +34,10 @@ module.exports = {
         prevSunday.setHours(23, 59, 59, 999);
 
         return prevSunday;
-    }
+    },
+  padLeadingZero: (num, size) => {
+    let s = num + "";
+    while (s.length < size) s = "0" + s;
+    return s;
+  }
 }

@@ -12,6 +12,7 @@ module.exports = override(
     ['@components']: path.resolve(__dirname, 'src/components'),
     ['@constants']: path.resolve(__dirname, 'src/constants'),
     ['@custom-fields']: path.resolve(__dirname, 'src/custom-fields'),
+    ['@app']: path.resolve(__dirname, 'src/app'),
 
     //CMS
     ['@cmsassets']: path.resolve(__dirname, 'src/features/cms/assets'),

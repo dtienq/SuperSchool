@@ -2,8 +2,7 @@
     "required": [
         "username",
         "password",
-        "usergroupid",
-        "fullname"
+        "email"
     ],
     "additionalProperties": false,
     "properties": {
@@ -14,15 +13,6 @@
         "password": {
             "type": "string",
             "minLength": 1
-        },
-        "usergroupid": {
-            "type": "number"
-        },
-        "fullname": {
-            "type": "string"
-        },
-        "phonenumber": {
-            "type": "string"
         },
         "email": {
             "type": "string"

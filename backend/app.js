@@ -6,14 +6,17 @@ const app = express();
 const loginValidation = require('./middlewares/validation.login');
 const fs = require('fs');
 const CONSTANT = require('./utils/constant');
+// var bodyParser = require('body-parser');
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 var bodyParser = require('body-parser');
 const bearerToken = require('express-bearer-token');
 
 app.use(cors());
 app.use(bearerToken());
 
-app.use('/public', express.static('public')); 
-app.use(bodyParser({limit: '1tb'}));
+// app.use('/public', express.static(__dirname + '/fileUpload'));
+app.use('/public', express.static('public'));
+// app.use(bodyParser({limit: '1tb'}));
 
 app.use(morgan('dev'));
 app.use(express.json());
@@ -30,8 +33,8 @@ app.use('/api/register-course', loginValidation(), require('./routes/course-stud
 
 app.post('/uploadFile', (req, res) => {
   let publicPath = path.dirname(require.main.filename) + '/public/';
-  
-  fs.writeFile(publicPath + req.body.fileName,  req.body.data, "binary", function (err) {
+
+  fs.writeFile(publicPath + req.body.fileName, req.body.data, "binary", function (err) {
     if (err) {
       res.status(500).json({
         message: CONSTANT.ERRORS.SYSTEM_ERROR

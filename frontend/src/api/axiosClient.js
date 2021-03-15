@@ -1,6 +1,9 @@
 import axios from 'axios';
 import queryString from 'query-string';
+import store from '../app/store';
+import { logout } from '@app/userSlice';
 
+const { dispatch } = store;
 const axiosClient = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   timeout: 10000,
@@ -9,11 +12,21 @@ const axiosClient = axios.create({
   },
   paramsSerializer: (params) => queryString.stringify(params),
 });
+
+let isRefreshing = false;
+let subscribers = [];
+function subscribeTokenRefresh(cb) {
+  subscribers.push(cb);
+}
+function onRefreshed(token) {
+  subscribers.map((cb) => cb(token));
+}
+
 axiosClient.interceptors.request.use(
   (config) => {
     const token = getLocalToken();
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = token;
     }
     return config;
   },
@@ -27,24 +40,38 @@ axiosClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response.status === 401) {
-      return refreshToken().then((result) => {
-        const token = result?.accessToken;
-        if (result.status !== 400) {
-          const config = error.config;
-          localStorage.setItem('token', token);
-          config.headers.Authorization = `Bearer ${token}`;
-          return axiosClient(config);
-        } else {
-          //dispatch action logout
-        }
+    const { config: originalRequest, response } = error;
+    const status = response?.status;
+    if (status === 401 && !originalRequest._retry) {
+      if (!isRefreshing) {
+        isRefreshing = true;
+        originalRequest._retry = true;
+        return refreshToken()
+          .then((result) => {
+            isRefreshing = false;
+            const token = result?.data?.access_token;
+            localStorage.setItem('token', token);
+            originalRequest.headers.Authorization = token;
+            axiosClient(originalRequest);
+            onRefreshed(token);
+            subscribers = [];
+          })
+          .catch((err) => {
+            dispatch(logout());
+            console.log(err);
+          });
+      }
+      return new Promise((resolve) => {
+        subscribeTokenRefresh((token) => {
+          originalRequest.headers.Authorization = token;
+          resolve(axiosClient(originalRequest));
+        });
       });
     }
-    return Promise.reject(error);
   }
 );
 function getLocalRefreshToken() {
-  const token = localStorage.getItem('refreshToken');
+  const token = localStorage.getItem('refresh_token');
   return token;
 }
 function getLocalToken() {
@@ -52,9 +79,10 @@ function getLocalToken() {
   return token;
 }
 function refreshToken() {
-  return axiosClient.post('/api/auth/refresh', {
-    refreshToken: getLocalRefreshToken(),
-    token: getLocalToken(),
+  return axios.post(`${process.env.REACT_APP_API_URL}/auth/refresh-token`, {
+    refresh_token: getLocalRefreshToken(),
+    access_token: getLocalToken(),
   });
 }
+
 export default axiosClient;
