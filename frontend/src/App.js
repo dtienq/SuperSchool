@@ -8,10 +8,10 @@ import { useDispatch } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Spin } from 'antd';
 const NotFoundPage = React.lazy(() => import('@components/NotFound'));
-const CoursesPage = React.lazy(() => import('@features/courses'));
+const CoursesPage = React.lazy(() => import('@features/courses/index'));
 const LoginPage = React.lazy(() => import('@features/auth/login'));
 const RegisterPage = React.lazy(() => import('@features/auth/register'));
-
+const ContactPage = React.lazy(() => import('@features/home/ContactPage'));
 function App() {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -33,12 +33,13 @@ function App() {
         <BrowserRouter>
           <Switch>
             <Route path="/" exact component={HomePage} />
-            <Route path="/courses" exact component={CoursesPage} />
+            <Route path="/courses" component={CoursesPage} />
             <Route path="/manager">
               <CMS />
             </Route>
             <Route path="/login" exact component={LoginPage} />
             <Route path="/register" exact component={RegisterPage} />
+            <Route path="/contact" exact component={ContactPage} />
             <Route component={NotFoundPage} />
           </Switch>
         </BrowserRouter>

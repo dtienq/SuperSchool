@@ -1,9 +1,13 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Input } from 'antd';
+
+const { Search } = Input;
 
 function NavOne() {
   const [sticky, setSticky] = useState(false);
+  const onSearch = (value) => console.log(value);
 
   const mobileMenu = () => {
     let mainNavToggler = document.querySelector('.menu-toggler');
@@ -16,7 +20,6 @@ function NavOne() {
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     mobileMenu();
-    searchButton();
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -28,28 +31,6 @@ function NavOne() {
       setSticky(false);
     }
   };
-
-  const searchButton = () => {
-    let searchToggle = document.querySelector('.search-toggle');
-    let searchPopup = document.querySelector('.search-popup');
-    let searchClose = document.querySelector('.cancel');
-    let searchOverlay = document.querySelector('.search-overlay');
-
-    if (searchToggle)
-      searchToggle.addEventListener('click', function () {
-        if (searchPopup) searchPopup.classList.add('active');
-      });
-
-    if (searchClose)
-      searchClose.addEventListener('click', function () {
-        searchPopup.classList.remove('active');
-      });
-
-    if (searchOverlay)
-      searchOverlay.addEventListener('click', function () {
-        searchPopup.classList.remove('active');
-      });
-  };
   return (
     <header className="site-header site-header__header-one ">
       <nav
@@ -57,8 +38,8 @@ function NavOne() {
           sticky ? 'stricked-menu stricky-fixed' : ''
         }`}
       >
-        <div className="container clearfix">
-          <div className="logo-box clearfix">
+        <div className="container d-flex justify-content-between">
+          <div className="">
             <Link to="/">
               <Link to="/" className="navbar-brand">
                 <div
@@ -76,44 +57,88 @@ function NavOne() {
               <span className="kipso-icon-menu"></span>
             </button>
           </div>
-          <div className="main-navigation">
+          <div>
+            <Search
+              placeholder="Nhập từ khoá cần tìm"
+              allowClear
+              enterButton
+              onSearch={onSearch}
+              style={{ width: 350 }}
+            />
+          </div>
+          <div>
             <ul className=" navigation-box">
               <li>
-                <Link to="/">
-                  <a>Lập trình</a>
+                <Link to="/courses">
+                  <a>Các lĩnh vực</a>
                 </Link>
                 <ul className="sub-menu">
                   <li>
-                    <Link to="/">
-                      <a>Home 01</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/">
-                      <a>Home 02</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/">
-                      <a>Home 03</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/">Header Versions</Link>
+                    <Link to="/">Lập trình</Link>
                     <ul className="sub-menu">
                       <li>
                         <Link to="/">
-                          <a>Header 01</a>
+                          <a>Lập trình C++</a>
                         </Link>
                       </li>
                       <li>
                         <Link to="/">
-                          <a>Header 02</a>
+                          <a>Lập trình Android</a>
                         </Link>
                       </li>
                       <li>
                         <Link to="/">
-                          <a>Header 03</a>
+                          <a>Lập trình JAVA</a>
+                        </Link>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <Link to="/">IT và phần mềm</Link>
+                    <ul className="sub-menu">
+                      <li>
+                        <Link to="/">
+                          <a>Thủ thuật máy tính</a>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/">
+                          <a>Hướng dẫn cài đặt</a>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/">
+                          <a>Bảo mật</a>
+                        </Link>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <Link to="/">Đồ hoạ</Link>
+                    <ul className="sub-menu">
+                      <li>
+                        <Link to="/">
+                          <a>Thủ thuật Photoshop</a>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/">
+                          <a>Thiết kế web</a>
+                        </Link>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <Link to="/">Ngoại ngữ</Link>
+                    <ul className="sub-menu">
+                      <li>
+                        <Link to="/">
+                          <a>Tiếng Anh</a>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/">
+                          <a>Tiếng Nhật</a>
                         </Link>
                       </li>
                     </ul>
@@ -121,109 +146,14 @@ function NavOne() {
                 </ul>
               </li>
               <li>
-                <Link to="/">IT và phần mềm</Link>
-                <ul className="sub-menu">
-                  <li>
-                    <Link to="/">
-                      <a>About Page</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/">
-                      <a>Gallery</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/">
-                      <a>Pricing Plans</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/">
-                      <a>FAQ'S</a>
-                    </Link>
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <a>Văn phòng</a>
-                <ul className="sub-menu">
-                  <li>
-                    <Link to="/">
-                      <a>Courses</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/">
-                      <a>Courses Details</a>
-                    </Link>
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <Link to="/teachers">
-                  <a>Đồ hoạ</a>
+                <Link to="/contact">
+                  <a>Liên hệ</a>
                 </Link>
-                <ul className="sub-menu">
-                  <li>
-                    <Link to="/">
-                      <a>Teachers</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/">
-                      <a>Teachers Details</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/">
-                      <a>Become Teacher</a>
-                    </Link>
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <Link to="/news">
-                  <a>Tiếng anh</a>
-                </Link>
-                <ul className="sub-menu">
-                  <li>
-                    <Link to="/">
-                      <a>News Page</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/">
-                      <a>News Details</a>
-                    </Link>
-                  </li>
-                </ul>
               </li>
             </ul>
           </div>
-          <div className="right-side-box">
-            <a
-              className="header__search-btn search-popup__toggler search-toggle"
-              to="#"
-            >
-              <i className="kipso-icon-magnifying-glass"></i>
-            </a>
-          </div>
         </div>
       </nav>
-      <div className="site-header__decor">
-        <div className="site-header__decor-row">
-          <div className="site-header__decor-single">
-            <div className="site-header__decor-inner-1"></div>
-          </div>
-          <div className="site-header__decor-single">
-            <div className="site-header__decor-inner-2"></div>
-          </div>
-          <div className="site-header__decor-single">
-            <div className="site-header__decor-inner-3"></div>
-          </div>
-        </div>
-      </div>
     </header>
   );
 }

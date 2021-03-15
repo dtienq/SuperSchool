@@ -3,7 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { logout } from '@app/userSlice';
 import { Menu, Dropdown } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import {
+  DownOutlined,
+  UserOutlined,
+  LikeOutlined,
+  BookOutlined,
+  LogoutOutlined,
+} from '@ant-design/icons';
 
 function Topbar() {
   const dispatch = useDispatch();
@@ -12,17 +18,34 @@ function Topbar() {
     ({ userReducer }) => userReducer?.user?.fullname
   );
   const menu = (
-    <Menu>
-      <Menu.Item>
+    <Menu size="large">
+      <Menu.Item
+        style={{ height: 50, width: 250 }}
+        className="d-flex align-items-center"
+      >
+        <UserOutlined />
         <Link to="/profile">Trang cá nhân</Link>
       </Menu.Item>
-      <Menu.Item>
+      <Menu.Item
+        style={{ height: 50, width: 250 }}
+        className="d-flex align-items-center"
+      >
+        <LikeOutlined />
         <Link to="love-courses">Khoá học yêu thích</Link>
       </Menu.Item>
-      <Menu.Item>
+      <Menu.Item
+        style={{ height: 50, width: 250 }}
+        className="d-flex align-items-center"
+      >
+        <BookOutlined />
         <Link to="studying-courses">Khoá học đang theo học</Link>
       </Menu.Item>
-      <Menu.Item onClick={() => dispatch(logout())}>
+      <Menu.Item
+        onClick={() => dispatch(logout())}
+        style={{ height: 50, width: 250 }}
+        className="d-flex align-items-center"
+      >
+        <LogoutOutlined />
         <div>Đăng xuất</div>
       </Menu.Item>
     </Menu>
@@ -30,21 +53,20 @@ function Topbar() {
   return (
     <div className="topbar-one">
       <div className="container">
-        <div className="topbar-one__left">
-          <Link to="/" className="d-none d-lg-block">
-            phanthanhvi97@gmail.com
-          </Link>
-          <Link to="/" className="d-none d-lg-block">
-            0983345305
-          </Link>
+        <div
+          className="topbar-one__left d-flex align-items-center font-weight-bold"
+          style={{ color: '#fff' }}
+        >
+          <div className="d-none d-lg-block mr-3">phanthanhvi97@gmail.com</div>
+          <div className="d-none d-lg-block">0983345305</div>
         </div>
-        <div className="topbar-one__right">
+        <div className="topbar-one__right d-flex align-items-center">
           {isLogin ? (
             <Dropdown overlay={menu}>
               <div
                 className="ant-dropdown-link"
                 onClick={(e) => e.preventDefault()}
-                style={{ color: '#fff', cursor: 'pointer' }}
+                style={{ color: '#fff', cursor: 'pointer', fontWeight: 'bold' }}
               >
                 Xin chào {currentUser}
                 <DownOutlined />

@@ -32,7 +32,7 @@ function BestViewCategory() {
     <section className="course-category-one container">
       <div className="container-fluid text-center">
         <div className="block-title text-center">
-          <h2 className="block-title__title">Các lĩnh vực được yêu thích</h2>
+          <h2 className="block-title__title">Các lĩnh vực phổ biến</h2>
         </div>
         <div className="course-category-one__carousel">
           <Swiper {...params}>
