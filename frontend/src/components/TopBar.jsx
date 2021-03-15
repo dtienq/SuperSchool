@@ -53,7 +53,9 @@ function Topbar() {
   return (
     <div className="topbar-one">
       <div className="container">
-        <div />
+        <Link to="/" style={{ color: '#fff', fontWeight: 'bold' }}>
+          Trang chủ
+        </Link>
         <div className="topbar-one__right d-flex align-items-center">
           {isLogin ? (
             <Dropdown overlay={menu}>

@@ -7,12 +7,16 @@ import React, { Suspense, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Spin } from 'antd';
+
 const NotFoundPage = React.lazy(() => import('@components/NotFound'));
 const CoursesPage = React.lazy(() => import('@features/courses/index'));
 const LoginPage = React.lazy(() => import('@features/auth/login'));
 const RegisterPage = React.lazy(() => import('@features/auth/register'));
 const ContactPage = React.lazy(() => import('@features/home/ContactPage'));
 const SearchPage = React.lazy(() => import('@features/search/SearchPage'));
+const ProfilePage = React.lazy(() =>
+  import('@features/profile/ProfilePage.jsx')
+);
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -43,6 +47,7 @@ function App() {
             <Route path="/register" exact component={RegisterPage} />
             <Route path="/contact" exact component={ContactPage} />
             <Route path="/search" component={SearchPage} />
+            <Route path="/profile" component={ProfilePage} />
             <Route component={NotFoundPage} />
           </Switch>
         </BrowserRouter>
