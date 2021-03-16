@@ -14,7 +14,6 @@ import ItemGrid from '@cmscomponents/Grid/ItemGrid.jsx';
 import IconCard from '@cmscomponents/Cards/IconCard.jsx';
 import IconButton from '@cmscomponents/CustomButtons/IconButton.jsx';
 import Button from '@cmscomponents/CustomButtons/Button.jsx';
-import { mainCategoryTable } from '@cmsvariables/general.jsx';
 import categoryApi from '@api/categoryApi';
 class MainCategoryTables extends React.Component {
   constructor(props) {

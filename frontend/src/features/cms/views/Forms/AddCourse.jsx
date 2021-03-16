@@ -5,13 +5,7 @@ import withStyles from 'material-ui/styles/withStyles';
 import FormLabel from 'material-ui/Form/FormLabel';
 import FormControlLabel from 'material-ui/Form/FormControlLabel';
 import Radio from 'material-ui/Radio';
-import Checkbox from 'material-ui/Checkbox';
-import Dashboard from 'material-ui-icons/Dashboard';
-import Schedule from 'material-ui-icons/Schedule';
 // material-ui-icons
-import MailOutline from 'material-ui-icons/MailOutline';
-import Check from 'material-ui-icons/Check';
-import Contacts from 'material-ui-icons/Contacts';
 import FiberManualRecord from 'material-ui-icons/FiberManualRecord';
 //React quill
 import Editor from '@cmscomponents/Editor/Editor.jsx'; // ES6
@@ -24,11 +18,8 @@ import FileUpload from '@cmscomponents/CustomUpload/FileUpload';
 import NavPills from '@cmscomponents/NavPills/NavPills.jsx';
 import GridContainer from '@cmscomponents/Grid/GridContainer.jsx';
 import ItemGrid from '@cmscomponents/Grid/ItemGrid.jsx';
-import IconCard from '@cmscomponents/Cards/IconCard.jsx';
 import HeaderCard from '@cmscomponents/Cards/HeaderCard.jsx';
 import CustomInput from '@cmscomponents/CustomInput/CustomInput.jsx';
-import Button from '@cmscomponents/CustomButtons/Button.jsx';
-import Switch from 'material-ui/Switch';
 import Accordion from '@cmscomponents/Accordion/Accordion.jsx';
 import Select from 'material-ui/Select';
 import MenuItem from 'material-ui/Menu/MenuItem';

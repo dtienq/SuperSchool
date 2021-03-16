@@ -10,8 +10,6 @@ import MenuItem from 'material-ui/Menu/MenuItem';
 import InputLabel from 'material-ui/Input/InputLabel';
 import FormControl from 'material-ui/Form/FormControl';
 // material-ui-icons
-import Refresh from 'material-ui-icons/Refresh';
-import Edit from 'material-ui-icons/Edit';
 import ArtTrack from 'material-ui-icons/ArtTrack';
 import UpdateIcon from 'material-ui-icons/Update';
 // core components
@@ -71,7 +69,7 @@ function CoursesList(props) {
       try {
         const fetch_maincat = await categoryApi.getMain();
         let fetch_subcat = [];
-        if (state.category != '' && state.subcategory != '') {
+        if (state.category !== '' && state.subcategory !== '') {
           fetch_subcat = await categoryApi.getSubCategoryByParentId(
             state.category
           );
@@ -81,7 +79,7 @@ function CoursesList(props) {
           category: state.category,
           subcategory: state.subcategory,
           listcategory: fetch_maincat.data,
-          listsubcategory: state.subcategory != '' ? fetch_subcat.data : [],
+          listsubcategory: state.subcategory !== '' ? fetch_subcat.data : [],
           search: '',
           data: fetch_data.data,
         };

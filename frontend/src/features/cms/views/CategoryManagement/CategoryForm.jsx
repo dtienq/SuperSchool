@@ -139,6 +139,8 @@ class CategoryForm extends React.Component {
             code: this.state.mainCode,
             english: this.state.mainEng,
           });
+          if (data) {
+          }
           this.props.history.push({
             pathname: '/manager/category/main-category',
           });

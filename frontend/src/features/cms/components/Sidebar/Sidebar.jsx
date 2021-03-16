@@ -181,7 +181,7 @@ class Sidebar extends React.Component {
                 </ListItem>
                 <ListItem className={classes.collapseItem}>
                   <NavLink
-                    to="#"
+                    to="/manager/editprofile"
                     className={
                       classes.itemLink + ' ' + classes.userCollapseLinks
                     }
@@ -193,23 +193,6 @@ class Sidebar extends React.Component {
                       primary={
                         rtlActive ? 'تعديل الملف الشخصي' : 'Edit Profile'
                       }
-                      disableTypography={true}
-                      className={collapseItemText}
-                    />
-                  </NavLink>
-                </ListItem>
-                <ListItem className={classes.collapseItem}>
-                  <NavLink
-                    to="#"
-                    className={
-                      classes.itemLink + ' ' + classes.userCollapseLinks
-                    }
-                  >
-                    <span className={collapseItemMini}>
-                      {rtlActive ? 'و' : 'S'}
-                    </span>
-                    <ListItemText
-                      primary={rtlActive ? 'إعدادات' : 'Settings'}
                       disableTypography={true}
                       className={collapseItemText}
                     />

@@ -2,10 +2,9 @@ import React from 'react';
 
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
-import Select from 'material-ui/Select';
 import InputAdornment from 'material-ui/Input/InputAdornment';
-import VpnKeyIcon from 'material-ui-icons/VpnKey';
 
+import SweetAlert from 'react-bootstrap-sweetalert';
 //material Icon
 import HomeIcon from 'material-ui-icons/Home';
 import PhoneIcon from 'material-ui-icons/Phone';
@@ -14,8 +13,10 @@ import FingerprintIcon from 'material-ui-icons/Fingerprint';
 import CustomInput from '@cmscomponents/CustomInput/CustomInput.jsx';
 import GridContainer from '@cmscomponents/Grid/GridContainer.jsx';
 import ItemGrid from '@cmscomponents/Grid/ItemGrid.jsx';
-
+import userApi from '@api/userApi';
 import customSelectStyle from '@cmsassets/jss/material-dashboard-pro-react/customSelectStyle.jsx';
+import { InputLabel } from 'material-ui';
+import UserContext from '../UserContext';
 
 const style = {
   infoText: {
@@ -30,18 +31,39 @@ class Step3 extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      alert: null,
+      show: false,
       address: '',
       phonenumber: '',
       phonenumberState: '',
       identity: '',
       identityState: '',
-      password: '',
-      passwordState: '',
-      confirm: '',
-      comfirmState: '',
       url: 'www.superschool.com',
       urlState: 'success',
     };
+  }
+  hideAlert() {
+    this.setState({
+      alert: null,
+    });
+  }
+  successAlert() {
+    this.setState({
+      alert: (
+        <SweetAlert
+          success
+          style={{ display: 'block', marginTop: '-100px' }}
+          title="Đăng ký hoàn tất!"
+          onConfirm={() => this.hideAlert()}
+          onCancel={() => this.hideAlert()}
+          confirmBtnCssClass={
+            this.props.classes.button + ' ' + this.props.classes.success
+          }
+        >
+          Mật khẩu sẽ được gửi qua Email trong vài giây!
+        </SweetAlert>
+      ),
+    });
   }
   handleSimple = (event) => {
     this.setState({ [event.target.name]: event.target.value });
@@ -50,10 +72,14 @@ class Step3 extends React.Component {
     if (
       this.state.phonenumberState === 'success' &&
       this.state.identityState === 'success' &&
-      this.state.passwordState === 'success' &&
-      this.state.comfirmState === 'success' &&
       this.state.urlState === 'success'
     ) {
+      let { user } = this.context;
+      console.log(user);
+      userApi
+        .adminCreateAccount(user)
+        .then((data) => this.successAlert())
+        .catch((err) => alert('Không thể đăng ký tài khoản'));
       return true;
     } else {
       if (this.state.phonenumberState !== 'success') {
@@ -62,12 +88,7 @@ class Step3 extends React.Component {
       if (this.state.identityState !== 'success') {
         this.setState({ fullnameState: 'error' });
       }
-      if (this.state.passwordState !== 'success') {
-        this.setState({ passwordState: 'error' });
-      }
-      if (this.state.confirmState !== 'success') {
-        this.setState({ confirmState: 'error' });
-      }
+
       if (this.state.urlState !== 'success') {
         this.setState({ urlState: 'error' });
       }
@@ -79,12 +100,6 @@ class Step3 extends React.Component {
   }
   verifyLength(value, length) {
     if (value.length >= length) {
-      return true;
-    }
-    return false;
-  }
-  compare(string1, string2) {
-    if (string1 === string2) {
       return true;
     }
     return false;
@@ -106,20 +121,6 @@ class Step3 extends React.Component {
   }
   change(event, stateName, type, stateNameEqualTo, maxValue) {
     switch (type) {
-      case 'password':
-        if (this.verifyLength(event.target.value, 1)) {
-          this.setState({ [stateName + 'State']: 'success' });
-        } else {
-          this.setState({ [stateName + 'State']: 'error' });
-        }
-        break;
-      case 'equalTo':
-        if (this.compare(event.target.value, this.state[stateNameEqualTo])) {
-          this.setState({ [stateName + 'State']: 'success' });
-        } else {
-          this.setState({ [stateName + 'State']: 'error' });
-        }
-        break;
       case 'checkbox':
         if (event.target.checked) {
           this.setState({ [stateName + 'State']: '' });
@@ -175,6 +176,7 @@ class Step3 extends React.Component {
     const { classes } = this.props;
     return (
       <GridContainer justify="center">
+        {this.state.alert}
         <ItemGrid xs={12} sm={12}>
           <h4 className={classes.infoText}>
             Nhập các thông tin cá nhân để hoàn tất
@@ -270,61 +272,13 @@ class Step3 extends React.Component {
           />
         </ItemGrid>
         <ItemGrid xs={12} sm={12} md={12} lg={10}>
-          <CustomInput
-            success={this.state.passwordState === 'success'}
-            error={this.state.passwordState === 'error'}
-            labelText={
-              <span>
-                Mật khẩu <small>(bắt buộc)</small>
-              </span>
-            }
-            id="password"
-            formControlProps={{
-              fullWidth: true,
-            }}
-            inputProps={{
-              onChange: (event) => this.change(event, 'password', 'password'),
-              endAdornment: (
-                <InputAdornment
-                  position="end"
-                  className={classes.inputAdornment}
-                >
-                  <VpnKeyIcon className={classes.inputAdornmentIcon} />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </ItemGrid>
-        <ItemGrid xs={12} sm={12} md={12} lg={10}>
-          <CustomInput
-            success={this.state.confirmState === 'success'}
-            error={this.state.confirmState === 'error'}
-            labelText={
-              <span>
-                Nhập lại mật khẩu <small>(bắt buộc)</small>
-              </span>
-            }
-            id="confirm"
-            formControlProps={{
-              fullWidth: true,
-            }}
-            inputProps={{
-              onChange: (event) =>
-                this.change(event, 'confirm', 'equalTo', 'password'),
-              endAdornment: (
-                <InputAdornment
-                  position="end"
-                  className={classes.inputAdornment}
-                >
-                  <VpnKeyIcon className={classes.inputAdornmentIcon} />
-                </InputAdornment>
-              ),
-            }}
-          />
+          <InputLabel>
+            Mật khẩu sẽ tự động tạo sau khi đăng ký hoàn tất
+          </InputLabel>
         </ItemGrid>
       </GridContainer>
     );
   }
 }
-
+Step3.contextType = UserContext;
 export default withStyles(style)(Step3);

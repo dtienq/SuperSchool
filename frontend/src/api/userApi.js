@@ -13,7 +13,7 @@ const userApi = {
     const data = await userApi.getUsersbyGroupId(id);
 
     return {
-      title: id == 1 ? 'Quản trị viên' : id === 2 ? 'Học viên' : 'Giảng viên',
+      title: id === 1 ? 'Quản trị viên' : id === 2 ? 'Học viên' : 'Giảng viên',
       headerRow: ['ID', 'Email', 'Họ tên', 'Trạng thái', 'Thao tác'],
       footerRow: ['ID', 'Email', 'Họ tên', 'Trạng thái', 'Thao tác'],
       dataRows: data.data.map((prop) => [
@@ -46,6 +46,10 @@ const userApi = {
         .join('')
     );
     return JSON.parse(jsonPayload);
+  },
+  adminCreateAccount: async (obj) => {
+    const url = 'admin/createteacher';
+    return await axiosClient.post(url, obj);
   },
   //using
   login: (data) => {

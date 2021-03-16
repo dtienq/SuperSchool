@@ -26,26 +26,8 @@ class HeaderLinks extends React.Component {
   };
   render() {
     const { classes, rtlActive } = this.props;
-    const { open } = this.state;
-    const searchButton =
-      classes.top +
-      ' ' +
-      classes.searchButton +
-      ' ' +
-      classNames({
-        [classes.searchRTL]: rtlActive,
-      });
-    const dropdownItem =
-      classes.dropdownItem +
-      ' ' +
-      classNames({
-        [classes.dropdownItemRTL]: rtlActive,
-      });
     const wrapper = classNames({
       [classes.wrapperRTL]: rtlActive,
-    });
-    const managerClasses = classNames({
-      [classes.managerClasses]: true,
     });
     return (
       <div className={wrapper}>
