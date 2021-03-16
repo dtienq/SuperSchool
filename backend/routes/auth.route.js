@@ -287,7 +287,7 @@ router.post("/check-email", async (req, res) => {
       });
     }
     const otp = commonUtils.padLeadingZero(
-      rn({ min: 0000, max: 9999, integer: true }),
+      rn({ min: 0, max: 9999, integer: true }),
       4
     );
     //check if user existed in OTP table

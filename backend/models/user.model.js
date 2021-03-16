@@ -1,9 +1,11 @@
 const db = require("../utils/db");
 
+
+
 module.exports = {
-  findAll: () => {
-    return db("user");
-  },
+    findAll: () => {
+        return db('user');
+    },
   getByUserEmail: (email) => {
     return db
       .from("user as u")
@@ -21,20 +23,20 @@ module.exports = {
       .where("email", email)
       .first();
   },
-  findById: (id) => {
-    return db("user").where("userid", id).first();
-  },
+    getByUserName: (username) => {
+        return db.from('user as u').innerJoin('usergroup as g', 'u.usergroupid', 'g.usergroupid').select('u.userid as userId', 'u.username', 'u.fullname', 'u.email', 'u.refresh_token', 'g.code as groupCode', 'u.password').where('username', username).first();
+    },
+    findById: (id) => {
+        return db('user').where('userid', id).first();
+    },
   findUserByEmail: (email) => {
     return db("user").where("email", email).first();
   },
   findVisitorByEmail: (email) => {
     return db("otp").where("visitor_email", email).first();
   },
-  create: async (transaction, user) => {
-    const userIds = await transaction("user")
-      .transacting(transaction)
-      .insert(user)
-      .returning("userid");
+    create: async (transaction, user) => {
+        const userIds = await transaction('user').transacting(transaction).insert(user).returning('userid');
 
     return transaction
       .from("user as u")

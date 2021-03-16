@@ -9,38 +9,53 @@ const db = require('../utils/db');
 const roleValidation = require('../middlewares/validation.role');
 
 /**
- * @api {get} /api/category/getByParentId Get Category by parentId
- * @apiName Get Category by parentId
+ * @api {get} /api/category Lấy danh sách category
+ * @apiName Lấy danh sách category
  * @apiGroup Category
  *
- * @apiParam {Number} parentId parentId = null nếu như là category cấp 1
  *
  * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 200 OK
  *     {
  *         "data": [
  *             {
- *                 "categoryid": "1",
- *                 "name": "Lập trình",
- *                 "code": "CODE",
- *                 "parentid": null
+ *                 "categoryId": "4",
+ *                 "categoryName": "Lập trình",
+ *                 "parentId": null,
+ *                 "children": [
+ *                     {
+ *                         "categoryId": "5",
+ *                         "categoryName": "Lập trình Python",
+ *                         "parentId": "4"
+ *                     }
+ *                 ]
  *             }
  *         ]
  *     }
  */
-router.get('/getByParentId', (req, res, next) => {
-  let queryParams = req.query;
-
-  categoryModel.findByParentId(queryParams.parentId).then(data => {
+router.get('/', (req, res, next) => {
+  categoryModel.getListCategory(null).then(data => {
     if(data) {
       res.json({
-          data: data
-      })
+          data: customizeListCategory(data)
+      });
     } else {
       throw "Refresh token fail";
     }
   }).catch(next);
 });
+
+function customizeListCategory(categoryList) {
+  //get parent category
+  let parentCategories = categoryList.filter(category => category.parentId == null);
+  let children = categoryList.filter(category => category.parentId != null);
+
+  parentCategories.forEach(parent => {
+    parent.children = children.filter(category => category.parentId == parent.categoryId);
+  });
+
+  return parentCategories;
+}
 
 /**
  * @api {get} /api/category/register/top Top course register
@@ -69,6 +84,23 @@ router.get('/register/top', function(req, res, next) {
   }).catch(next);
 });
 
+/**
+ * @api {get} /api/category/findById/:id Get details of category
+ * @apiName Get details of category
+ * @apiGroup Category
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *         "data": {
+ *             "categoryid": "6",
+ *             "name": "Lập trình Java",
+ *             "code": "C01.2",
+ *             "parentid": "4",
+ *             "english": "Java Basic"
+ *         }
+ *     }
+ */
 router.get('/findById/:id', roleValidation([constant.USER_GROUP.ADMIN]), (req, res, next) => {
   categoryModel.findById(req.params.id).then(category => {
     res.json({
@@ -77,6 +109,24 @@ router.get('/findById/:id', roleValidation([constant.USER_GROUP.ADMIN]), (req, r
   }).catch(next);
 })
 
+/**
+ * @api {post} /api/category/create Create a category
+ * @apiName Create a category
+ * @apiGroup Category
+ * 
+ * @apiParamExample {json} Request-Example:
+ *     {
+ *         "name": "C++",
+ *         "code": "C01",
+ *         "parentId": null
+ *     }
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *         "data": "Success"
+ *     }
+ */
 router.post('/create', roleValidation([constant.USER_GROUP.ADMIN]), validateMdw(require('../schemas/createCategory.json')), (req, res, next) => {
   db.transaction(transaction => {
     categoryModel.create(transaction, req.body).then(_ => {
@@ -91,6 +141,17 @@ router.post('/create', roleValidation([constant.USER_GROUP.ADMIN]), validateMdw(
   });
 });
 
+/**
+ * @api {delete} /api/category/delete/:id Delete a category
+ * @apiName Delete a category
+ * @apiGroup Category
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *         "data": "Success"
+ *     }
+ */
 router.delete('/delete/:id', roleValidation([constant.USER_GROUP.ADMIN]), (req, res, next) => {
   db.transaction(transaction => {
     categoryModel.delete(transaction, req.params.id).then(_ => {
@@ -105,6 +166,25 @@ router.delete('/delete/:id', roleValidation([constant.USER_GROUP.ADMIN]), (req, 
   });
 });
 
+/**
+ * @api {put} /api/category/update Update a category
+ * @apiName Update a category
+ * @apiGroup Category
+ * 
+ * @apiParamExample {json} Request-Example:
+ *     {
+ *         "categoryId": 8, -- Bắt buộc
+ *         "name": "Lập trình C++ 1234",
+ *         "code": "C01.12345", 
+ *         "parentId": null
+ *     }
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *         "data": "Success"
+ *     }
+ */
 router.put('/update', roleValidation([constant.USER_GROUP.ADMIN]), validateMdw(require('../schemas/updateCategory.json')), (req, res, next) => {
   db.transaction(transaction => {
     categoryModel.update(transaction, req.body).then(_ => {
