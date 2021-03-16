@@ -22,7 +22,7 @@ import Widgets from '@cmsviews/Widgets/Widgets.jsx';
 import UserProfile from '@cmsviews/Pages/UserProfile.jsx';
 import TimelinePage from '@cmsviews/Pages/Timeline.jsx';
 import RTLSupport from '@cmsviews/Pages/RTLSupport.jsx';
-import UserRegister from '@cmsviews/Forms/UserRegister.jsx';
+
 import pagesRoutes from './pages.jsx';
 import CoursesList from '@cmsviews/CourseManagement/CoursesList';
 import AddCourse from '@cmsviews/Forms/AddCourse.jsx';
@@ -31,6 +31,7 @@ import ListIcon from 'material-ui-icons/List';
 import AdminTable from '@cmsviews/UsersManagement/AdminTable.jsx';
 import StudentTable from '@cmsviews/UsersManagement/StudentTable.jsx';
 import TeacherTable from '@cmsviews/UsersManagement/TeacherTable.jsx';
+import AccountRegister from '@cmsviews/UsersManagement/AccountRegister.jsx';
 //New
 import Profile from '@cmsviews/Pages/Profile.jsx';
 // material-ui-icons
@@ -112,7 +113,7 @@ var dashRoutes = [
         path: '/manager/users/add-user',
         name: 'Tạo tài khoản',
         mini: 'RG',
-        component: UserRegister,
+        component: AccountRegister,
       },
     ],
   },
@@ -211,7 +212,7 @@ var dashRoutes = [
         path: '/manager/forms/user-registation',
         name: 'Tạo tài khoản',
         mini: 'REG',
-        component: UserRegister,
+        component: AccountRegister,
       },
     ],
   },

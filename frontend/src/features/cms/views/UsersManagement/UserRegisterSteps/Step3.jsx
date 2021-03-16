@@ -173,7 +173,6 @@ class Step3 extends React.Component {
   }
   render() {
     const { classes } = this.props;
-    console.log(this.state);
     return (
       <GridContainer justify="center">
         <ItemGrid xs={12} sm={12}>

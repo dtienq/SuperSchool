@@ -10,7 +10,7 @@ import ItemGrid from '@cmscomponents/Grid/ItemGrid.jsx';
 
 import customSelectStyle from '@cmsassets/jss/material-dashboard-pro-react/customSelectStyle.jsx';
 import customCheckboxRadioSwitch from '@cmsassets/jss/material-dashboard-pro-react/customCheckboxRadioSwitch.jsx';
-
+import UserContext from '../UserContext';
 const style = {
   infoText: {
     fontWeight: '300',
@@ -45,14 +45,27 @@ class Step2 extends React.Component {
   };
   isValidated() {
     if (this.state.student || this.state.teacher || this.state.admin) {
-      return true;
+      let { user, setUser } = this.context;
+      if (this.state.student) {
+        setUser({ ...user, usergroupid: 2 });
+        return true;
+      }
+
+      if (this.state.admin) {
+        setUser({ ...user, usergroupid: 1 });
+        return true;
+      }
+      if (this.state.teacher) {
+        setUser({ ...user, usergroupid: 3 });
+        return true;
+      }
     } else return false;
   }
   render() {
     const { classes } = this.props;
+    console.log(this.context);
     return (
       <div>
-        {console.log(this.state)}
         <h4 className={classes.infoText}>Chọn loại tài khoản</h4>
         <GridContainer justify="center">
           <ItemGrid xs={12} sm={12} md={12} lg={10}>
@@ -144,5 +157,5 @@ class Step2 extends React.Component {
     );
   }
 }
-
+Step2.contextType = UserContext;
 export default withStyles(style)(Step2);

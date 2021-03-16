@@ -13,7 +13,7 @@ import GridContainer from '@cmscomponents/Grid/GridContainer.jsx';
 import ItemGrid from '@cmscomponents/Grid/ItemGrid.jsx';
 import PictureUpload from '@cmscomponents/CustomUpload/PictureUpload.jsx';
 import CustomInput from '@cmscomponents/CustomInput/CustomInput.jsx';
-import { useDispatch } from 'react-redux';
+import UserContext from '../UserContext';
 const style = {
   infoText: {
     fontWeight: '300',
@@ -86,6 +86,12 @@ class Step1 extends React.Component {
       this.state.fullnameState === 'success' &&
       this.state.emailState === 'success'
     ) {
+      let { setUser } = this.context;
+      setUser({
+        username: this.state.username,
+        fullname: this.state.fullname,
+        email: this.state.email,
+      });
       return true;
     } else {
       if (this.state.usernameState !== 'success') {
@@ -102,6 +108,7 @@ class Step1 extends React.Component {
   }
   render() {
     const { classes } = this.props;
+    console.log(this.context);
     return (
       <GridContainer justify="center">
         <ItemGrid xs={12} sm={12}>
@@ -192,5 +199,5 @@ class Step1 extends React.Component {
     );
   }
 }
-
+Step1.contextType = UserContext;
 export default withStyles(style)(Step1);

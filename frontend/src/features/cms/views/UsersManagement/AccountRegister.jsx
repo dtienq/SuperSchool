@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 // core components
 import UserRegister from '@cmscomponents/UserRegister/UserRegister.jsx';
 import GridContainer from '@cmscomponents/Grid/GridContainer.jsx';
@@ -7,12 +7,13 @@ import ItemGrid from '@cmscomponents/Grid/ItemGrid.jsx';
 import Step1 from './UserRegisterSteps/Step1.jsx';
 import Step2 from './UserRegisterSteps/Step2.jsx';
 import Step3 from './UserRegisterSteps/Step3.jsx';
-
-class UserRegisterView extends React.Component {
-  render() {
-    return (
-      <GridContainer justify="center">
-        <ItemGrid xs={12} sm={8}>
+import UserContext from './UserContext';
+export default function AccountRegister(props) {
+  const [user, setUser] = useState({});
+  return (
+    <GridContainer justify="center">
+      <ItemGrid xs={12} sm={8}>
+        <UserContext.Provider value={{ user, setUser }}>
           <UserRegister
             validate
             steps={[
@@ -35,10 +36,8 @@ class UserRegisterView extends React.Component {
             title="Đăng ký tài khoản"
             subtitle="Hãy điền đầy đủ các thông tin."
           />
-        </ItemGrid>
-      </GridContainer>
-    );
-  }
+        </UserContext.Provider>
+      </ItemGrid>
+    </GridContainer>
+  );
 }
-
-export default UserRegisterView;
