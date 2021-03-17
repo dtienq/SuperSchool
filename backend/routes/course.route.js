@@ -366,4 +366,19 @@ router.get('/findByTeacherId/:teacherId', (req, res, next) => {
     }).catch(next);
 });
 
+router.put('/disable-course/:courseId', (req, res, next) => {
+    let {disabled} = req.body;
+    let {courseId} = req.params;
+
+    courseModel.selectByIdSimple(courseId).then(async course => {
+        course.disabled = disabled;
+
+        course = await courseModel.updateSimple(course);
+
+        res.json({
+            data: course
+        });
+    }).catch(next);
+});
+
 module.exports = router;

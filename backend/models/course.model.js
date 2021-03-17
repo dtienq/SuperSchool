@@ -132,6 +132,8 @@ module.exports = {
             query.where('categoryid', categoryId);
         }
 
+        query.where('c.disabled', false);
+
         if(orderBy) {
             query.orderBy(orderBy, orderType ? orderType : 'asc');
         }
@@ -142,6 +144,8 @@ module.exports = {
         if (categoryId) {
             queryCount.where('categoryid', categoryId);
         }
+
+        queryCount.where('c.disabled', false);
 
         queryCount.count('c.courseid as totalItems').first();
 
@@ -202,5 +206,11 @@ module.exports = {
         query.where('sc.createddate', '<=', sundayOfLastWeek);
 
         return query.select('c.*').groupBy('c.courseid').limit(quantity);
+    },
+    selectByIdSimple: (id) => {
+        return db('course').where('courseid', id).first();
+    },
+    updateSimple: (course) => {
+        return db('course').where('courseid', course.courseid).update(course).returning('*');
     }
 };
