@@ -1,24 +1,36 @@
-const db = require('../utils/db');
+const db = require("../utils/db");
 
 module.exports = {
   getAll: () => {
-    return db('course');
+    return db("course");
+  },
+  topLatest: (quantity) => {
+    let query = db("course").orderByRaw("createddate desc nulls last");
+    if (quantity) {
+      query.limit(quantity);
+    }
+    return query;
   },
   viewForAdmin: () => {
     let query = db
-      .select('c.*', 'u.fullname as teachername', 'ct.parentid as parentid')
-      .from('course as c')
-      .leftJoin('user as u', 'c.teacherid', 'u.userid')
-      .leftJoin('category as ct', 'ct.categoryid', 'c.categoryid');
+      .select("c.*", "u.fullname as teachername", "ct.parentid as parentid")
+      .from("course as c")
+      .leftJoin("user as u", "c.teacherid", "u.userid")
+      .leftJoin("category as ct", "ct.categoryid", "c.categoryid");
     return query;
   },
+  getRating: () => {
+    let query = db.select();
+    return null;
+  },
+
   findByCategoryId: (categoryId, page, pageSize) => {
-    let query = db('course');
+    let query = db("course");
 
     if (categoryId) {
-      query.where('categoryid', categoryId);
+      query.where("categoryid", categoryId);
     } else {
-      query.where('categoryid', null);
+      query.where("categoryid", null);
     }
 
     if (pageSize && pageSize > 0) {
@@ -29,9 +41,9 @@ module.exports = {
     return query;
   },
   findByTeacherId: (teacherId, page, pageSize) => {
-    let query = db('course');
+    let query = db("course");
 
-    query.where('categoryid', teacherId);
+    query.where("categoryid", teacherId);
 
     if (pageSize && pageSize > 0) {
       query.offset(pageSize * (page - 1));
@@ -41,10 +53,10 @@ module.exports = {
     return query;
   },
   findById: (id) => {
-    return db('course').where('courseid', id).first();
+    return db("course").where("courseid", id).first();
   },
   topView: (quantity) => {
-    let query = db('course').orderByRaw('views desc nulls last');
+    let query = db("course").orderByRaw("views desc nulls last");
 
     if (quantity) {
       query.limit(quantity);
@@ -54,11 +66,11 @@ module.exports = {
   },
   topRegister: (quantity, categoryId) => {
     let query = db
-      .from('course as c')
-      .leftJoin('student_course as sc', 'c.courseid', 'sc.courseid')
-      .select('c.*')
-      .count('sc.studentcourseid as countQuantityRegister')
-      .groupBy('c.courseid')
+      .from("course as c")
+      .leftJoin("student_course as sc", "c.courseid", "sc.courseid")
+      .select("c.*")
+      .count("sc.studentcourseid as countQuantityRegister")
+      .groupBy("c.courseid")
       .distinct()
       .orderByRaw('"countQuantityRegister" desc nulls last');
 
@@ -67,18 +79,18 @@ module.exports = {
     }
 
     if (categoryId) {
-      query.where('categoryid', categoryId);
+      query.where("categoryid", categoryId);
     }
 
     return query;
   },
   searchCourse: (searchString, categoryId, page, pageSize) => {
     let query = db
-      .from('course as c')
-      .where('title', 'like', `%${searchString}%`);
+      .from("course as c")
+      .where("title", "like", `%${searchString}%`);
 
     if (categoryId) {
-      query.where('categoryid', categoryId);
+      query.where("categoryid", categoryId);
     }
 
     if (pageSize) {
@@ -89,13 +101,13 @@ module.exports = {
     return query;
   },
   create: async (transaction, course, videos) => {
-    let courseId = await transaction('course')
+    let courseId = await transaction("course")
       .insert(course)
-      .returning('courseid');
+      .returning("courseid");
 
     if (videos && videos.length > 0) {
       videos.forEach((video) => {
-        transaction('coursevideo').insert({
+        transaction("coursevideo").insert({
           courseid: courseId,
           videopath: video.fileName,
         });
@@ -105,11 +117,11 @@ module.exports = {
     return;
   },
   update: (transaction, course) => {
-    return transaction('course')
-      .where('courseid', course.courseId)
+    return transaction("course")
+      .where("courseid", course.courseId)
       .update(course);
   },
   delete: (transaction, id) => {
-    return transaction('course').where('courseid', id).del();
+    return transaction("course").where("courseid", id).del();
   },
 };
