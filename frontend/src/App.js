@@ -1,7 +1,6 @@
 import userApi from '@api/userApi';
 import { checkLogin } from '@app/userSlice';
 import LoadingScreen from '@components/LoadingScreen';
-import CMS from '@features/cms/cms';
 import HomePage from '@features/home/HomePage';
 import React, { Suspense, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -18,6 +17,7 @@ const ProfilePage = React.lazy(() =>
   import('@features/profile/ProfilePage.jsx')
 );
 
+const CmsPage = React.lazy(() => import('@features/cms/cms'));
 function App() {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -39,10 +39,8 @@ function App() {
         <BrowserRouter>
           <Switch>
             <Route path="/" exact component={HomePage} />
-            <Route path="/courses" component={CoursesPage} />
-            <Route path="/manager">
-              <CMS />
-            </Route>
+            <Route path="/courses" exact component={CoursesPage} />
+            <Route path="/manager" component={CmsPage} />
             <Route path="/login" exact component={LoginPage} />
             <Route path="/register" exact component={RegisterPage} />
             <Route path="/contact" exact component={ContactPage} />

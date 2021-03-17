@@ -57,6 +57,35 @@ function customizeListCategory(categoryList) {
   return parentCategories;
 }
 
+router.get('/getByParentId', (req, res, next) => {
+  let queryParams = req.query;
+
+  categoryModel
+    .findByParentId(queryParams.parentId)
+    .then((data) => {
+      if (data) {
+        res.json({
+          data: data,
+        });
+      } else {
+        throw 'Refresh token fail';
+      }
+    })
+    .catch(next);
+});
+
+router.get('/getTree', (req, res, next) => {
+  categoryModel
+    .getTree()
+    .then((data) => {
+      if (data) {
+        res.json({ data: data });
+      } else {
+        throw 'Refresh token fail';
+      }
+    })
+    .catch(next);
+});
 /**
  * @api {get} /api/category/register/top Top course register
  * @apiName Top course register
@@ -76,12 +105,15 @@ function customizeListCategory(categoryList) {
  *         ]
  *     }
  */
-router.get('/register/top', function(req, res, next) {
-  categoryModel.getTopRegister().then(categories => {
-    res.json({
-      data: categories
-    });
-  }).catch(next);
+router.get('/register/top', function (req, res, next) {
+  categoryModel
+    .getTopRegister()
+    .then((categories) => {
+      res.json({
+        data: categories,
+      });
+    })
+    .catch(next);
 });
 
 /**
@@ -107,7 +139,7 @@ router.get('/findById/:id', roleValidation([constant.USER_GROUP.ADMIN]), (req, r
       data: category
     })
   }).catch(next);
-})
+});
 
 /**
  * @api {post} /api/category/create Create a category
@@ -141,62 +173,41 @@ router.post('/create', roleValidation([constant.USER_GROUP.ADMIN]), validateMdw(
   });
 });
 
-/**
- * @api {delete} /api/category/delete/:id Delete a category
- * @apiName Delete a category
- * @apiGroup Category
- *
- * @apiSuccessExample {json} Success-Response:
- *     HTTP/1.1 200 OK
- *     {
- *         "data": "Success"
- *     }
- */
-router.delete('/delete/:id', roleValidation([constant.USER_GROUP.ADMIN]), (req, res, next) => {
-  db.transaction(transaction => {
-    categoryModel.delete(transaction, req.params.id).then(_ => {
-      transaction.commit();
-      res.json({
-        data: 'Success'
+router.delete('/delete/:id',roleValidation([constant.USER_GROUP.ADMIN]), (req, res, next) => {
+  db.transaction((transaction) => {
+    categoryModel
+      .delete(transaction, req.params.id)
+      .then((_) => {
+        transaction.commit();
+        res.json({
+          data: 'Success',
+        });
+      })
+      .catch((err) => {
+        transaction.rollback();
+        next(err);
       });
-    }).catch(err => {
-      transaction.rollback();
-      next(err);
-    });
   });
 });
 
-/**
- * @api {put} /api/category/update Update a category
- * @apiName Update a category
- * @apiGroup Category
- * 
- * @apiParamExample {json} Request-Example:
- *     {
- *         "categoryId": 8, -- Bắt buộc
- *         "name": "Lập trình C++ 1234",
- *         "code": "C01.12345", 
- *         "parentId": null
- *     }
- *
- * @apiSuccessExample {json} Success-Response:
- *     HTTP/1.1 200 OK
- *     {
- *         "data": "Success"
- *     }
- */
-router.put('/update', roleValidation([constant.USER_GROUP.ADMIN]), validateMdw(require('../schemas/updateCategory.json')), (req, res, next) => {
-  db.transaction(transaction => {
-    categoryModel.update(transaction, req.body).then(_ => {
-      transaction.commit();
-      res.json({
-        data: 'Success'
-      });
-    }).catch(err => {
-      transaction.rollback();
-      next(err);
+router.put(
+  '/update',roleValidation([constant.USER_GROUP.ADMIN]),
+  validateMdw(require('../schemas/updateCategory.json')),
+  (req, res, next) => {
+    db.transaction((transaction) => {
+      categoryModel
+        .update(transaction, req.body)
+        .then((_) => {
+          transaction.commit();
+          res.json({
+            data: 'Success',
+          });
+        })
+        .catch((err) => {
+          transaction.rollback();
+          next(err);
+        });
     });
   });
-});
 
 module.exports = router;

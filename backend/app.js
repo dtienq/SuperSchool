@@ -31,29 +31,43 @@ app.use('/api/course/favorite', loginValidation(), require('./routes/favorite-co
 app.use('/api/register-course', loginValidation(), require('./routes/course-student.route'));
 
 
-app.post('/uploadFile', (req, res) => {
+app.use('/api/admin',loginValidation(), require('./routes/admin.route'));
+
+app.use(
+  '/api/course/video',
+  loginValidation(),
+  require('./routes/coursevideo.route')
+);
+
+app.post('/uploadFile', (req, res, next) => {
   let publicPath = path.dirname(require.main.filename) + '/public/';
 
-  fs.writeFile(publicPath + req.body.fileName, req.body.data, "binary", function (err) {
-    if (err) {
-      res.status(500).json({
-        message: CONSTANT.ERRORS.SYSTEM_ERROR
-      })
-    } else {
-      res.json({
-        message: 'Success'
-      })
+  fs.writeFile(
+    publicPath + req.body.fileName,
+    req.body.data,
+    'binary',
+    function (err) {
+      if (err) {
+        res.status(500).json({
+          message: CONSTANT.ERRORS.SYSTEM_ERROR,
+        });
+      } else {
+        res.json({
+          message: 'Success',
+        });
+      }
     }
-  });
+  );
 });
 
 //error handler
-app.use((req, res, next) => {
+app.use((err, req, res, next) => {
+  console.info('Error occurs: ', err);
   res.status(500).json({
-    message: "Something wrong, please contact administrators for more information!"
+    message:
+      'Something wrong, please contact administrators for more information!',
   });
 });
-
 
 const PORT = process.env.PORT || 3000;
 

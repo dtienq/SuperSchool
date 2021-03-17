@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React from 'react';
 
 // material-ui components
@@ -36,10 +35,6 @@ class Step3 extends React.Component {
       phonenumberState: '',
       identity: '',
       identityState: '',
-      password: '',
-      passwordState: '',
-      confirm: '',
-      comfirmState: '',
       url: 'www.superschool.com',
       urlState: 'success',
     };
@@ -51,8 +46,6 @@ class Step3 extends React.Component {
     if (
       this.state.phonenumberState === 'success' &&
       this.state.identityState === 'success' &&
-      this.state.passwordState === 'success' &&
-      this.state.comfirmState === 'success' &&
       this.state.urlState === 'success'
     ) {
       return true;
@@ -62,12 +55,6 @@ class Step3 extends React.Component {
       }
       if (this.state.identityState !== 'success') {
         this.setState({ fullnameState: 'error' });
-      }
-      if (this.state.passwordState !== 'success') {
-        this.setState({ passwordState: 'error' });
-      }
-      if (this.state.confirmState !== 'success') {
-        this.setState({ confirmState: 'error' });
       }
       if (this.state.urlState !== 'success') {
         this.setState({ urlState: 'error' });
@@ -107,20 +94,6 @@ class Step3 extends React.Component {
   }
   change(event, stateName, type, stateNameEqualTo, maxValue) {
     switch (type) {
-      case 'password':
-        if (this.verifyLength(event.target.value, 1)) {
-          this.setState({ [stateName + 'State']: 'success' });
-        } else {
-          this.setState({ [stateName + 'State']: 'error' });
-        }
-        break;
-      case 'equalTo':
-        if (this.compare(event.target.value, this.state[stateNameEqualTo])) {
-          this.setState({ [stateName + 'State']: 'success' });
-        } else {
-          this.setState({ [stateName + 'State']: 'error' });
-        }
-        break;
       case 'checkbox':
         if (event.target.checked) {
           this.setState({ [stateName + 'State']: '' });
@@ -268,59 +241,6 @@ class Step3 extends React.Component {
               defaultValue: this.state.url,
               type: 'text',
               onChange: (e) => this.change(e, 'url', 'url'),
-            }}
-          />
-        </ItemGrid>
-        <ItemGrid xs={12} sm={12} md={12} lg={10}>
-          <CustomInput
-            success={this.state.passwordState === 'success'}
-            error={this.state.passwordState === 'error'}
-            labelText={
-              <span>
-                Mật khẩu <small>(bắt buộc)</small>
-              </span>
-            }
-            id="password"
-            formControlProps={{
-              fullWidth: true,
-            }}
-            inputProps={{
-              onChange: (event) => this.change(event, 'password', 'password'),
-              endAdornment: (
-                <InputAdornment
-                  position="end"
-                  className={classes.inputAdornment}
-                >
-                  <VpnKeyIcon className={classes.inputAdornmentIcon} />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </ItemGrid>
-        <ItemGrid xs={12} sm={12} md={12} lg={10}>
-          <CustomInput
-            success={this.state.confirmState === 'success'}
-            error={this.state.confirmState === 'error'}
-            labelText={
-              <span>
-                Nhập lại mật khẩu <small>(bắt buộc)</small>
-              </span>
-            }
-            id="confirm"
-            formControlProps={{
-              fullWidth: true,
-            }}
-            inputProps={{
-              onChange: (event) =>
-                this.change(event, 'confirm', 'equalTo', 'password'),
-              endAdornment: (
-                <InputAdornment
-                  position="end"
-                  className={classes.inputAdornment}
-                >
-                  <VpnKeyIcon className={classes.inputAdornmentIcon} />
-                </InputAdornment>
-              ),
             }}
           />
         </ItemGrid>
