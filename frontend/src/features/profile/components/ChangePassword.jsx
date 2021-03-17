@@ -2,6 +2,7 @@ import React from 'react';
 import { Input, Form, Button } from '@features/auth/base/components';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
+import profileApi from '@api/profileApi';
 const { FormItem } = Form;
 
 const ChangePasswordValidationSchema = Yup.object().shape({
@@ -14,7 +15,7 @@ const ChangePasswordValidationSchema = Yup.object().shape({
     .required('Trường mật khẩu không thể bỏ trống'),
   repassword: Yup.string().oneOf(
     [Yup.ref('password'), null],
-    'Mật khẩu không khớp'
+    'Mật khẩu mới không khớp'
   ),
 });
 
@@ -23,7 +24,12 @@ function ChangePassword() {
     validationSchema: ChangePasswordValidationSchema,
   });
   const onSubmit = async (data) => {
-    console.log(data);
+    const dataToSend={
+      'oldPassword': data.oldpassword,
+      'newPassword': data.password
+    }
+    const res = await profileApi.changePassword(dataToSend)
+    console.log(res);
   };
   return (
     <div className="content-panel">
