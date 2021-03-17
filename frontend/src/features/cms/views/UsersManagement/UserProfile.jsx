@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 // material-ui components
 import InputLabel from 'material-ui/Input/InputLabel';
@@ -26,16 +26,17 @@ function UserProfile({ ...props }) {
     username: 'Raykad552',
     fullname: 'Nguyễn Minh Quân',
     email: 'nmquanvn@gmail.com',
-    phonenumber: '09056251563',
-    dob: '25/12/1998',
-    reg: '08/02/2021',
-    group: 'Học viên',
-    description:
-      "Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...",
+    phonenumber: 'Không thay đổi',
+    dob: 'Không thay đổi',
+    reg: 'Không thay đổi',
+    group: '',
+    role: '',
+    description: 'Chưa có mô tả',
   };
+  useEffect(() => {}, 200);
   const [state, setState] = useState({
-    //Form Input
     ...info,
+    //Form Input
     // type validation
     required: '',
     requiredState: '',
@@ -60,39 +61,42 @@ function UserProfile({ ...props }) {
     maxValue: '',
     maxValueState: '',
   });
-  const onSubmit = async function (data) {
-    try {
-      // const res = await axiosInstance.post('/auth',data);
-      // if(res.data.authenticated) {
-      //      localStorage.todoApp_accessToken = res.data.accessToken;
-      //     localStorage.todoApp_userId = parseJwt(res.data.accessToken).userId;
-      //     history.replace(from)
-      // }
-      // else{
-      //     alert('Invalid Login');
-      // }
-      alert(JSON.stringify(state));
-    } catch (err) {
-      console.log(err.response.data);
+  useEffect(() => {
+    setTimeout(() => {
+      const fetch_data_backend = {
+        username: 'Raykad552',
+        fullname: 'Nguyễn Minh Quân',
+        email: 'nmquanvn@gmail.com',
+        phonenumber: '09056251563',
+        dob: '25/12/1998',
+        reg: '08/02/2021',
+        group: 'Học viên',
+        description:
+          "Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...",
+      };
+    }, 300);
+  }, []);
+
+  const isValidated = () => {
+    if (
+      this.state.usernameState === 'success' &&
+      this.state.fullnameState === 'success' &&
+      this.state.emailState === 'success'
+    ) {
+      return true;
+    } else {
+      if (state.usernameState !== 'success') {
+        setState({ ...state, usernameState: 'error' });
+      }
+      if (state.fullnameState !== 'success') {
+        setState({ ...state, fullnameState: 'error' });
+      }
+      if (state.emailState !== 'success') {
+        setState({ ...state, emailState: 'error' });
+      }
     }
+    return false;
   };
-  // const [info, setInfo] = useState({});
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     const fetch_data_backend = {
-  //       username: 'Raykad552',
-  //       fullname: 'Nguyễn Minh Quân',
-  //       email: 'nmquanvn@gmail.com',
-  //       phonenumber: '09056251563',
-  //       dob: '25/12/1998',
-  //       reg: '08/02/2021',
-  //       group: 'Học viên',
-  //       description:
-  //         "Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...",
-  //     };
-  //     setInfo(fetch_data_backend);
-  //   }, 300);
-  // }, []);
   const verifyEmail = function (value) {
     var emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (emailRex.test(value)) {
@@ -290,7 +294,7 @@ function UserProfile({ ...props }) {
     }
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form>
       <div>
         <GridContainer>
           <ItemGrid xs={12} sm={12} md={8}>
@@ -377,8 +381,8 @@ function UserProfile({ ...props }) {
                           fullWidth: true,
                         }}
                         inputProps={{
+                          disabled: true,
                           defaultValue: state.phonenumber,
-                          type: 'number',
                           onChange: function (event) {
                             change(
                               'phonenumber',
@@ -403,6 +407,7 @@ function UserProfile({ ...props }) {
                           });
                         }}
                         inputProps={{
+                          disabled: true,
                           placeholder: 'Chọn ngày sinh',
                           value: state.dob,
                           onChange: (e) => setState({ dob: e.target.value }),
@@ -441,7 +446,7 @@ function UserProfile({ ...props }) {
                       />
                     </ItemGrid>
                   </GridContainer>
-                  <Button type="submit" color="rose" right>
+                  <Button onClick={isValidated} color="rose" right>
                     Xác nhận
                   </Button>
                   <Clearfix />

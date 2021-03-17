@@ -31,7 +31,7 @@ module.exports = {
   findByTeacherId: (teacherId, page, pageSize) => {
     let query = db('course');
 
-    query.where('categoryid', teacherId);
+    query.where('teacherid', teacherId);
 
     if (pageSize && pageSize > 0) {
       query.offset(pageSize * (page - 1));

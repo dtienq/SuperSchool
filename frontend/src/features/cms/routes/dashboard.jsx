@@ -1,5 +1,6 @@
 import CoursesList from '@cmsviews/CourseManagement/CoursesList';
-import AddCourse from '@cmsviews/Forms/AddCourse.jsx';
+import TeacherCourses from '@cmsviews/CourseManagement/TeacherCourses';
+import AddCourse from '@cmsviews/CourseManagement/AddCourse.jsx';
 import ListIcon from 'material-ui-icons/List';
 // Users
 import AdminTable from '@cmsviews/UsersManagement/AdminTable.jsx';
@@ -106,6 +107,12 @@ var dashRoutes = [
     icon: PersonIcon,
     name: 'Sửa thông tin',
     component: UserProfile,
+  },
+  {
+    path: '/manager/teachercourses',
+    icon: DashboardIcon,
+    name: 'Teacher Courses Management',
+    component: TeacherCourses,
   },
   {
     redirect: true,

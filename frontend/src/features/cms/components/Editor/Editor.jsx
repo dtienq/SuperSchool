@@ -10,6 +10,7 @@ export const Editor = (props) => {
       <ReactQuill
         theme="snow"
         value={props.value}
+        defaultValue={props.defaultValue}
         onChange={props.onChange}
         placeholder={props.placeholder}
         modules={modules}
