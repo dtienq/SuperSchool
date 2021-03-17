@@ -231,30 +231,7 @@ router.post('/search', function (req, res, next) {
     }).catch(next);
 });
 
-/**
- * @api {get} /api/course/findById/:id Xem chi tiết khóa học
- * @apiName Xem chi tiết khóa học
- * @apiGroup Courses
- *
- * @apiSuccessExample {json} Success-Response:
- *     HTTP/1.1 200 OK
- *     {
- *         "data": {
- *             "courseid": "3",
- *             "title": "Lập trình Java căn bản",
- *             "imagePath": null,
- *             "description": "",
- *             "detailDescription": "",
- *             "views": "0",
- *             "createddate": "2021-01-09T09:22:06.842Z",
- *             "updateddate": null,
- *             "price": "1200000.00",
- *             "categoryid": "6",
- *             "teacherid": "4",
- *             "status": "INCOMPLETE"
- *         }
- *     }
- */
+// xem chi tiết khóa học
 router.get('/findById/:id', (req, res, next) => {
     let {id} = req.params;
     courseModel.findById(id).then(async course => {
@@ -273,32 +250,7 @@ router.get('/findById/:id', (req, res, next) => {
     }).catch(next);
 });
 
-/**
- * @api {get} /api/course/create Create a course
- * @apiName Create a course
- * @apiGroup Courses
- *
- * @apiParams
- *
- * @apiSuccessExample {json} Success-Response:
- *     HTTP/1.1 200 OK
- *     {
- *         "data": {
- *             "courseid": "3",
- *             "title": "Lập trình Java căn bản",
- *             "imagePath": null,
- *             "description": "",
- *             "detailDescription": "",
- *             "views": "0",
- *             "createddate": "2021-01-09T09:22:06.842Z",
- *             "updateddate": null,
- *             "price": "1200000.00",
- *             "categoryid": "6",
- *             "teacherid": "4",
- *             "status": "INCOMPLETE"
- *         }
- *     }
- */
+// Tạo khóa học
 router.post('/create', roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]), validation(require('../schemas/createUpdateCourse.json')), (req, res, next) => {
     db.transaction(transaction => {
         //init data before insert
@@ -307,16 +259,20 @@ router.post('/create', roleValidation([constant.USER_GROUP.ADMIN, constant.USER_
         let now = new Date();
         let publicPath = path.dirname(require.main.filename) + '/public/';
         var videos = [];
+        let {title, description, detailDescription, price, categoryId, teacherId, image} = req.body;
 
         if (requestBody) {
-            course.title = requestBody.title || '';
-            course.description = requestBody.description || '';
-            course.detailDescription = requestBody.detailDescription || '';
+            course = {
+                title,
+                description,
+                detailDescription,
+                price,
+                categoryId,
+                teacherId,
+                image
+            };
             course.views = 0;
             course.createddate = now;
-            course.price = requestBody.price || 0;
-            course.categoryid = requestBody.categoryId;
-            course.teacherid = requestBody.teacherId;
 
             if (requestBody.image && requestBody.image.fileName) {
                 let fileName = publicPath + now.getTime() + '_' + requestBody.image.fileName;
@@ -334,20 +290,11 @@ router.post('/create', roleValidation([constant.USER_GROUP.ADMIN, constant.USER_
             if (requestBody.videos) {
                 requestBody.videos.forEach(element => {
                     var video = {};
-                    if (element.data) {
-                        video.fileName = now.getTime() + '_' + element.fileName;
+                    video.fileName = element.filePath;
+                    video.orderNo = element.orderNo;
+                    video.preview = element.preview;
 
-                        fs.writeFile(publicPath + video.fileName, element.data, "binary", function (err) {
-                            if (err) {
-                                transaction.rollback();
-                                res.status(500).json({
-                                    message: CONSTANT.ERRORS.SYSTEM_ERROR
-                                })
-                            }
-                        });
-
-                        videos.push(video);
-                    }
+                    videos.push(video);
                 });
             }
         }
@@ -364,22 +311,22 @@ router.post('/create', roleValidation([constant.USER_GROUP.ADMIN, constant.USER_
     });
 });
 
+//Bổ sung thông tin, bài giảng cho khóa học
 router.put('/update', roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]), validation(require('../schemas/createUpdateCourse.json')), (req, res, next) => {
     db.transaction(transaction => {
         //init data before update
         let course = {}
         let requestBody = req.body;
         let now = new Date();
+        let {title , imagePath , description , detailDescription , categoryId, teacherId, price, deletedVideoIds, moreVideos} = req.body;
+
+        deletedVideoIds.forEach(async e => {
+            await courseVideoModel.deleteById(e);
+        });
 
         if (requestBody) {
-            course.title = requestBody.title || '';
-            course.imagePath = requestBody.imagePath || '';
-            course.description = requestBody.description || '';
-            course.detailDescription = requestBody.detailDescription || '';
+            course = {title , imagePath , description , detailDescription , categoryid: categoryId, teacherid: teacherId, price, moreVideos};
             course.updateddate = now;
-            course.price = requestBody.price || 0;
-            course.categoryid = requestBody.categoryId;
-            course.teacherid = requestBody.teacherId;
         }
 
         courseModel.update(transaction, course).then(_ => {
@@ -408,17 +355,11 @@ router.delete('/delete/:id', roleValidation([constant.USER_GROUP.ADMIN, constant
     });
 });
 
-router.get('/findByTeacherId', formValidation(require('../schemas/pagination.json')), (req, res, next) => {
-    let teacherId = req.body.teacherId;
-    let page;
-    let pageSize;
+// danh sach khoa hoc da dang
+router.get('/findByTeacherId/:teacherId', (req, res, next) => {
+    let {teacherId} = req.params;
 
-    if (req.body) {
-        page = req.body.page || 1;
-        pageSize = req.body.pageSize || 10;
-    }
-
-    courseModel.findByTeacherId(teacherId, page, pageSize).then(courses => {
+    courseModel.findByTeacherId(teacherId).then(courses => {
         res.json({
             data: courses
         });

@@ -36,15 +36,10 @@ module.exports = {
 
         return query.count().first();
     },
-    findByTeacherId: (teacherId, page, pageSize) => {
+    findByTeacherId: (teacherId) => {
         let query = db('course');
 
-        query.where('categoryid', teacherId);
-
-        if (pageSize && pageSize > 0) {
-            query.offset(pageSize * (page - 1));
-            query.limit(pageSize);
-        }
+        query.where('teacherid', teacherId);
 
         return query;
     },
@@ -159,7 +154,9 @@ module.exports = {
             videos.forEach(video => {
                 transaction('coursevideo').insert({
                     courseid: courseId,
-                    videopath: video.fileName
+                    videopath: video.fileName,
+                    orderno: video.orderNo,
+                    preview: video.preview ? true : false
                 });
             });
         }
@@ -167,7 +164,19 @@ module.exports = {
         return;
     },
     update: (transaction, course) => {
-        return transaction('course').where('courseid', course.courseId).update(course);
+        course.moreVideos.forEach(video => {
+            transaction('coursevideo').insert({
+                courseid: course.courseId,
+                videopath: video.fileName,
+                orderno: video.orderNo,
+                preview: video.preview ? true : false
+            });
+        });
+
+        return transaction('course').where('courseid', course.courseId).update({
+            ...course,
+            moreVideos: undefined
+        });
     },
     delete: (transaction, id) => {
         return transaction('course').where('courseid', id).del();
