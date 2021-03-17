@@ -13,3 +13,5 @@ alter table student_course add column status varchar(20) not null default 'OPEN'
 alter table review add column userid bigint not null references "user"(userid);
 
 alter table review alter column rating type float;
+
+alter table course add column disabled boolean not null default false;
