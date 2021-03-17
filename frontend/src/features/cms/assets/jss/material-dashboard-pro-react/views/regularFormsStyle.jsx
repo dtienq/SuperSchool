@@ -1,9 +1,8 @@
-// ##############################
-// // // RegularForms view styles
+// RegularForms view styles
 // #############################
 
 import customCheckboxRadioSwitch from '@cmsassets/jss/material-dashboard-pro-react/customCheckboxRadioSwitch.jsx';
-
+import customSelectStyle from '@cmsassets/jss/material-dashboard-pro-react/customSelectStyle.jsx';
 const regularFormsStyle = {
   ...customCheckboxRadioSwitch,
   staticFormGroup: {
@@ -26,6 +25,8 @@ const regularFormsStyle = {
     paddingBottom: '8px',
     minHeight: '34px',
   },
+
+  ...customSelectStyle,
 };
 
 export default regularFormsStyle;
