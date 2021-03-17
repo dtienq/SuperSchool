@@ -13,6 +13,7 @@ module.exports = {
       "parentid as parentId"
     );
   },
+
   findByParentId: (parentId) => {
     let query = db("category");
 
@@ -21,11 +22,15 @@ module.exports = {
     } else {
       query.where("parentid", null);
     }
-    return query;
+
+    return query.select(
+      "categoryid as categoryId",
+      "name as categoryName",
+      "parentid as parentId"
+    );
   },
   getTree: async () => {
     let query = await db("category").where("parentid", null);
-
     for (i = 0; i < query.length; i++) {
       // code block to be executed
       query[i].children = await db("category").where(
@@ -41,8 +46,10 @@ module.exports = {
       .innerJoin("course as co", "c.categoryid", "co.categoryid")
       .leftJoin("student_course as cs", "cs.courseid", "co.courseid")
       .select("c.*")
-      .count("cs.studentcourseid")
-      .groupBy("c.categoryid");
+      .count("cs.studentcourseid as totalStudent")
+      .groupBy("c.categoryid")
+      .orderBy("totalStudent", "DESC")
+      .limit(5);
 
     return query;
   },

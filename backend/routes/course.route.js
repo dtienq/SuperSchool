@@ -1,26 +1,30 @@
-var express = require('express');
-const validation = require('../middlewares/validate.mdw');
-const roleValidation = require('../middlewares/validation.role');
-const formValidation = require('../middlewares/validate.mdw');
+var express = require("express");
+const validation = require("../middlewares/validate.mdw");
+const roleValidation = require("../middlewares/validation.role");
+const formValidation = require("../middlewares/validate.mdw");
 var router = express.Router();
-var rn = require('random-number');
-const fs = require('fs');
-const path = require('path');
-const courseModel = require('../models/course.model');
-const constant = require('../utils/constant');
-const db = require('../utils/db');
+var rn = require("random-number");
+const fs = require("fs");
+const path = require("path");
+const courseModel = require("../models/course.model");
+const courseVideoModel = require("../models/coursevideo.model");
+const constant = require("../utils/constant");
+const db = require("../utils/db");
 
 //top 3 khóa học nổi bật nhất trong tuần qua (nhiều lượt đăng kí nhất)
-router.get('/top-highlight', function (req, res, next) {
-    let quantity = 3;
-    courseModel.topHighlight(3).then(courses => {
-        res.json({
-            data: courses
-        });
-    }).catch(next);
+router.get("/top-highlight", function (req, res, next) {
+  let quantity = 3;
+  courseModel
+    .topHighlight(3)
+    .then((courses) => {
+      res.json({
+        data: courses,
+      });
+    })
+    .catch(next);
 });
 
-router.get('/', (req, res, next) => {
+router.get("/", (req, res, next) => {
   courseModel.getAll().then((data) => res.json({ data: data }));
 });
 /**
@@ -57,16 +61,18 @@ router.get('/', (req, res, next) => {
  *        ]
  *    }
  */
-router.get('/top10View', (req, res, next) => {
-    courseModel.getTopByColumnName(10, 'views', 'desc').then(courses => {
-        res.json({
-            data: courses
-        })
+router.get("/top10View", (req, res, next) => {
+  let quantity = 10;
+
+  courseModel.getTopByColumnName(quantity, "views", "desc").then((courses) => {
+    res.json({
+      data: courses,
     });
+  });
 });
 router.get(
-  '/findByCategoryId',
-  validation(require('../schemas/pagination.json')),
+  "/findByCategoryId",
+  validation(require("../schemas/pagination.json")),
   (req, res, next) => {
     let queryParams = req.query;
     let body = req.body;
@@ -110,14 +116,13 @@ router.get(
  *        ]
  *    }
  */
-router.get('/top10Newest', (req, res, next) => {
-    courseModel.getTopByColumnName(10, 'createddate', 'desc').then(courses => {
-        res.json({
-            data: courses
-        })
+router.get("/top10Newest", (req, res, next) => {
+  courseModel.getTopByColumnName(10, "createddate", "desc").then((courses) => {
+    res.json({
+      data: courses,
     });
+  });
 });
-
 
 /**
  * @api {get} /api/course/findByCategoryId/:categoryId Get course by categoryId
@@ -128,7 +133,7 @@ router.get('/top10Newest', (req, res, next) => {
  *
  * @apiParamExample {json} Request-Example:
  *     {
- *         "page": 1, 
+ *         "page": 1,
  *         "pageSize": 10
  *     }
  *
@@ -150,21 +155,28 @@ router.get('/top10Newest', (req, res, next) => {
  *         "totalItems": "1"
  *     }
  */
-router.get('/findByCategoryId/:categoryId', validation(require('../schemas/pagination.json')), (req, res, next) => {
+router.get(
+  "/findByCategoryId/:categoryId",
+  validation(require("../schemas/pagination.json")),
+  (req, res, next) => {
     let params = req.params;
     let body = req.body;
     let page = body.page;
     let pageSize = body.pageSize;
 
-    courseModel.findByCategoryId(params.categoryId, page, pageSize).then(data => {
-        courseModel.countByCategoryId(params.categoryId).then(totalItems => {
-            res.json({
-                data: data,
-                totalItems: totalItems.count
-            })
+    courseModel
+      .findByCategoryId(params.categoryId, page, pageSize)
+      .then((data) => {
+        courseModel.countByCategoryId(params.categoryId).then((totalItems) => {
+          res.json({
+            data: data,
+            totalItems: totalItems.count,
+          });
         });
-    }).catch(next);
-});
+      })
+      .catch(next);
+  }
+);
 
 /**
  * @api {get} /api/course/register/top Top registration
@@ -193,16 +205,19 @@ router.get('/findByCategoryId/:categoryId', validation(require('../schemas/pagin
  *         ]
  *     }
  */
-router.get('/register/top', function (req, res, next) {
-    var quantity = req.query.quantity;
-    var categoryId = req.query.categoryId;
+router.get("/register/top", function (req, res, next) {
+  var quantity = req.query.quantity;
+  var categoryId = req.query.categoryId;
 
-    courseModel.topRegister(quantity, categoryId).then(courses => {
-        res.json({
-            data: courses
-        });
-    }).catch(next);
-})
+  courseModel
+    .topRegister(quantity, categoryId)
+    .then((courses) => {
+      res.json({
+        data: courses,
+      });
+    })
+    .catch(next);
+});
 
 /**
  * @api {get} /api/course/search Search courses
@@ -239,221 +254,238 @@ router.get('/register/top', function (req, res, next) {
  *         ]
  *     }
  */
-router.post('/search', function (req, res, next) {
-    let body = {};
-
-    if (req.body) {
-        body = req.body;
-    }
-
-    let result = courseModel.searchCourse(body);
-
-    result[0].then(courses => {
-        result[1].then(countCourses => {
-            res.json({
-                data: courses,
-                totalItems: +countCourses.totalItems
-            });
-        });
-    }).catch(next);
-});
-
-/**
- * @api {get} /api/course/findById/:id Xem chi tiết khóa học
- * @apiName Xem chi tiết khóa học
- * @apiGroup Courses
- *
- * @apiSuccessExample {json} Success-Response:
- *     HTTP/1.1 200 OK
- *     {
- *         "data": {
- *             "courseid": "3",
- *             "title": "Lập trình Java căn bản",
- *             "imagePath": null,
- *             "description": "",
- *             "detailDescription": "",
- *             "views": "0",
- *             "createddate": "2021-01-09T09:22:06.842Z",
- *             "updateddate": null,
- *             "price": "1200000.00",
- *             "categoryid": "6",
- *             "teacherid": "4",
- *             "status": "INCOMPLETE"
- *         }
- *     }
- */
-router.get('/findById/:id', (req, res, next) => {
-    courseModel.findById(req.params.id).then(course => {
-        console.log(course);
-        if (!course.courseid) {
-            throw "Not found";
-        } else {
-            res.json({
-                data: course
-            });
-        }
-    }).catch(next);
-});
-
-/**
- * @api {get} /api/course/create Create a course
- * @apiName Create a course
- * @apiGroup Courses
- *
- * @apiParams
- *
- * @apiSuccessExample {json} Success-Response:
- *     HTTP/1.1 200 OK
- *     {
- *         "data": {
- *             "courseid": "3",
- *             "title": "Lập trình Java căn bản",
- *             "imagePath": null,
- *             "description": "",
- *             "detailDescription": "",
- *             "views": "0",
- *             "createddate": "2021-01-09T09:22:06.842Z",
- *             "updateddate": null,
- *             "price": "1200000.00",
- *             "categoryid": "6",
- *             "teacherid": "4",
- *             "status": "INCOMPLETE"
- *         }
- *     }
- */
-router.post('/create', roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]), validation(require('../schemas/createUpdateCourse.json')), (req, res, next) => {
-    db.transaction(transaction => {
-        //init data before insert
-        let course = {}
-        let requestBody = req.body;
-        let now = new Date();
-        let publicPath = path.dirname(require.main.filename) + '/public/';
-        var videos = [];
-
-        if (requestBody) {
-            course.title = requestBody.title || '';
-            course.description = requestBody.description || '';
-            course.detailDescription = requestBody.detailDescription || '';
-            course.views = 0;
-            course.createddate = now;
-            course.price = requestBody.price || 0;
-            course.categoryid = requestBody.categoryId;
-            course.teacherid = requestBody.teacherId;
-
-            if (requestBody.image && requestBody.image.fileName) {
-                let fileName = publicPath + now.getTime() + '_' + requestBody.image.fileName;
-                fs.writeFile(fileName, requestBody.image.data, "binary", function (err) {
-                    if (err) {
-                        transaction.rollback();
-                        res.status(500).json({
-                            message: CONSTANT.ERRORS.SYSTEM_ERROR
-                        })
-                    }
-                });
-                course.imagePath = fileName;
-            }
-
-            if (requestBody.videos) {
-                requestBody.videos.forEach(element => {
-                    var video = {};
-                    if (element.data) {
-                        video.fileName = now.getTime() + '_' + element.fileName;
-
-                        fs.writeFile(publicPath + video.fileName, element.data, "binary", function (err) {
-                            if (err) {
-                                transaction.rollback();
-                                res.status(500).json({
-                                    message: CONSTANT.ERRORS.SYSTEM_ERROR
-                                })
-                            }
-                        });
-
-                        videos.push(video);
-                    }
-                });
-            }
-        }
-
-        courseModel.create(transaction, course, videos).then(_ => {
-            transaction.commit();
-            res.json({
-                data: 'Success'
-            });
-        }).catch(err => {
-            transaction.rollback();
-            next(err);
-        });
-    });
-});
-
-router.put('/update', roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]), validation(require('../schemas/createUpdateCourse.json')), (req, res, next) => {
-    db.transaction(transaction => {
-        //init data before update
-        let course = {}
-        let requestBody = req.body;
-        let now = new Date();
-
-        if (requestBody) {
-            course.title = requestBody.title || '';
-            course.imagePath = requestBody.imagePath || '';
-            course.description = requestBody.description || '';
-            course.detailDescription = requestBody.detailDescription || '';
-            course.updateddate = now;
-            course.price = requestBody.price || 0;
-            course.categoryid = requestBody.categoryId;
-            course.teacherid = requestBody.teacherId;
-        }
-
-        courseModel.update(transaction, course).then(_ => {
-            transaction.commit();
-            res.json({
-                data: 'Success'
-            });
-        }).catch(err => {
-            transaction.rollback();
-            next(err);
-        });
-    });
-});
-
-router.delete('/delete/:id', roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]), (req, res, next) => {
-    db.transaction(transaction => {
-        courseModel.delete(transaction, req.params.id).then(_ => {
-            transaction.commit();
-            res.json({
-                data: 'Success'
-            });
-        }).catch(err => {
-            transaction.rollback();
-            next(err);
-        });
-    });
-});
-
-router.get('/findByTeacherId', formValidation(require('../schemas/pagination.json')), (req, res, next) => {
-  let searchString = '';
-  let categoryId = null;
-  let page;
-  let pageSize;
+router.post("/search", function (req, res, next) {
+  let body = {};
 
   if (req.body) {
-    searchString = req.body.searchString || '';
-    categoryId = req.body.categoryId;
-    page = req.body.page || 1;
-    pageSize = req.body.pageSize || 10;
+    body = req.body;
   }
 
-  courseModel
-    .searchCourse(searchString, categoryId, page, pageSize)
+  let result = courseModel.searchCourse(body);
+
+  result[0]
     .then((courses) => {
-      res.json({
-        data: courses,
+      result[1].then((countCourses) => {
+        res.json({
+          data: courses,
+          totalItems: +countCourses.totalItems,
+        });
       });
     })
     .catch(next);
 });
 
-router.get('findById/:id', (req, res, next) => {
+// xem chi tiết khóa học
+router.get("/findById/:id", (req, res, next) => {
+  let { id } = req.params;
+  courseModel
+    .findById(id)
+    .then(async (course) => {
+      if (!course.courseid) {
+        throw "Not found";
+      } else {
+        let courseVideo = { courseId: course.courseid };
+        let result = await courseVideoModel.findByCourseId(courseVideo);
+
+        course.videos = result;
+
+        res.json({
+          data: course,
+        });
+      }
+    })
+    .catch(next);
+});
+
+// Tạo khóa học
+router.post(
+  "/create",
+  roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
+  validation(require("../schemas/createUpdateCourse.json")),
+  (req, res, next) => {
+    db.transaction((transaction) => {
+      //init data before insert
+      let course = {};
+      let requestBody = req.body;
+      let now = new Date();
+      let publicPath = path.dirname(require.main.filename) + "/public/";
+      var videos = [];
+      let {
+        title,
+        description,
+        detailDescription,
+        price,
+        categoryId,
+        teacherId,
+        image,
+      } = req.body;
+
+      if (requestBody) {
+        course = {
+          title,
+          description,
+          detailDescription,
+          price,
+          categoryId,
+          teacherId,
+          image,
+        };
+        course.views = 0;
+        course.createddate = now;
+
+        if (requestBody.image && requestBody.image.fileName) {
+          let fileName =
+            publicPath + now.getTime() + "_" + requestBody.image.fileName;
+          fs.writeFile(
+            fileName,
+            requestBody.image.data,
+            "binary",
+            function (err) {
+              if (err) {
+                transaction.rollback();
+                res.status(500).json({
+                  message: CONSTANT.ERRORS.SYSTEM_ERROR,
+                });
+              }
+            }
+          );
+          course.imagePath = fileName;
+        }
+
+        if (requestBody.videos) {
+          requestBody.videos.forEach((element) => {
+            var video = {};
+            video.fileName = element.filePath;
+            video.orderNo = element.orderNo;
+            video.preview = element.preview;
+
+            videos.push(video);
+          });
+        }
+      }
+
+      courseModel
+        .create(transaction, course, videos)
+        .then((_) => {
+          transaction.commit();
+          res.json({
+            data: "Success",
+          });
+        })
+        .catch((err) => {
+          transaction.rollback();
+          next(err);
+        });
+    });
+  }
+);
+
+//Bổ sung thông tin, bài giảng cho khóa học
+router.put(
+  "/update",
+  roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
+  validation(require("../schemas/createUpdateCourse.json")),
+  (req, res, next) => {
+    db.transaction((transaction) => {
+      //init data before update
+      let course = {};
+      let requestBody = req.body;
+      let now = new Date();
+      let {
+        title,
+        imagePath,
+        description,
+        detailDescription,
+        categoryId,
+        teacherId,
+        price,
+        deletedVideoIds,
+        moreVideos,
+      } = req.body;
+
+      deletedVideoIds.forEach(async (e) => {
+        await courseVideoModel.deleteById(e);
+      });
+
+      if (requestBody) {
+        course = {
+          title,
+          imagePath,
+          description,
+          detailDescription,
+          categoryid: categoryId,
+          teacherid: teacherId,
+          price,
+          moreVideos,
+        };
+        course.updateddate = now;
+      }
+
+      courseModel
+        .update(transaction, course)
+        .then((_) => {
+          transaction.commit();
+          res.json({
+            data: "Success",
+          });
+        })
+        .catch((err) => {
+          transaction.rollback();
+          next(err);
+        });
+    });
+  }
+);
+
+router.delete(
+  "/delete/:id",
+  roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
+  (req, res, next) => {
+    db.transaction((transaction) => {
+      courseModel
+        .delete(transaction, req.params.id)
+        .then((_) => {
+          transaction.commit();
+          res.json({
+            data: "Success",
+          });
+        })
+        .catch((err) => {
+          transaction.rollback();
+          next(err);
+        });
+    });
+  }
+);
+
+router.get(
+  "/findByTeacherId",
+  formValidation(require("../schemas/pagination.json")),
+  (req, res, next) => {
+    let searchString = "";
+    let categoryId = null;
+    let page;
+    let pageSize;
+
+    if (req.body) {
+      searchString = req.body.searchString || "";
+      categoryId = req.body.categoryId;
+      page = req.body.page || 1;
+      pageSize = req.body.pageSize || 10;
+    }
+
+    courseModel
+      .searchCourse(searchString, categoryId, page, pageSize)
+      .then((courses) => {
+        res.json({
+          data: courses,
+        });
+      })
+      .catch(next);
+  }
+);
+
+router.get("findById/:id", (req, res, next) => {
   courseModel
     .findById(req.params.id)
     .then((course) => {
@@ -465,22 +497,22 @@ router.get('findById/:id', (req, res, next) => {
 });
 
 router.post(
-  '/create',
+  "/create",
   roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
-  validation(require('../schemas/createUpdateCourse.json')),
+  validation(require("../schemas/createUpdateCourse.json")),
   (req, res, next) => {
     db.transaction((transaction) => {
       //init data before insert
       let course = {};
       let requestBody = req.body;
       let now = new Date();
-      let publicPath = path.dirname(require.main.filename) + '/public/';
+      let publicPath = path.dirname(require.main.filename) + "/public/";
       var videos = [];
 
       if (requestBody) {
-        course.title = requestBody.title || '';
-        course.description = requestBody.description || '';
-        course.detailDescription = requestBody.detailDescription || '';
+        course.title = requestBody.title || "";
+        course.description = requestBody.description || "";
+        course.detailDescription = requestBody.detailDescription || "";
         course.views = 0;
         course.createddate = now;
         course.price = requestBody.price || 0;
@@ -489,11 +521,11 @@ router.post(
 
         if (requestBody.image && requestBody.image.fileName) {
           let fileName =
-            publicPath + now.getTime() + '_' + requestBody.image.fileName;
+            publicPath + now.getTime() + "_" + requestBody.image.fileName;
           fs.writeFile(
             fileName,
             requestBody.image.data,
-            'binary',
+            "binary",
             function (err) {
               if (err) {
                 transaction.rollback();
@@ -510,12 +542,12 @@ router.post(
           requestBody.videos.forEach((element) => {
             var video = {};
             if (element.data) {
-              video.fileName = now.getTime() + '_' + element.fileName;
+              video.fileName = now.getTime() + "_" + element.fileName;
 
               fs.writeFile(
                 publicPath + video.fileName,
                 element.data,
-                'binary',
+                "binary",
                 function (err) {
                   if (err) {
                     transaction.rollback();
@@ -537,7 +569,7 @@ router.post(
         .then((_) => {
           transaction.commit();
           res.json({
-            data: 'Success',
+            data: "Success",
           });
         })
         .catch((err) => {
@@ -549,9 +581,9 @@ router.post(
 );
 
 router.put(
-  '/update',
+  "/update",
   roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
-  validation(require('../schemas/createUpdateCourse.json')),
+  validation(require("../schemas/createUpdateCourse.json")),
   (req, res, next) => {
     db.transaction((transaction) => {
       //init data before update
@@ -560,10 +592,10 @@ router.put(
       let now = new Date();
 
       if (requestBody) {
-        course.title = requestBody.title || '';
-        course.imagePath = requestBody.imagePath || '';
-        course.description = requestBody.description || '';
-        course.detailDescription = requestBody.detailDescription || '';
+        course.title = requestBody.title || "";
+        course.imagePath = requestBody.imagePath || "";
+        course.description = requestBody.description || "";
+        course.detailDescription = requestBody.detailDescription || "";
         course.updateddate = now;
         course.price = requestBody.price || 0;
         course.categoryid = requestBody.categoryId;
@@ -575,7 +607,7 @@ router.put(
         .then((_) => {
           transaction.commit();
           res.json({
-            data: 'Success',
+            data: "Success",
           });
         })
         .catch((err) => {
@@ -587,7 +619,7 @@ router.put(
 );
 
 router.delete(
-  '/delete/:id',
+  "/delete/:id",
   roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
   (req, res, next) => {
     db.transaction((transaction) => {
@@ -596,7 +628,7 @@ router.delete(
         .then((_) => {
           transaction.commit();
           res.json({
-            data: 'Success',
+            data: "Success",
           });
         })
         .catch((err) => {
@@ -608,8 +640,8 @@ router.delete(
 );
 
 router.get(
-  '/findByTeacherId',
-  formValidation(require('../schemas/pagination.json')),
+  "/findByTeacherId/:teacherId",
+  formValidation(require("../schemas/pagination.json")),
   (req, res, next) => {
     let teacherId = req.body.teacherId;
     let page;

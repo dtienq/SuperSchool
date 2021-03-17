@@ -17,5 +17,8 @@ module.exports = {
         let query = db('coursevideo').insert(videos);
 
         return query;
+    },
+    deleteById: (id) => {
+        return db('coursevideo').where('coursevideoid', id).del();
     }
 }
