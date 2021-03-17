@@ -59,7 +59,7 @@ module.exports = {
                 'c.title as courseName',
                 'c.description as shortDescription',
                 'c.detailDescription',
-                db.raw('coalesce(round(avg(r.rating), 1), 0) as "ratingAvgPoint"'),
+                db.raw('coalesce(round(cast(avg(r.rating) as numeric), 1), 0) as "ratingAvgPoint"'),
                 db.raw('count(distinct r.userid) as "totalReviewPerson"'),
                 db.raw('count(distinct sc.studentid) as "totalStudentRegister"'),
                 'p.value as priceDiscount',
@@ -106,13 +106,7 @@ module.exports = {
         return query;
     },
     searchCourse: (body) => {
-        let searchString = body.searchString || '';
-        let categoryId = body.categoryId;
-        let page = body.page;
-        let pageSize = body.pageSize;
-        let orderBy = body.orderBy;
-        let orderType = body.orderType;
-        let fullText = body.fullText;
+        let {searchString, categoryId, orderBy, orderType, fullText} = body;
 
         let query = db.select(db.raw(' c.*, case when maxCourse.courseid = c.courseid then true else false end as "isBestSeller"\n' +
             'from course c \n' +
@@ -139,11 +133,6 @@ module.exports = {
 
         if(orderBy) {
             query.orderBy(orderBy, orderType ? orderType : 'asc');
-        }
-
-        if (pageSize) {
-            query.limit(pageSize);
-            query.offset((page - 1) * pageSize);
         }
 
         let queryCount = db.from('course as c')

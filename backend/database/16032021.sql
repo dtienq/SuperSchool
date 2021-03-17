@@ -804,7 +804,7 @@ ALTER TABLE ONLY superschool.usergroup
 --
 
 ALTER TABLE ONLY superschool.category
-    ADD CONSTRAINT category_parentid_foreign FOREIGN KEY (parentid) REFERENCES superschool.category(categoryid) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT category_parentid_foreign FOREIGN KEY (parentid) REFERENCES superschool.category(categoryid);
 
 
 --
@@ -812,7 +812,7 @@ ALTER TABLE ONLY superschool.category
 --
 
 ALTER TABLE ONLY superschool.course
-    ADD CONSTRAINT course_categoryid_foreign FOREIGN KEY (categoryid) REFERENCES superschool.category(categoryid) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT course_categoryid_foreign FOREIGN KEY (categoryid) REFERENCES superschool.category(categoryid);
 
 
 --
@@ -820,7 +820,7 @@ ALTER TABLE ONLY superschool.course
 --
 
 ALTER TABLE ONLY superschool.course
-    ADD CONSTRAINT course_teacherid_foreign FOREIGN KEY (teacherid) REFERENCES superschool."user"(userid) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT course_teacherid_foreign FOREIGN KEY (teacherid) REFERENCES superschool."user"(userid);
 
 
 --
@@ -828,7 +828,7 @@ ALTER TABLE ONLY superschool.course
 --
 
 ALTER TABLE ONLY superschool.coursevideo
-    ADD CONSTRAINT coursevideo_courseid_fkey FOREIGN KEY (courseid) REFERENCES superschool.course(courseid) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT coursevideo_courseid_fkey FOREIGN KEY (courseid) REFERENCES superschool.course(courseid);
 
 
 --
@@ -844,7 +844,7 @@ ALTER TABLE ONLY superschool.promotion
 --
 
 ALTER TABLE ONLY superschool.review
-    ADD CONSTRAINT review_courseid_foreign FOREIGN KEY (courseid) REFERENCES superschool.course(courseid) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT review_courseid_foreign FOREIGN KEY (courseid) REFERENCES superschool.course(courseid);
 
 
 --
@@ -852,7 +852,7 @@ ALTER TABLE ONLY superschool.review
 --
 
 ALTER TABLE ONLY superschool.student_course
-    ADD CONSTRAINT student_course_courseid_foreign FOREIGN KEY (courseid) REFERENCES superschool.course(courseid) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT student_course_courseid_foreign FOREIGN KEY (courseid) REFERENCES superschool.course(courseid);
 
 
 --
@@ -860,7 +860,7 @@ ALTER TABLE ONLY superschool.student_course
 --
 
 ALTER TABLE ONLY superschool.student_course
-    ADD CONSTRAINT student_course_studentid_foreign FOREIGN KEY (studentid) REFERENCES superschool."user"(userid) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT student_course_studentid_foreign FOREIGN KEY (studentid) REFERENCES superschool."user"(userid);
 
 
 --
@@ -868,7 +868,7 @@ ALTER TABLE ONLY superschool.student_course
 --
 
 ALTER TABLE ONLY superschool."user"
-    ADD CONSTRAINT user_usergroupid_foreign FOREIGN KEY (usergroupid) REFERENCES superschool.usergroup(usergroupid) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT user_usergroupid_foreign FOREIGN KEY (usergroupid) REFERENCES superschool.usergroup(usergroupid);
 
 
 --

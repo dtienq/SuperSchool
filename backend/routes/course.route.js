@@ -7,6 +7,7 @@ var rn = require('random-number');
 const fs = require('fs');
 const path = require('path');
 const courseModel = require('../models/course.model');
+const courseVideoModel = require('../models/coursevideo.model');
 const constant = require('../utils/constant');
 const db = require('../utils/db');
 
@@ -47,7 +48,9 @@ router.get('/top-highlight', function (req, res, next) {
  *    }
  */
 router.get('/top10View', (req, res, next) => {
-    courseModel.getTopByColumnName(10, 'views', 'desc').then(courses => {
+    let quantity = 10;
+
+    courseModel.getTopByColumnName(quantity, 'views', 'desc').then(courses => {
         res.json({
             data: courses
         })
@@ -253,11 +256,16 @@ router.post('/search', function (req, res, next) {
  *     }
  */
 router.get('/findById/:id', (req, res, next) => {
-    courseModel.findById(req.params.id).then(course => {
+    courseModel.findById(req.params.id).then(async course => {
         console.log(course);
         if (!course.courseid) {
             throw "Not found";
         } else {
+            let courseVideo = {courseId: course.courseid};
+            let result = await courseVideoModel.findByCourseId(courseVideo);
+
+            course.videos = result;
+
             res.json({
                 data: course
             });

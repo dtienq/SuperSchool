@@ -25,8 +25,10 @@ module.exports = {
                     .innerJoin('course as co', 'c.categoryid', 'co.categoryid')
                     .leftJoin('student_course as cs', 'cs.courseid', 'co.courseid')
                     .select('c.*')
-                    .count('cs.studentcourseid')
-                    .groupBy('c.categoryid');
+                    .count('cs.studentcourseid as totalStudent')
+                    .groupBy('c.categoryid')
+                    .orderBy('totalStudent', 'DESC')
+                    .limit(5);
 
         return query;
     },

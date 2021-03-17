@@ -3,10 +3,12 @@ const validateMdw = require('../middlewares/validate.mdw');
 var router = express.Router();
 
 const categoryModel = require('../models/category.model');
+const courseModel = require('../models/course.model');
 const common = require('../utils/common');
 const constant = require('../utils/constant');
 const db = require('../utils/db');
 const roleValidation = require('../middlewares/validation.role');
+const loginValidation = require('../middlewares/validation.login');
 
 /**
  * @api {get} /api/category Lấy danh sách category
@@ -152,9 +154,28 @@ router.post('/create', roleValidation([constant.USER_GROUP.ADMIN]), validateMdw(
  *         "data": "Success"
  *     }
  */
-router.delete('/delete/:id', roleValidation([constant.USER_GROUP.ADMIN]), (req, res, next) => {
+router.delete('/delete/:id', loginValidation(), roleValidation([constant.USER_GROUP.ADMIN]), async (req, res, next) => {
+  let {id} = req.params;
+  let categories = await categoryModel.findByParentId(id);
+
+  if(categories && categories.length > 0) {
+    return res.status(403).json({
+      code: 'HAS_SUB_CAT',
+      message: 'Lĩnh vực này có lĩnh vực phụ, không thể xóa.'
+    });
+  }
+
+  let totalCourse = await courseModel.countByCategoryId(id);
+
+  if(+totalCourse.count > 0) {
+    return res.status(403).json({
+      code: 'HAS_COURSES',
+      message: 'Lĩnh vực này có khóa học, không thể xóa.'
+    });
+  }
+
   db.transaction(transaction => {
-    categoryModel.delete(transaction, req.params.id).then(_ => {
+    categoryModel.delete(transaction, id).then(_ => {
       transaction.commit();
       res.json({
         data: 'Success'

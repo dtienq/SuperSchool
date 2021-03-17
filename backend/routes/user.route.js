@@ -46,8 +46,6 @@ router.post(
     let user = req.body;
 
     db.transaction((transaction) => {
-      if (true) {
-      }
       userModel.findById(commonUtils.currentUser.userId).then((userFromDB) => {
         let encryptedPassword = userFromDB.password;
 
