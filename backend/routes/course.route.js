@@ -256,8 +256,8 @@ router.post('/search', function (req, res, next) {
  *     }
  */
 router.get('/findById/:id', (req, res, next) => {
-    courseModel.findById(req.params.id).then(async course => {
-        console.log(course);
+    let {id} = req.params;
+    courseModel.findById(id).then(async course => {
         if (!course.courseid) {
             throw "Not found";
         } else {

@@ -50,10 +50,11 @@ module.exports = {
     },
     findById: (id) => {
         return db('course as c')
-            .leftJoin('review as r', 'r.courseid', 'c.courseid')
-            .leftJoin('student_course as sc', 'sc.courseid', 'c.courseid')
-            .leftJoin('promotion as p', 'p.courseid', 'c.courseid')
-            .select(
+          .innerJoin('user as u', 'u.userid', 'c.teacherid')
+          .leftJoin('review as r', 'r.courseid', 'c.courseid')
+          .leftJoin('student_course as sc', 'sc.courseid', 'c.courseid')
+          .leftJoin('promotion as p', 'p.courseid', 'c.courseid')
+          .select(
                 'c.courseid',
                 'c.imagePath',
                 'c.title as courseName',
@@ -64,9 +65,13 @@ module.exports = {
                 db.raw('count(distinct sc.studentid) as "totalStudentRegister"'),
                 'p.value as priceDiscount',
                 'c.price',
-                'c.updateddate'
+                'c.updateddate',
+                'u.fullname as teacherName',
+                'u.email as teacherEmail',
+                'u.picture as teacherAvatar'
 
-        ).where('c.courseid', id).groupBy(
+        ).where('c.courseid', id)
+          .groupBy(
                 'c.courseid',
                 'c.imagePath',
                 'courseName',
@@ -75,6 +80,7 @@ module.exports = {
                 'priceDiscount',
                 'c.price',
                 'c.updateddate',
+                'u.userid'
             ).first();
     },
     topView: (quantity) => {
