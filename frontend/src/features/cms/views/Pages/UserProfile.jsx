@@ -26,7 +26,7 @@ function UserProfile({ ...props }) {
     username: 'Raykad552',
     fullname: 'Nguyễn Minh Quân',
     email: 'nmquanvn@gmail.com',
-    phonenumber: '09056251563',
+    phonenumber: '00000000000',
     dob: '25/12/1998',
     reg: '08/02/2021',
     group: 'Học viên',
@@ -372,6 +372,7 @@ function UserProfile({ ...props }) {
                         error={state.minLengthState === 'error'}
                         labelText="SDT"
                         id="phonenumber"
+                        disabled
                         ref={register}
                         formControlProps={{
                           fullWidth: true,

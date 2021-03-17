@@ -22,12 +22,13 @@ import ImagePriceCard from '@cmscomponents/Cards/ImagePriceCard.jsx';
 import CustomInput from '@cmscomponents/CustomInput/CustomInput.jsx';
 import InputAdornment from 'material-ui/Input/InputAdornment';
 import SearchIcon from 'material-ui-icons/Search';
-import PublicIcon from 'material-ui-icons/Public';
 import VpnLockIcon from 'material-ui-icons/VpnLock';
+import Edit from 'material-ui-icons/Edit';
 import dashboardStyle from '@cmsassets/jss/material-dashboard-pro-react/views/dashboardStyle';
 import categoryApi from '@api/categoryApi';
 import coursesApi from '@api/coursesApi';
-function CoursesList(props) {
+import Close from 'material-ui-icons/Close';
+function TeacherCourses(props) {
   let location = useLocation();
   const [state, setState] = useState({
     category: location.state
@@ -299,64 +300,9 @@ function CoursesList(props) {
                       image={item.imagePath}
                       title={item.title}
                       text={item.description}
-                      price={item.teachername}
+                      price={item.status}
                       statIcon={UpdateIcon}
-                      statText={item.publish ? `Đang hiển thị` : 'Bị đình chỉ'}
-                      hover
-                      underImage={
-                        <div>
-                          <Tooltip
-                            id="tooltip-top"
-                            title="Xem"
-                            placement="bottom"
-                            classes={{ tooltip: classes.tooltip }}
-                          >
-                            <Button color="defaultNoBackground" justIcon>
-                              <ArtTrack className={classes.underChartIcons} />
-                            </Button>
-                          </Tooltip>
-                          <Tooltip
-                            id="tooltip-top"
-                            title="Trực tuyến"
-                            placement="bottom"
-                            classes={{ tooltip: classes.tooltip }}
-                          >
-                            <Button color="successNoBackground" justIcon>
-                              <PublicIcon className={classes.underChartIcons} />
-                            </Button>
-                          </Tooltip>
-                          <Tooltip
-                            id="tooltip-top"
-                            title="Đình chỉ"
-                            placement="bottom"
-                            classes={{ tooltip: classes.tooltip }}
-                          >
-                            <Button color="dangerNoBackground" justIcon>
-                              <VpnLockIcon
-                                className={classes.underChartIcons}
-                              />
-                            </Button>
-                          </Tooltip>
-                        </div>
-                      }
-                    />
-                  </ItemGrid>
-                );
-              }
-              if (
-                state.category !== '' &&
-                state.category === +item.parentid &&
-                state.subcategory === ''
-              ) {
-                return (
-                  <ItemGrid xs={12} sm={12} md={4}>
-                    <ImagePriceCard
-                      image={item.imagePath}
-                      title={item.title}
-                      text={item.description}
-                      price={item.teachername}
-                      statIcon={UpdateIcon}
-                      statText={item.publish ? `Đang hiển thị` : 'Bị đình chỉ'}
+                      statText={`Cập nhật:${item.teachername}`}
                       hover
                       underImage={
                         <div>
@@ -377,7 +323,60 @@ function CoursesList(props) {
                             classes={{ tooltip: classes.tooltip }}
                           >
                             <Button color="successNoBackground" justIcon>
-                              <PublicIcon className={classes.underChartIcons} />
+                              <Edit className={classes.underChartIcons} />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip
+                            id="tooltip-top"
+                            title="Đình chỉ"
+                            placement="bottom"
+                            classes={{ tooltip: classes.tooltip }}
+                          >
+                            <Button color="dangerNoBackground" justIcon>
+                              <Close className={classes.underChartIcons} />
+                            </Button>
+                          </Tooltip>
+                        </div>
+                      }
+                    />
+                  </ItemGrid>
+                );
+              }
+              if (
+                state.category !== '' &&
+                state.category === +item.parentid &&
+                state.subcategory === ''
+              ) {
+                return (
+                  <ItemGrid xs={12} sm={12} md={4}>
+                    <ImagePriceCard
+                      image={item.imagePath}
+                      title={item.title}
+                      text={item.description}
+                      price={item.status}
+                      statIcon={UpdateIcon}
+                      statText={`Cập nhật:${item.updateddate}`}
+                      hover
+                      underImage={
+                        <div>
+                          <Tooltip
+                            id="tooltip-top"
+                            title="Xem"
+                            placement="bottom"
+                            classes={{ tooltip: classes.tooltip }}
+                          >
+                            <Button color="defaultNoBackground" justIcon>
+                              <ArtTrack className={classes.underChartIcons} />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip
+                            id="tooltip-top"
+                            title="Edit"
+                            placement="bottom"
+                            classes={{ tooltip: classes.tooltip }}
+                          >
+                            <Button color="successNoBackground" justIcon>
+                              <Edit className={classes.underChartIcons} />
                             </Button>
                           </Tooltip>
                           <Tooltip
@@ -407,9 +406,9 @@ function CoursesList(props) {
                       image={item.imagePath}
                       title={item.title}
                       text={item.description}
-                      price={item.teachername}
+                      price={item.status}
                       statIcon={UpdateIcon}
-                      statText={item.publish ? `Đang hiển thị` : 'Bị đình chỉ'}
+                      statText={`Cập nhật:${item.teachername}`}
                       hover
                       underImage={
                         <div>
@@ -430,7 +429,7 @@ function CoursesList(props) {
                             classes={{ tooltip: classes.tooltip }}
                           >
                             <Button color="successNoBackground" justIcon>
-                              <PublicIcon className={classes.underChartIcons} />
+                              <Edit className={classes.underChartIcons} />
                             </Button>
                           </Tooltip>
                           <Tooltip
@@ -469,8 +468,8 @@ function CoursesList(props) {
   );
 }
 
-CoursesList.propTypes = {
+TeacherCourses.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(dashboardStyle)(CoursesList);
+export default withStyles(dashboardStyle)(TeacherCourses);
