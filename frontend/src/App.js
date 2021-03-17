@@ -16,6 +16,7 @@ const SearchPage = React.lazy(() => import('@features/search/SearchPage'));
 const ProfilePage = React.lazy(() =>
   import('@features/profile/ProfilePage.jsx')
 );
+const TestUploadPage = React.lazy(()=>import("./test/Upload"))
 
 const CmsPage = React.lazy(() => import('@features/cms/cms'));
 function App() {
@@ -46,6 +47,7 @@ function App() {
             <Route path="/contact" exact component={ContactPage} />
             <Route path="/search" component={SearchPage} />
             <Route path="/profile" component={ProfilePage} />
+            <Route path="/upload" component={TestUploadPage} />
             <Route component={NotFoundPage} />
           </Switch>
         </BrowserRouter>
