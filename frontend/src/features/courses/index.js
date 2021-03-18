@@ -8,10 +8,11 @@ function Courses() {
   const match = useRouteMatch();
   return (
     <Switch>
-      <Route exact path={`${match.url}/:category?`} component={CoursesPage} />
+      <Route exact path={match.url} component={CoursesPage} />
+      <Route path={`/courses/category/:categoryId?`} component={CoursesPage} />
       <Route
         exact
-        path={`${match.url}/detail/:coursesId`}
+        path={`/courses/detail/:coursesId`}
         component={CoursesDetailPage}
       />
       <Route component={NotFoundPage} />

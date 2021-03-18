@@ -1,17 +1,19 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { Input } from 'antd';
-
+import { getListCategory } from '@features/home/homeSlice';
 const { Search } = Input;
 
 function NavOne() {
-  const [sticky, setSticky] = useState(false);
+  const dispatch = useDispatch();
   const history = useHistory();
+  const [sticky, setSticky] = useState(false);
+  const category = useSelector(({ homeReducer }) => homeReducer?.category);
   const onSearch = (keyword) => {
     history.push(`/search/keyword=${keyword}`);
   };
-
   const mobileMenu = () => {
     let mainNavToggler = document.querySelector('.menu-toggler');
     let mainNav = document.querySelector('.main-navigation');
@@ -26,6 +28,9 @@ function NavOne() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
+  }, []);
+  useEffect(() => {
+    !category.length && dispatch(getListCategory());
   }, []);
   const handleScroll = () => {
     if (window.scrollY > 70) {
@@ -76,76 +81,28 @@ function NavOne() {
                   <a>Các lĩnh vực</a>
                 </Link>
                 <ul className="sub-menu">
-                  <li>
-                    <Link to="/">Lập trình</Link>
-                    <ul className="sub-menu">
-                      <li>
-                        <Link to="/">
-                          <a>Lập trình C++</a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/">
-                          <a>Lập trình Android</a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/">
-                          <a>Lập trình JAVA</a>
-                        </Link>
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <Link to="/">IT và phần mềm</Link>
-                    <ul className="sub-menu">
-                      <li>
-                        <Link to="/">
-                          <a>Thủ thuật máy tính</a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/">
-                          <a>Hướng dẫn cài đặt</a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/">
-                          <a>Bảo mật</a>
-                        </Link>
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <Link to="/">Đồ hoạ</Link>
-                    <ul className="sub-menu">
-                      <li>
-                        <Link to="/">
-                          <a>Thủ thuật Photoshop</a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/">
-                          <a>Thiết kế web</a>
-                        </Link>
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <Link to="/">Ngoại ngữ</Link>
-                    <ul className="sub-menu">
-                      <li>
-                        <Link to="/">
-                          <a>Tiếng Anh</a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/">
-                          <a>Tiếng Nhật</a>
-                        </Link>
-                      </li>
-                    </ul>
-                  </li>
+                  {category.map((cat) => (
+                    <li key={cat?.categoryId}>
+                      <Link to={`/courses/category/${cat?.categoryId}?`}>
+                        {cat?.categoryName}
+                      </Link>
+                      {cat?.children?.length ? (
+                        <ul className="sub-menu">
+                          {cat.children.map((child) => (
+                            <li key={child?.categoryId}>
+                              <Link
+                                to={`/courses/category/${child?.categoryId}?`}
+                              >
+                                <a>{child?.categoryName}</a>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        ''
+                      )}
+                    </li>
+                  ))}
                 </ul>
               </li>
               <li>
