@@ -2,6 +2,7 @@ import React from 'react';
 import Swiper from 'react-id-swiper';
 import 'swiper/css/swiper.css';
 import CoursesItem from '@components/CoursesItem';
+import { Skeleton } from 'antd';
 
 const params = {
   slidesPerView: 3,
@@ -11,10 +12,6 @@ const params = {
   autoplay: {
     delay: 3000,
     disableOnInteraction: false,
-  },
-  pagination: {
-    el: '.swiper-pagination',
-    clickable: true,
   },
   breakpoints: {
     1024: {
@@ -31,7 +28,7 @@ const params = {
     },
   },
 };
-function CoursesCarousel({ type }) {
+function CoursesCarousel({ type, data }) {
   return (
     <div>
       <section className="course-one__top-title home-one">
@@ -40,6 +37,7 @@ function CoursesCarousel({ type }) {
             <h2 className="block-title__title">
               {type === 'new' && 'Các khoá học mới nhất'}
               {type === 'bestview' && 'Các khoá học được xem nhiều nhất'}
+              {type === 'hightlight' && 'Các khoá học nổi bật'}
             </h2>
           </div>
         </div>
@@ -48,17 +46,17 @@ function CoursesCarousel({ type }) {
       <section className="course-one course-one__teacher-details home-one">
         <div className="container">
           <div className="course-one__carousel">
-            <Swiper {...params}>
-              <div className="item">
-                <CoursesItem />
-              </div>
-              <div className="item">
-                <CoursesItem />
-              </div>
-              <div className="item">
-                <CoursesItem />
-              </div>
-            </Swiper>
+            {data?.length ? (
+              <Swiper {...params} shouldSwiperUpdate>
+                {data?.map((e, index) => (
+                  <div className="item" key={index}>
+                    <CoursesItem data={e} />
+                  </div>
+                ))}
+              </Swiper>
+            ) : (
+              <Skeleton />
+            )}
           </div>
         </div>
       </section>

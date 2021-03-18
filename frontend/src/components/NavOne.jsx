@@ -31,7 +31,7 @@ function NavOne() {
     };
   }, []);
   useEffect(() => {
-    !category.length && dispatch(getListCategory());
+    !category?.length && dispatch(getListCategory());
   }, []);
   const handleScroll = () => {
     if (window.scrollY > 70) {
@@ -82,7 +82,7 @@ function NavOne() {
                   <a>Các lĩnh vực</a>
                 </Link>
                 <ul className="sub-menu">
-                  {category.map((cat) => (
+                  {category?.map((cat) => (
                     <li key={cat?.categoryId}>
                       <Link to={`/courses/category/${cat?.categoryId}?`}>
                         {cat?.categoryName}

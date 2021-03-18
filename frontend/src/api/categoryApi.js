@@ -94,6 +94,11 @@ const categoryApi = {
     const url = '/category';
     return await axiosClient.get(url);
   },
+  //get top register category
+  getTopRegisterCategory: async () => {
+    const url = 'category/register/top';
+    return await axiosClient.get(url);
+  },
 };
 
 export default categoryApi;
