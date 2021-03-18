@@ -324,6 +324,8 @@ module.exports = {
         videopath: video.fileName,
         orderno: video.orderNo,
         preview: video.preview ? true : false,
+        title: video.title,
+        description: video.description
       });
     });
 

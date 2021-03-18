@@ -555,17 +555,17 @@ router.put(
       let course = {};
       let requestBody = req.body;
       let now = new Date();
+      let {title, imagePath, description, detailDescription, price, categoryId, teacherId, deletedVideoIds ,moreVideos} = req.body;
 
-      if (requestBody) {
-        course.title = requestBody.title || "";
-        course.imagePath = requestBody.imagePath || "";
-        course.description = requestBody.description || "";
-        course.detailDescription = requestBody.detailDescription || "";
-        course.updateddate = now;
-        course.price = requestBody.price || 0;
-        course.categoryid = requestBody.categoryId;
-        course.teacherid = requestBody.teacherId;
-      }
+      course = {
+        title, imagePath, description, detailDescription, price, categoryId, teacherId,
+        updateddate: now
+      };
+
+      //delete the video
+      deletedVideoIds.forEach(async (e) => {
+        await courseVideoModel.deleteById(e);
+      });
 
       courseModel
         .update(transaction, course)
