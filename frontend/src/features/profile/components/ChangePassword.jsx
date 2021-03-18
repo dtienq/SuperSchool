@@ -38,8 +38,8 @@ function ChangePassword() {
     return message.error('Đổi mật khẩu thất bại');
   };
   return (
-    <Spin spinning={loading}>
-      <div className="content-panel">
+    <div className="content-panel">
+      <Spin spinning={loading}>
         <h1 className="title mb-5">Thay đổi mật khẩu</h1>
         <form
           className="form-horizontal"
@@ -91,8 +91,8 @@ function ChangePassword() {
             </div>
           </div>
         </form>
-      </div>
-    </Spin>
+      </Spin>
+    </div>
   );
 }
 
