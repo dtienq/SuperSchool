@@ -636,7 +636,7 @@ router.get(
   }
 );
 
-router.put('/disable-course/:courseId', loginValidation(['ADMIN']), (req, res, next) => {
+router.put('/disable-course/:courseId', loginValidation(['ADMIN']), validation(require('../schemas/disable-course.json')), (req, res, next) => {
     let {publish} = req.body;
     let {courseId} = req.params;
 
