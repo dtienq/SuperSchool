@@ -8,9 +8,11 @@ const fs = require("fs");
 const path = require("path");
 const courseModel = require("../models/course.model");
 const courseVideoModel = require("../models/coursevideo.model");
+const studentCourseModel = require("../models/student-course.model");
 const constant = require("../utils/constant");
 const db = require("../utils/db");
 const loginValidation = require("../middlewares/validation.login");
+const commonUtils = require('../utils/common');
 
 //top 3 khóa học nổi bật nhất trong tuần qua (nhiều lượt đăng kí nhất)
 router.get("/top-highlight", function (req, res, next) {
@@ -287,6 +289,16 @@ router.get("/findById/:id", loginValidation(['NOT_NEED_LOGIN']), (req, res, next
         throw "Not found";
       } else {
         await courseModel.updateViews(course.courseid, +course.views + 1);
+
+        course.registered = false;
+
+        if(commonUtils.currentUser.userId) {
+          let temp1 = await studentCourseModel.findByStudentAndCourse({studentId: commonUtils.currentUser.userId, courseId: course.courseid});
+
+          if(temp1 && temp1.studentcourseid) {
+            course.registered = true;
+          }
+        }
 
         let courseVideo = { courseId: course.courseid };
 
