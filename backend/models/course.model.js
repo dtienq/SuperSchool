@@ -84,6 +84,7 @@ module.exports = {
     //   return db("course").where("courseid", id).first(); ==> Changed behavior
     return db("course as c")
       .innerJoin("user as u", "u.userid", "c.teacherid")
+      .innerJoin("category as cat", "cat.categoryid", "c.categoryid")
       .leftJoin("review as r", "r.courseid", "c.courseid")
       .leftJoin("student_course as sc", "sc.courseid", "c.courseid")
       .leftJoin("promotion as p", "p.courseid", "c.courseid")
@@ -94,6 +95,7 @@ module.exports = {
         "c.description as shortDescription",
         "c.detailDescription",
         "c.*",
+        "cat.name as categoryName",
         db.raw(
           'coalesce(round(cast(avg(r.rating) as numeric), 1), 0) as "ratingAvgPoint"'
         ),
@@ -116,7 +118,8 @@ module.exports = {
         "priceDiscount",
         "c.price",
         "c.updateddate",
-        "u.userid"
+        "u.userid",
+        "cat.categoryid"
       )
       .first();
   },
