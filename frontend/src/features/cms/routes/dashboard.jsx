@@ -148,4 +148,4 @@ var dashRoutes = [
     name: 'Dashboard',
   },
 ];
-export default dashRoutes;
+export default managerRoutes;
