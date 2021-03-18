@@ -130,7 +130,9 @@ class MainCategoryTables extends React.Component {
                     <Button
                       color="primary"
                       onClick={() =>
-                        this.props.history.push('/manager/forms/category-form')
+                        this.props.history.push(
+                          '/manager/category/category-form/'
+                        )
                       }
                     >
                       <AddBoxIcon />

@@ -20,8 +20,6 @@ import HeaderLinks from '@cmscomponents/Header/HeaderLinks.jsx';
 
 import sidebarStyle from '@cmsassets/jss/material-dashboard-pro-react/components/sidebarStyle.jsx';
 
-import avatar from '@cmsassets/img/faces/avatar.jpg';
-
 var ps;
 
 // We've created this component so we can have a ref to the wrapper of the links that appears in our sidebar.
@@ -134,7 +132,11 @@ class Sidebar extends React.Component {
     var user = (
       <div className={userWrapperClass}>
         <div className={photo}>
-          <img src={avatar} className={classes.avatarImg} alt="..." />
+          <img
+            src="https://www.lansweeper.com/wp-content/uploads/2018/05/ASSET-USER-ADMIN.png"
+            className={classes.avatarImg}
+            alt="..."
+          />
         </div>
         <List className={classes.list}>
           <ListItem className={classes.item + ' ' + classes.userItem}>
@@ -144,7 +146,7 @@ class Sidebar extends React.Component {
               onClick={() => this.openCollapse('openAvatar')}
             >
               <ListItemText
-                primary={rtlActive ? 'تانيا أندرو' : 'Administrator'}
+                primary={rtlActive ? 'تانيا أندرو' : 'Quản trị viên'}
                 secondary={
                   <b
                     className={

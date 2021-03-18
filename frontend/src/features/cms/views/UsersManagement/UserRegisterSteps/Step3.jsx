@@ -78,7 +78,9 @@ class Step3 extends React.Component {
       console.log(user);
       userApi
         .adminCreateAccount(user)
-        .then((data) => this.successAlert())
+        .then((data) => {
+          if (data) this.successAlert();
+        })
         .catch((err) => alert('Không thể đăng ký tài khoản'));
       return true;
     } else {

@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, { useState, useEffect } from 'react';
 
 // material-ui components
@@ -7,6 +9,7 @@ import FormControlLabel from 'material-ui/Form/FormControlLabel';
 import Radio from 'material-ui/Radio';
 // material-ui-icons
 import FiberManualRecord from 'material-ui-icons/FiberManualRecord';
+import Check from 'material-ui-icons/Check';
 //React quill
 import Editor from '@cmscomponents/Editor/Editor.jsx'; // ES6
 
@@ -17,7 +20,8 @@ import CurrencyTextField from '@unicef/material-ui-currency-textfield';
 import categoryApi from '@api/categoryApi';
 
 // core components
-import FileUpload from '@cmscomponents/CustomUpload/FileUpload';
+import { Upload } from 'antd';
+import { uploadService } from '@utils/uploadService';
 import NavPills from '@cmscomponents/NavPills/NavPills.jsx';
 import GridContainer from '@cmscomponents/Grid/GridContainer.jsx';
 import ItemGrid from '@cmscomponents/Grid/ItemGrid.jsx';
@@ -30,6 +34,8 @@ import FormControl from 'material-ui/Form/FormControl';
 import InputLabel from 'material-ui/Input/InputLabel';
 import regularFormsStyle from '@cmsassets/jss/material-dashboard-pro-react/views/regularFormsStyle';
 import Button from '@cmscomponents/CustomButtons/Button.jsx';
+import Checkbox from 'material-ui/Checkbox';
+
 function AddCourse(props) {
   const [state, setState] = useState({
     checked: [24, 22],
@@ -41,6 +47,7 @@ function AddCourse(props) {
     subcategory: '',
     listcategory: [],
     listsubcategory: [],
+    link: '',
   });
   const [course, setCourse] = useState({
     title: '',
@@ -62,9 +69,10 @@ function AddCourse(props) {
     let chapters = [];
     for (let i = 0; i < course.numberOfChapters; i++) {
       let chapter = {
-        orderno: i + 1,
+        orderNo: i + 1,
         title: '',
-        filename: '',
+        filePath: '',
+        preview: false,
       };
       chapters.push(chapter);
     }
@@ -90,6 +98,26 @@ function AddCourse(props) {
       }
     }, 200);
   }, []);
+  const uploadImage = async (options) => {
+    const { file, onSuccess, onError } = options;
+    const link = await uploadService('image', file);
+    if (link) {
+      onSuccess(file);
+      setState({ ...state, link: link });
+    } else {
+      onError(file);
+    }
+  };
+  const uploadVideo = async (options) => {
+    const { file, onSuccess, onError } = options;
+    const link = await uploadService('video', file);
+    if (link) {
+      onSuccess(file);
+      setState({ ...state, link: link });
+    } else {
+      onError(file);
+    }
+  };
   const handleCategorySelect = async (event) => {
     const subdata = await categoryApi.getSubCategoryByParentId(
       event.target.value
@@ -105,33 +133,6 @@ function AddCourse(props) {
     setState({ ...state, subcategory: event.target.value });
     setCourse({ ...course, categoryid: +event.target.value });
   };
-  const handleFileChange = (e) => {
-    e.preventDefault();
-    let reader = new FileReader();
-    let file = e.target.files[0];
-    reader.onloadend = () => {
-      this.setState({
-        file: file,
-        imagePreviewUrl: reader.result,
-      });
-    };
-    reader.readAsDataURL(file);
-  };
-  const filehandleClick = () => {
-    var input = document.createElement('input');
-    input.type = 'file';
-    input.onchange = handleFileChange;
-    input.click();
-  };
-  const detailhandleChange = (e) => {
-    setCourse({ ...course, detailDescription: e.target.value });
-  };
-  const videohandleClick = () => {
-    var input = document.createElement('input');
-    input.type = 'file';
-    input.onchange = handleFileChange;
-    input.click();
-  };
 
   const statusChange = function (event) {
     setState({ ...state, selectedValue: event.target.value });
@@ -140,12 +141,10 @@ function AddCourse(props) {
       status: event.target.value === 'a' ? 'COMPLETE' : 'INCOMPLETE',
     });
   };
-  const handleChangeEnabled = function (event) {
-    setState({ ...state, selectedEnabled: event.target.value });
-  };
+
   const EditChapter = function (order, value) {
     for (var chapter in coursevid.chapters) {
-      if (coursevid.chapters[chapter].orderno === order) {
+      if (coursevid.chapters[chapter].orderNo === order) {
         let newChap = coursevid.chapters;
         newChap[chapter] = [...newChap[chapter], value];
         setCoursevid({ ...coursevid, chapters: newChap });
@@ -158,7 +157,7 @@ function AddCourse(props) {
     let i = 0;
     coursevid.chapters.forEach((item) => {
       chaparr.push({
-        title: `Chương #${item.orderno}`,
+        title: `Chương #${item.orderNo}`,
         content: (
           <ItemGrid xs={12} sm={12} md={12}>
             <GridContainer>
@@ -175,7 +174,7 @@ function AddCourse(props) {
                   }}
                   inputProps={{
                     type: 'text',
-                    onChange: (e) => {},
+                    onChange: (e) => handleTitleChange(e, item.orderNo),
                     defaultValue: item.title,
                   }}
                 />
@@ -195,8 +194,32 @@ function AddCourse(props) {
                   }}
                   inputProps={{
                     type: 'text',
-                    onChange: (e) => {},
+                    onChange: (e) => handleVideoChange(e, item.orderNo),
+                    defaultValue: item.filePath,
                   }}
+                />
+              </ItemGrid>
+            </GridContainer>
+            <GridContainer>
+              <ItemGrid xs={12} sm={2}></ItemGrid>
+              <ItemGrid xs={12} sm={10}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      tabIndex={-1}
+                      checked={item.preview}
+                      onClick={() => handleToggle(item.orderNo, !item.preview)}
+                      checkedIcon={<Check className={classes.checkedIcon} />}
+                      icon={<Check className={classes.uncheckedIcon} />}
+                      classes={{
+                        checked: classes.checked,
+                      }}
+                    />
+                  }
+                  classes={{
+                    label: classes.label,
+                  }}
+                  label="Cho phép Preview"
                 />
               </ItemGrid>
             </GridContainer>
@@ -207,23 +230,29 @@ function AddCourse(props) {
     return chaparr;
   };
 
-  const handleToggle = function (value) {
-    const { checked } = state;
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setState({ ...state, checked: newChecked });
+  const handleToggle = function (order, value) {
+    let data = coursevid.chapters;
+    let foundIndex = data.findIndex((x) => x.orderNo === order);
+    data[foundIndex].preview = value;
+    setCoursevid({ ...coursevid, chapters: data });
+  };
+  const handleTitleChange = (e, order) => {
+    let data = coursevid.chapters;
+    let foundIndex = data.findIndex((x) => x.orderNo === order);
+    data[foundIndex].title = e.target.value;
+    setCoursevid({ ...coursevid, chapters: data });
+  };
+  const handleVideoChange = (e, order) => {
+    let data = coursevid.chapters;
+    let foundIndex = data.findIndex((x) => x.orderNo === order);
+    data[foundIndex].filePath = e.target.value;
+    setCoursevid({ ...coursevid, chapters: data });
   };
   const { classes } = props;
   return (
     <GridContainer>
       {console.log(course)}
+      {console.log(coursevid)}
       <ItemGrid xs={12} sm={12} md={12}>
         <HeaderCard
           cardTitle="Thông tin khoá học"
@@ -474,7 +503,7 @@ function AddCourse(props) {
                             digitGroupSeparator=","
                             error={moneyisValid}
                             onChange={(e) =>
-                              setCourse({ ...state, price: e.target.value })
+                              setCourse({ ...course, price: e.target.value })
                             }
                             helperText={
                               moneyisValid &&
@@ -647,6 +676,7 @@ function AddCourse(props) {
                     }}
                     inputProps={{
                       type: 'text',
+                      value: state.link,
                     }}
                     helpText="Đường dẫn sẽ hiển thị khi bạn upload file thành công."
                   />
@@ -654,8 +684,23 @@ function AddCourse(props) {
               </GridContainer>
               <GridContainer>
                 <ItemGrid xs={12} sm={2}></ItemGrid>
-                <ItemGrid xs={12} sm={10}>
-                  <input type="file"></input>
+                <ItemGrid xs={12} sm={3}>
+                  <Upload
+                    accept="image/*"
+                    customRequest={uploadImage}
+                    maxCount={1}
+                  >
+                    <Button color="rose">Upload hình ảnh</Button>
+                  </Upload>
+                </ItemGrid>
+                <ItemGrid xs={12} sm={4}>
+                  <Upload
+                    accept="image/*"
+                    customRequest={uploadVideo}
+                    maxCount={1}
+                  >
+                    <Button color="rose">Upload Video khoá học</Button>
+                  </Upload>
                 </ItemGrid>
               </GridContainer>
             </form>

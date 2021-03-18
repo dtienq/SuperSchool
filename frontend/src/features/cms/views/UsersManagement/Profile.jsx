@@ -9,20 +9,22 @@ import ItemGrid from '@cmscomponents/Grid/ItemGrid.jsx';
 import ProfileCard from '@cmscomponents/Cards/ProfileCard.jsx';
 import IconCard from '@cmscomponents/Cards/IconCard.jsx';
 import Button from '@cmscomponents/CustomButtons/Button.jsx';
+import { Link } from 'react-router-dom';
 import Clearfix from '@cmscomponents/Clearfix/Clearfix.jsx';
 import { useHistory } from 'react-router-dom';
-import avatar from '@cmsassets/img/faces/marc.jpg';
-
+import { useSelector, useDispatch } from 'react-redux';
 function Profile({ ...props }) {
+  const dispatch = useDispatch();
+  const currentUser = useSelector(({ userReducer }) => userReducer?.user);
   const history = useHistory();
   const info = {
-    username: 'Raykad552',
-    fullname: 'Nguyễn Minh Quân',
-    email: 'nmquanvn@gmail.com',
-    phonenumber: '09056251563',
-    dob: '25 / 12 / 1998',
-    reg: '08 / 02 / 2021',
-    group: 'Học viên',
+    username: currentUser.username,
+    fullname: currentUser.fullname,
+    email: currentUser.email,
+    phonenumber: '00000000000',
+    dob: 'Chưa cập nhật',
+    reg: 'Chưa cập nhật',
+    group: currentUser.groupCode,
     description:
       "Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...",
   };
@@ -103,14 +105,16 @@ function Profile({ ...props }) {
         </ItemGrid>
         <ItemGrid xs={12} sm={12} md={4}>
           <ProfileCard
-            avatar={avatar}
+            avatar={currentUser.picture}
             subtitle={info.group}
             title={info.fullname}
             description={info.description}
             content={
-              <Button color="rose" href="/" round>
-                Về trang chủ
-              </Button>
+              <Link to="/">
+                <Button color="rose" round>
+                  Về trang chủ
+                </Button>
+              </Link>
             }
           />
         </ItemGrid>

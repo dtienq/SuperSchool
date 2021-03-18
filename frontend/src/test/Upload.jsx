@@ -4,13 +4,18 @@ import { uploadService } from '@utils/uploadService';
 
 function AddCouses() {
   const uploadImage = async (options) => {
-    const { file } = options;
-    const link = await uploadService("image", file);
-    console.log(link);
+    const { file, onSuccess, onError } = options;
+    const link = await uploadService('image', file);
+    if (link) {
+      onSuccess(file);
+      alert(link);
+    } else {
+      onError(file);
+    }
   };
-  const uploadVideo= async (options) => {
+  const uploadVideo = async (options) => {
     const { file } = options;
-    const link = await uploadService("video", file);
+    const link = await uploadService('video', file);
     console.log(link);
   };
   return (

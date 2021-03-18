@@ -111,7 +111,7 @@ var dashRoutes = [
   {
     path: '/manager/teachercourses',
     icon: DashboardIcon,
-    name: 'Teacher Courses Management',
+    name: 'Khoá học của tôi',
     component: TeacherCourses,
   },
   {

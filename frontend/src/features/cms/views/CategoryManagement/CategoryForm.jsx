@@ -145,7 +145,7 @@ class CategoryForm extends React.Component {
             pathname: '/manager/category/main-category',
           });
         } catch (err) {
-          alert(err.message);
+          alert(err);
         }
       } else if (!this.state.main) {
         try {
