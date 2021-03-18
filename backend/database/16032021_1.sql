@@ -15,3 +15,7 @@ alter table review add column userid bigint not null references "user"(userid);
 alter table review alter column rating type float;
 
 alter table course add column disabled boolean not null default false;
+
+alter table course drop column disabled;
+
+alter table course add column publish boolean not null default true;

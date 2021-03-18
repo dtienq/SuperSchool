@@ -225,6 +225,8 @@ module.exports = {
       query.where("categoryid", categoryId);
     }
 
+    query.where("publish", true);
+
     if (orderBy) {
       query.orderBy(orderBy, orderType ? orderType : "asc");
     }
@@ -236,6 +238,8 @@ module.exports = {
     if (categoryId) {
       queryCount.where("categoryid", categoryId);
     }
+
+    queryCount.where("publish", true);
 
     queryCount.count("c.courseid as totalItems").first();
 

@@ -664,11 +664,11 @@ router.get(
 );
 
 router.put('/disable-course/:courseId', (req, res, next) => {
-    let {disabled} = req.body;
+    let {publish} = req.body;
     let {courseId} = req.params;
 
     courseModel.selectByIdSimple(courseId).then(async course => {
-        course.disabled = disabled;
+        course.publish = publish;
 
         course = await courseModel.updateSimple(course);
 
