@@ -1,14 +1,14 @@
-const userModel = require("../models/user.model");
-const courseModel = require("../models/course.model");
-const constant = require("../utils/constant");
-const mailService = require("../utils/mailService");
-const bcrypt = require("bcrypt");
-const randomString = require("randomstring");
-var express = require("express");
-const categoryModel = require("../models/category.model");
+const userModel = require('../models/user.model');
+const courseModel = require('../models/course.model');
+const constant = require('../utils/constant');
+const mailService = require('../utils/mailService');
+const bcrypt = require('bcrypt');
+const randomString = require('randomstring');
+var express = require('express');
+const categoryModel = require('../models/category.model');
 // const courseModel = require("../models/course.model");
 var router = express.Router();
-router.get("/listuser", (req, res, next) => {
+router.get('/listuser', (req, res, next) => {
   let queryParams = req.query;
   let body = req.body;
   let page = body.page;
@@ -23,7 +23,7 @@ router.get("/listuser", (req, res, next) => {
     .catch(next);
 });
 //Student = 2; Teacher = 3 && Admin = 1
-router.get("/getuserbygroupid/:groupId", (req, res, next) => {
+router.get('/getuserbygroupid/:groupId', (req, res, next) => {
   const { groupId } = req.params;
   userModel
     .getUserbyGroupId(groupId)
@@ -35,7 +35,7 @@ router.get("/getuserbygroupid/:groupId", (req, res, next) => {
     .catch(next);
 });
 
-router.post("/togglestatus", (req, res, next) => {
+router.post('/togglestatus', (req, res, next) => {
   const { userId, status } = req.body;
   userModel
     .toggleStatus(userId, status)
@@ -47,7 +47,7 @@ router.post("/togglestatus", (req, res, next) => {
     .catch(next);
 });
 
-router.post("/createteacher", (req, res, next) => {
+router.post('/createteacher', (req, res, next) => {
   const { fullname, email, picture, usergroupid } = req.body;
   const raw_password = randomString.generate({ length: 6 });
   const password = bcrypt.hashSync(raw_password, constant.SALT_ROUNDS);
@@ -57,7 +57,7 @@ router.post("/createteacher", (req, res, next) => {
     .then((data) => {
       const dataToSend = {
         to: email,
-        subject: "SuperSchool - Thông tin đăng nhập",
+        subject: 'SuperSchool - Thông tin đăng nhập',
         html: `<div>Email: ${email}</div>
                 <div>Mật khẩu:${raw_password}</div>`,
       };
@@ -73,7 +73,7 @@ router.post("/createteacher", (req, res, next) => {
     .catch(next);
 });
 
-router.get("/deleteteacher/:userId", (req, res, next) => {
+router.get('/deleteteacher/:userId', (req, res, next) => {
   const { userId } = req.params;
   userModel
     .removeTeacher(userId)
@@ -85,7 +85,7 @@ router.get("/deleteteacher/:userId", (req, res, next) => {
     .catch(next);
 });
 //without tree
-router.get("/getallcourse", (req, res, next) => {
+router.get('/getallcourse', (req, res, next) => {
   categoryModel
     .getParentCategory()
     .then((data) => {
@@ -97,7 +97,7 @@ router.get("/getallcourse", (req, res, next) => {
 });
 
 //with tree.
-router.get("/getcourse", (req, res, next) => {
+router.get('/getcourse', (req, res, next) => {
   categoryModel
     .getListCategory(null)
     .then((data) => {
@@ -126,9 +126,17 @@ function customizeListCategory(categoryList) {
   return parentCategories;
 }
 
-router.get("/view/courses/", (req, res, next) => {
+router.get('/view/courses/', (req, res, next) => {
   courseModel
     .viewForAdmin()
+    .then((data) => res.json({ data: data }))
+    .catch(next);
+});
+
+router.get('/view/teachercourses/:id', (req, res, next) => {
+  if (!req.params.id) return res.json({ err: 'Không tìm thấy kết quả' });
+  courseModel
+    .viewForTeacher(req.params.id)
     .then((data) => res.json({ data: data }))
     .catch(next);
 });

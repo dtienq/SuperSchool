@@ -1,14 +1,14 @@
-var express = require("express");
-const validateMdw = require("../middlewares/validate.mdw");
+var express = require('express');
+const validateMdw = require('../middlewares/validate.mdw');
 var router = express.Router();
 
-const categoryModel = require("../models/category.model");
-const courseModel = require("../models/course.model");
-const common = require("../utils/common");
-const constant = require("../utils/constant");
-const db = require("../utils/db");
-const roleValidation = require("../middlewares/validation.role");
-const loginValidation = require("../middlewares/validation.login");
+const categoryModel = require('../models/category.model');
+const courseModel = require('../models/course.model');
+const common = require('../utils/common');
+const constant = require('../utils/constant');
+const db = require('../utils/db');
+const roleValidation = require('../middlewares/validation.role');
+const loginValidation = require('../middlewares/validation.login');
 
 /**
  * @api {get} /api/category Lấy danh sách category
@@ -35,7 +35,7 @@ const loginValidation = require("../middlewares/validation.login");
  *         ]
  *     }
  */
-router.get("/", (req, res, next) => {
+router.get('/', (req, res, next) => {
   categoryModel
     .getListCategory(null)
     .then((data) => {
@@ -44,7 +44,7 @@ router.get("/", (req, res, next) => {
           data: customizeListCategory(data),
         });
       } else {
-        throw "Refresh token fail";
+        throw 'Refresh token fail';
       }
     })
     .catch(next);
@@ -66,7 +66,7 @@ function customizeListCategory(categoryList) {
   return parentCategories;
 }
 
-router.get("/getByParentId", (req, res, next) => {
+router.get('/getByParentId', (req, res, next) => {
   let queryParams = req.query;
 
   categoryModel
@@ -77,20 +77,20 @@ router.get("/getByParentId", (req, res, next) => {
           data: data,
         });
       } else {
-        throw "Refresh token fail";
+        throw 'Refresh token fail';
       }
     })
     .catch(next);
 });
 
-router.get("/getTree", (req, res, next) => {
+router.get('/getTree', (req, res, next) => {
   categoryModel
     .getTree()
     .then((data) => {
       if (data) {
         res.json({ data: data });
       } else {
-        throw "Refresh token fail";
+        throw 'Refresh token fail';
       }
     })
     .catch(next);
@@ -114,7 +114,7 @@ router.get("/getTree", (req, res, next) => {
  *         ]
  *     }
  */
-router.get("/register/top", function (req, res, next) {
+router.get('/register/top', function (req, res, next) {
   categoryModel
     .getTopRegister()
     .then((categories) => {
@@ -143,7 +143,7 @@ router.get("/register/top", function (req, res, next) {
  *     }
  */
 router.get(
-  "/findById/:id",
+  '/findById/:id',
   roleValidation([constant.USER_GROUP.ADMIN]),
   (req, res, next) => {
     categoryModel
@@ -176,9 +176,10 @@ router.get(
  *     }
  */
 router.post(
-  "/create",
+  '/create',
+  loginValidation(),
   roleValidation([constant.USER_GROUP.ADMIN]),
-  validateMdw(require("../schemas/createCategory.json")),
+  validateMdw(require('../schemas/createCategory.json')),
   (req, res, next) => {
     db.transaction((transaction) => {
       categoryModel
@@ -186,7 +187,7 @@ router.post(
         .then((_) => {
           transaction.commit();
           res.json({
-            data: "Success",
+            data: 'Success',
           });
         })
         .catch((err) => {
@@ -209,7 +210,7 @@ router.post(
  *     }
  */
 router.delete(
-  "/delete/:id",
+  '/delete/:id',
   loginValidation(),
   roleValidation([constant.USER_GROUP.ADMIN]),
   async (req, res, next) => {
@@ -218,8 +219,8 @@ router.delete(
 
     if (categories && categories.length > 0) {
       return res.status(403).json({
-        code: "HAS_SUB_CAT",
-        message: "Lĩnh vực này có lĩnh vực phụ, không thể xóa.",
+        code: 'HAS_SUB_CAT',
+        message: 'Lĩnh vực này có lĩnh vực phụ, không thể xóa.',
       });
     }
 
@@ -227,8 +228,8 @@ router.delete(
 
     if (+totalCourse.count > 0) {
       return res.status(403).json({
-        code: "HAS_COURSES",
-        message: "Lĩnh vực này có khóa học, không thể xóa.",
+        code: 'HAS_COURSES',
+        message: 'Lĩnh vực này có khóa học, không thể xóa.',
       });
     }
 
@@ -236,7 +237,7 @@ router.delete(
       categoryModel.delete(transaction, id).then((_) => {
         transaction.commit();
         res.json({
-          data: "Success",
+          data: 'Success',
         });
       });
     });
@@ -244,9 +245,9 @@ router.delete(
 );
 
 router.put(
-  "/update",
+  '/update',
   roleValidation([constant.USER_GROUP.ADMIN]),
-  validateMdw(require("../schemas/updateCategory.json")),
+  validateMdw(require('../schemas/updateCategory.json')),
   (req, res, next) => {
     db.transaction((transaction) => {
       categoryModel
@@ -254,7 +255,7 @@ router.put(
         .then((_) => {
           transaction.commit();
           res.json({
-            data: "Success",
+            data: 'Success',
           });
         })
         .catch((err) => {
