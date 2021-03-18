@@ -8,7 +8,7 @@ const transport = nodemailer.createTransport({
   },
 });
 
-exports.sendOTPRegister = async (emailPayload) => {
+exports.sendMail = async (emailPayload) => {
   try {
     await transport.sendMail({
       from: "superschool",

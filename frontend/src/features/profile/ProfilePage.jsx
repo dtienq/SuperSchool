@@ -18,8 +18,8 @@ const StyledNavLink = styled(NavLink)`
   margin-right: 32px;
   padding: 12px;
   &.active {
-    color: #1890ff;
-    border-bottom: 2px solid;
+    color: #1890ff !important;
+    border-bottom: 2px solid !important;
   }
 `;
 function ProfilePage() {

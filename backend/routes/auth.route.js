@@ -96,13 +96,13 @@ router.post("/login", validation(loginSchema), function (req, res, next) {
  */
 router.post("/register", function (req, res, next) {
   let userInfo = req.body;
-  console.log(req.body);
   let newUser = {
     username: userInfo.email,
     password: userInfo.password,
     usergroupid: 2,
     fullname: userInfo.username,
     email: userInfo.email,
+    picture: userInfo.picture
   };
   newUser.refresh_token = randomstring.generate({ length: 255 });
   newUser.password = bcrypt.hashSync(newUser.password, constant.SALT_ROUNDS);
@@ -160,6 +160,8 @@ router.post("/google-login", (req, res) => {
             } else {
               // This email not existed
               // Register account with email from google
+              const raw_password = randomstring.generate({ length: 6 });
+              const password = bcrypt.hashSync(raw_password, constant.SALT_ROUNDS);
               const rfToken = randomstring.generate({ length: 255 });
               let userInfo = {
                 usergroupid: 2,
@@ -168,11 +170,17 @@ router.post("/google-login", (req, res) => {
                 picture,
                 refresh_token: rfToken,
                 username: email,
-                password: "",
+                password: password,
               };
               userModel
                 .addUserFromGG(userInfo)
                 .then((result) => {
+                  const dataToSend = {
+                    to: email,
+                    subject: "SuperSchool - Password",
+                    html: `<div>Mật khẩu mặc định của bạn là: ${raw_password}</div>`,
+                  };
+                  mailService.sendMail(dataToSend);
                   const access_token = jwt.sign(
                     commonUtils.parse2Plain(userInfo),
                     constant.SECRET_KEY
@@ -302,7 +310,7 @@ router.post("/check-email", async (req, res) => {
       subject: "SuperSchool - Mã OTP",
       html: `<div>Mã OTP của bạn là: ${otp}</div>`,
     };
-    const sendMail = await mailService.sendOTPRegister(dataToSend);
+    const sendMail = await mailService.sendMail(dataToSend);
     if (sendMail) res.json({ status: true });
   } catch (error) {
     throw error;

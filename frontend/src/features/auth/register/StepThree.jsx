@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
-import { Row, Col, Spin } from 'antd';
+import { Row, Col, Spin, Upload, message } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import { Input, Form, Button } from '@features/auth/base/components';
 import { RegisterStepThreeValidationSchema } from '@features/auth/base/yup';
 import userApi from '@api/userApi';
+import { uploadService } from '@utils/uploadService';
 
 const { FormItem } = Form;
 
@@ -26,15 +28,28 @@ const SButton = styled(Button)`
 
 function StepThree({ onChangeTitle, currentEmail }) {
   const [loading, setLoading] = useState(false);
+  const [picture, setPicture] = useState('');
   const { handleSubmit, errors, control } = useForm({
     validationSchema: RegisterStepThreeValidationSchema,
   });
+  const uploadImage = async (options) => {
+    const { file, onSuccess, onError } = options;
+    const link = await uploadService('image', file);
+    if (link) {
+      onSuccess(file);
+      setPicture(link);
+    } else {
+      onError(file);
+    }
+  };
   const onSubmit = async (data) => {
+    if (!picture) return message.error('Chưa upload ảnh đại diện');
     setLoading(true);
     const dataToSend = {
       username: data?.username,
       password: data?.password,
       email: currentEmail,
+      picture
     };
     try {
       const res = await userApi.register(dataToSend);
@@ -83,6 +98,16 @@ function StepThree({ onChangeTitle, currentEmail }) {
               error={errors.repassword?.message}
               defaultValue=""
             />
+            <SPadding size="30px" />
+            <div>Upload ảnh đại diện</div>
+            <Upload
+              accept="image/*"
+              customRequest={uploadImage}
+              maxCount={1}
+              onRemove={() => setPicture('')}
+            >
+              <Button icon={<UploadOutlined />}>Upload image</Button>
+            </Upload>
             <SPadding size="30px" />
             <SButton htmlType="submit" block>
               Hoàn thành

@@ -62,7 +62,7 @@ router.post("/createteacher", (req, res, next) => {
                 <div>Mật khẩu:${raw_password}</div>`,
       };
       const sendMail = mailService
-        .sendOTPRegister(dataToSend)
+        .sendMail(dataToSend)
         .then((sendMail) => {
           if (sendMail)
             res.json({
