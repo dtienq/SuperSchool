@@ -563,9 +563,11 @@ router.put(
       };
 
       //delete the video
-      deletedVideoIds.forEach(async (e) => {
-        await courseVideoModel.deleteById(e);
-      });
+      if(deletedVideoIds) {
+        deletedVideoIds.forEach(async (e) => {
+          await courseVideoModel.deleteById(e);
+        });
+      }
 
       courseModel
         .update(transaction, course)
