@@ -9,17 +9,9 @@ const categoryModel = require('../models/category.model');
 // const courseModel = require("../models/course.model");
 const loginValidation = require('../middlewares/validation.login');
 var router = express.Router();
-<<<<<<< HEAD
-router.get('/listuser', (req, res, next) => {
-  let queryParams = req.query;
-  let body = req.body;
-  let page = body.page;
-  let pageSize = body.pageSize;
-=======
-const validation = require("../middlewares/validate.mdw");
+const validation = require('../middlewares/validate.mdw');
 
-router.get("/listuser", loginValidation(['ADMIN']), (req, res, next) => {
->>>>>>> release/tienqd
+router.get('/listuser', loginValidation(['ADMIN']), (req, res, next) => {
   userModel
     .findAll()
     .then((data) => {
@@ -31,90 +23,93 @@ router.get("/listuser", loginValidation(['ADMIN']), (req, res, next) => {
 });
 
 //Student = 2; Teacher = 3 && Admin = 1
-<<<<<<< HEAD
-router.get('/getuserbygroupid/:groupId', (req, res, next) => {
-=======
-router.get("/getuserbygroupid/:groupId", loginValidation(['ADMIN']), (req, res, next) => {
->>>>>>> release/tienqd
-  const { groupId } = req.params;
-  userModel
-    .getUserbyGroupId(groupId)
-    .then((data) => {
-      res.json({
-        data,
-      });
-    })
-    .catch(next);
-});
+router.get(
+  '/getuserbygroupid/:groupId',
+  loginValidation(['ADMIN']),
+  (req, res, next) => {
+    const { groupId } = req.params;
+    userModel
+      .getUserbyGroupId(groupId)
+      .then((data) => {
+        res.json({
+          data,
+        });
+      })
+      .catch(next);
+  }
+);
 
-<<<<<<< HEAD
-router.post('/togglestatus', (req, res, next) => {
-=======
-router.post("/togglestatus", loginValidation(['ADMIN']), validation(require('../schemas/togglestatus.json')), (req, res, next) => {
->>>>>>> release/tienqd
-  const { userId, status } = req.body;
-  userModel
-    .toggleStatus(userId, status)
-    .then((data) => {
-      res.json({
-        data,
-      });
-    })
-    .catch(next);
-});
+router.post(
+  '/togglestatus',
+  loginValidation(['ADMIN']),
+  validation(require('../schemas/togglestatus.json')),
+  (req, res, next) => {
+    const { userId, status } = req.body;
+    userModel
+      .toggleStatus(userId, status)
+      .then((data) => {
+        res.json({
+          data,
+        });
+      })
+      .catch(next);
+  }
+);
 
-<<<<<<< HEAD
-router.post('/createteacher', (req, res, next) => {
-=======
-router.post("/createteacher", loginValidation(['ADMIN']), validation(require('../schemas/createteacher.json')), (req, res, next) => {
->>>>>>> release/tienqd
-  const { fullname, email, picture, usergroupid } = req.body;
-  const raw_password = randomString.generate({ length: 6 });
-  const password = bcrypt.hashSync(raw_password, constant.SALT_ROUNDS);
-  const refresh_token = randomString.generate({ length: 255 });
-  userModel
-    .addAccount(fullname, email, usergroupid, picture || null, password, refresh_token)
-    .then((data) => {
-      const dataToSend = {
-        to: email,
-        subject: 'SuperSchool - Thông tin đăng nhập',
-        html: `<div>Email: ${email}</div>
+router.post(
+  '/createteacher',
+  loginValidation(['ADMIN']),
+  validation(require('../schemas/createteacher.json')),
+  (req, res, next) => {
+    const { fullname, email, picture, usergroupid } = req.body;
+    const raw_password = randomString.generate({ length: 6 });
+    const password = bcrypt.hashSync(raw_password, constant.SALT_ROUNDS);
+    const refresh_token = randomString.generate({ length: 255 });
+    userModel
+      .addAccount(
+        fullname,
+        email,
+        usergroupid,
+        picture || null,
+        password,
+        refresh_token
+      )
+      .then((data) => {
+        const dataToSend = {
+          to: email,
+          subject: 'SuperSchool - Thông tin đăng nhập',
+          html: `<div>Email: ${email}</div>
                 <div>Mật khẩu:${raw_password}</div>`,
-      };
-      const sendMail = mailService
-        .sendMail(dataToSend)
-        .then((sendMail) => {
+        };
+        const sendMail = mailService.sendMail(dataToSend).then((sendMail) => {
           if (sendMail)
             res.json({
               data,
             });
         });
-    })
-    .catch(next);
-});
+      })
+      .catch(next);
+  }
+);
 
-<<<<<<< HEAD
-router.get('/deleteteacher/:userId', (req, res, next) => {
-=======
-router.get("/deleteteacher/:userId", loginValidation(['ADMIN']), (req, res, next) => {
->>>>>>> release/tienqd
-  const { userId } = req.params;
-  userModel
-    .removeTeacher(userId)
-    .then((data) => {
-      res.json({
-        data,
-      });
-    })
-    .catch(next);
-});
+router.get(
+  '/deleteteacher/:userId',
+  loginValidation(['ADMIN']),
+  (req, res, next) => {
+    const { userId } = req.params;
+    userModel
+      .removeTeacher(userId)
+      .then((data) => {
+        res.json({
+          data,
+        });
+      })
+      .catch(next);
+  }
+);
 
 //without tree
-<<<<<<< HEAD
-router.get('/getallcourse', (req, res, next) => {
-=======
-router.get("/getallcourse", loginValidation(['ADMIN']), (req, res, next) => {
->>>>>>> release/tienqd
+router.get('/getallcourse', loginValidation(['ADMIN']), (req, res, next) => {
   categoryModel
     .getParentCategory()
     .then((data) => {
@@ -126,11 +121,7 @@ router.get("/getallcourse", loginValidation(['ADMIN']), (req, res, next) => {
 });
 
 //with tree.
-<<<<<<< HEAD
-router.get('/getcourse', (req, res, next) => {
-=======
-router.get("/getcourse", loginValidation(['ADMIN']), (req, res, next) => {
->>>>>>> release/tienqd
+router.get('/getcourse', loginValidation(['ADMIN']), (req, res, next) => {
   categoryModel
     .getListCategory(null)
     .then((data) => {
@@ -159,11 +150,7 @@ function customizeListCategory(categoryList) {
   return parentCategories;
 }
 
-<<<<<<< HEAD
-router.get('/view/courses/', (req, res, next) => {
-=======
-router.get("/view/courses/", loginValidation(['ADMIN']), (req, res, next) => {
->>>>>>> release/tienqd
+router.get('/view/courses/', loginValidation(['ADMIN']), (req, res, next) => {
   courseModel
     .viewForAdmin()
     .then((data) => res.json({ data: data }))

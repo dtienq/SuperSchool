@@ -1,23 +1,23 @@
-const userModel = require("../models/user.model");
-var express = require("express");
+const userModel = require('../models/user.model');
+var express = require('express');
 var router = express.Router();
-const { OAuth2Client } = require("google-auth-library");
-const validation = require("../middlewares/validate.mdw");
-const loginSchema = require("../schemas/login.json");
-const registerSchema = require("../schemas/register.json");
-const jwt = require("jsonwebtoken");
-const commonUtils = require("../utils/common");
-const constant = require("../utils/constant");
-const bcrypt = require("bcrypt");
-const randomstring = require("randomstring");
-const db = require("../utils/db");
+const { OAuth2Client } = require('google-auth-library');
+const validation = require('../middlewares/validate.mdw');
+const loginSchema = require('../schemas/login.json');
+const registerSchema = require('../schemas/register.json');
+const jwt = require('jsonwebtoken');
+const commonUtils = require('../utils/common');
+const constant = require('../utils/constant');
+const bcrypt = require('bcrypt');
+const randomstring = require('randomstring');
+const db = require('../utils/db');
 // const { json } = require("body-parser");
-const omit = require("lodash.omit");
-const refreshTokenSchema = require("../schemas/refresh-token.json");
-const { request } = require("express");
-const mailService = require("../utils/mailService");
-const rn = require("random-number");
-const loginValidation = require("../middlewares/validation.login");
+const omit = require('lodash.omit');
+const refreshTokenSchema = require('../schemas/refresh-token.json');
+const { request } = require('express');
+const mailService = require('../utils/mailService');
+const rn = require('random-number');
+const loginValidation = require('../middlewares/validation.login');
 
 /**
  * @api {post} /api/auth/login Đăng nhập
@@ -37,7 +37,7 @@ const loginValidation = require("../middlewares/validation.login");
  *         "refresh_token": "QhnibXASPJRiDt46hDBWQGljURlZnfgkTOV8U6FRCkVqo0P3Rwx4QBjl9DBFyqLYt41jEiKQWjhUCTFn0ESFu2HLGgiu8pAXolHvhCGihEdCBKne3rh4erT5vv3Kc3yjM4EvjQ4Czine7D15oKT5Qh4d5uKgTrHao3BlzceL7HuTL9WKcWMn9YR9OVDoyjGsRwvNXKqE85xaT4XMWtoIdyH2vGCWTiVVF5T4cV2N2Ju4l7bVNrgD5CyXBd4gUFl"
  *     }
  */
-router.post("/login", validation(loginSchema), function (req, res, next) {
+router.post('/login', validation(loginSchema), function (req, res, next) {
   let userInfo = req.body;
 
   userModel
@@ -52,7 +52,7 @@ router.post("/login", validation(loginSchema), function (req, res, next) {
             commonUtils.parse2Plain(data),
             constant.SECRET_KEY,
             {
-              expiresIn: '15s'
+              expiresIn: '15s',
             }
           );
           const refresh_token = data.refresh_token;
@@ -66,12 +66,12 @@ router.post("/login", validation(loginSchema), function (req, res, next) {
           });
         } else {
           res.status(401).json({
-            message: "Email or password are not correct",
+            message: 'Email or password are not correct',
           });
         }
       } else {
         res.status(401).json({
-          message: "Email or password are not correct",
+          message: 'Email or password are not correct',
         });
       }
     })
@@ -98,7 +98,7 @@ router.post("/login", validation(loginSchema), function (req, res, next) {
  *         "refresh_token": "QhnibXASPJRiDt46hDBWQGljURlZnfgkTOV8U6FRCkVqo0P3Rwx4QBjl9DBFyqLYt41jEiKQWjhUCTFn0ESFu2HLGgiu8pAXolHvhCGihEdCBKne3rh4erT5vv3Kc3yjM4EvjQ4Czine7D15oKT5Qh4d5uKgTrHao3BlzceL7HuTL9WKcWMn9YR9OVDoyjGsRwvNXKqE85xaT4XMWtoIdyH2vGCWTiVVF5T4cV2N2Ju4l7bVNrgD5CyXBd4gUFl"
  *     }
  */
-router.post("/register", function (req, res, next) {
+router.post('/register', function (req, res, next) {
   let userInfo = req.body;
   let newUser = {
     username: userInfo.email,
@@ -106,7 +106,7 @@ router.post("/register", function (req, res, next) {
     usergroupid: 2,
     fullname: userInfo.username,
     email: userInfo.email,
-    picture: userInfo.picture
+    picture: userInfo.picture,
   };
   newUser.refresh_token = randomstring.generate({ length: 255 });
   newUser.password = bcrypt.hashSync(newUser.password, constant.SALT_ROUNDS);
@@ -115,7 +115,7 @@ router.post("/register", function (req, res, next) {
     userModel
       .create(transaction, newUser)
       .then((data) => {
-        let access_token = "";
+        let access_token = '';
         data.refresh_token = undefined;
         access_token = jwt.sign(
           commonUtils.parse2Plain(data),
@@ -136,7 +136,7 @@ router.post("/register", function (req, res, next) {
 });
 
 //Google login
-router.post("/google-login", (req, res) => {
+router.post('/google-login', (req, res) => {
   const { idToken } = req.body;
   const client = new OAuth2Client(constant.GOOGLE_CLIENT);
   client
@@ -165,7 +165,10 @@ router.post("/google-login", (req, res) => {
               // This email not existed
               // Register account with email from google
               const raw_password = randomstring.generate({ length: 6 });
-              const password = bcrypt.hashSync(raw_password, constant.SALT_ROUNDS);
+              const password = bcrypt.hashSync(
+                raw_password,
+                constant.SALT_ROUNDS
+              );
               const rfToken = randomstring.generate({ length: 255 });
               let userInfo = {
                 usergroupid: 2,
@@ -181,7 +184,7 @@ router.post("/google-login", (req, res) => {
                 .then((result) => {
                   const dataToSend = {
                     to: email,
-                    subject: "SuperSchool - Password",
+                    subject: 'SuperSchool - Password',
                     html: `<div>Mật khẩu mặc định của bạn là: ${raw_password}</div>`,
                   };
                   mailService.sendMail(dataToSend);
@@ -192,7 +195,7 @@ router.post("/google-login", (req, res) => {
                   res.json({
                     access_token,
                     refresh_token: rfToken,
-                    user: omit(userInfo, ["refresh_token", "password"]),
+                    user: omit(userInfo, ['refresh_token', 'password']),
                   });
                 })
                 .catch((err) => {
@@ -205,7 +208,7 @@ router.post("/google-login", (req, res) => {
           });
       } else {
         res.status(401).json({
-          error: "Google login failed. Try again",
+          error: 'Google login failed. Try again',
         });
       }
     })
@@ -231,7 +234,7 @@ router.post("/google-login", (req, res) => {
  *     }
  */
 router.post(
-  "/refresh-token",
+  '/refresh-token',
   // validation(refreshTokenSchema),
   (req, res, next) => {
     let { access_token, refresh_token } = req.body;
@@ -251,14 +254,14 @@ router.post(
             access_token: access_token,
           });
         } else {
-          throw "Refresh token fail";
+          throw 'Refresh token fail';
         }
       })
       .catch(next);
   }
 );
 
-router.post("/check-login", (req, res) => {
+router.post('/check-login', (req, res) => {
   try {
     const access_token = req.headers.authorization;
     const user = jwt.verify(access_token, constant.SECRET_KEY, {
@@ -267,13 +270,13 @@ router.post("/check-login", (req, res) => {
     if (!user)
       return res.json({
         isLogin: false,
-        message: "Can not find user",
+        message: 'Can not find user',
       });
     userModel.getByUserEmail(user.email).then((data) => {
       if (data) {
         res.json({
           isLogin: true,
-          user: omit(data, ["password", "refresh_token"]),
+          user: omit(data, ['password', 'refresh_token']),
         });
       } else {
         res.json({
@@ -287,7 +290,7 @@ router.post("/check-login", (req, res) => {
 });
 
 //Check existed email
-router.post("/check-email", async (req, res) => {
+router.post('/check-email', async (req, res) => {
   try {
     const { email } = req.body;
     //Check is existed user
@@ -295,7 +298,7 @@ router.post("/check-email", async (req, res) => {
     if (user) {
       return res.json({
         status: false,
-        message: "Email đã tồn tại, hãy đăng nhập!",
+        message: 'Email đã tồn tại, hãy đăng nhập!',
       });
     }
     const otp = commonUtils.padLeadingZero(
@@ -311,7 +314,7 @@ router.post("/check-email", async (req, res) => {
     }
     const dataToSend = {
       to: email,
-      subject: "SuperSchool - Mã OTP",
+      subject: 'SuperSchool - Mã OTP',
       html: `<div>Mã OTP của bạn là: ${otp}</div>`,
     };
     const sendMail = await mailService.sendMail(dataToSend);
@@ -321,7 +324,7 @@ router.post("/check-email", async (req, res) => {
   }
 });
 //Confirm OTP
-router.post("/confirm-otp", async (req, res) => {
+router.post('/confirm-otp', async (req, res) => {
   try {
     const { email, otp } = req.body;
     //check otp
