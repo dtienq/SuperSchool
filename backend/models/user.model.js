@@ -9,6 +9,9 @@ module.exports = {
   findAll: () => {
     return db('user');
   },
+  checkMailDuplicate: (userId, email) => {
+    return db('user').where('userid', '!=', userId).where('email', email).first();
+  },
   getUserbyGroupId: (groupId) => {
     return db('user').where('usergroupid', groupId);
   },

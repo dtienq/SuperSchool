@@ -17,12 +17,23 @@ router.post(
   validation(require("../schemas/updateInfo.json")),
   (req, res, next) => {
     let user = req.body;
+    let {userId} = commonUtils.currentUser;
 
-    db.transaction((transaction) => {
+    db.transaction(async (transaction) => {
       if (user.userId != commonUtils.currentUser.userId) {
         res.status(403).json({
           message: "You are not have permission to access this function",
         });
+      }
+
+      if(user.email) {
+        let data = await userModel.checkMailDuplicate(userId, user.email);
+        if(data && data.userid) {
+          return res.status(500).json({
+            code: 'DUPLICATE_EMAIL',
+            message: 'Email đã tồn tại'
+          })
+        }
       }
 
       userModel
