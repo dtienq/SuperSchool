@@ -9,7 +9,7 @@ import TeacherTable from '@cmsviews/UsersManagement/TeacherTable.jsx';
 import AccountRegister from '@cmsviews/UsersManagement/AccountRegister.jsx';
 import UserProfile from '@cmsviews/UsersManagement/UserProfile.jsx';
 import Profile from '@cmsviews/UsersManagement/Profile.jsx';
-
+import UserAndCourse from '@cmsviews/UsersManagement/UserAndCourses.jsx';
 // material-ui-icons
 import DashboardIcon from 'material-ui-icons/Dashboard';
 import ContentPaste from 'material-ui-icons/ContentPaste';
@@ -20,7 +20,7 @@ import MainCategoryTables from '@cmsviews/CategoryManagement/MainCategoryTables'
 import SubCategoryTables from '@cmsviews/CategoryManagement/SubCategoryTables';
 import CategoryForm from '@cmsviews/CategoryManagement/CategoryForm';
 
-var dashRoutes = [
+var managerRoutes = [
   // User Info
   {
     path: '/manager/profile',
@@ -102,11 +102,38 @@ var dashRoutes = [
   },
 
   //User Edit
+  // {
+  //   path: '/manager/editprofile',
+  //   icon: PersonIcon,
+  //   name: 'Sửa thông tin',
+  //   component: UserProfile,
+  // },
   {
-    path: '/manager/editprofile',
+    path: '/manager/viewinfo',
+    icon: DashboardIcon,
+    name: 'Thông tin người dùng',
+    component: UserAndCourse,
+  },
+  {
+    redirect: true,
+    path: '/',
+    pathTo: '/manager/profile',
+    name: 'Dashboard',
+  },
+];
+
+var dashRoutes = [
+  {
+    path: '/manager/profile',
     icon: PersonIcon,
-    name: 'Sửa thông tin',
-    component: UserProfile,
+    name: 'Thông tin cá nhân',
+    component: Profile,
+  },
+  {
+    path: '/manager/add-course',
+    name: 'Thêm khoá học',
+    icon: DashboardIcon,
+    component: AddCourse,
   },
   {
     path: '/manager/teachercourses',

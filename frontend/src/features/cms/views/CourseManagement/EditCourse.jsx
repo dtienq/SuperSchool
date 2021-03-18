@@ -18,9 +18,10 @@ import CurrencyTextField from '@unicef/material-ui-currency-textfield';
 
 //APIS
 import categoryApi from '@api/categoryApi';
-
+import coursesApi from '@api/coursesApi';
 // core components
 import { Upload } from 'antd';
+import { useLocation } from 'react-router-dom';
 import { uploadService } from '@utils/uploadService';
 import NavPills from '@cmscomponents/NavPills/NavPills.jsx';
 import GridContainer from '@cmscomponents/Grid/GridContainer.jsx';
@@ -36,13 +37,12 @@ import regularFormsStyle from '@cmsassets/jss/material-dashboard-pro-react/views
 import Button from '@cmscomponents/CustomButtons/Button.jsx';
 import Checkbox from 'material-ui/Checkbox';
 
-function AddCourse(props) {
+function EditCourse(props) {
+  let location = useLocation();
   const [state, setState] = useState({
     checked: [24, 22],
     selectedValue: null,
     selectedEnabled: 'b',
-    createCourse: false,
-    editCourse: false,
     category: '',
     subcategory: '',
     listcategory: [],
@@ -61,7 +61,7 @@ function AddCourse(props) {
     numberOfChapters: 5,
   });
   const [coursevid, setCoursevid] = useState({
-    couseid: false,
+    couseid: location?.state?.courseid ? location?.state?.courseid : false,
     chapters: [],
   });
   let moneyisValid = course.price < 1000;
@@ -92,6 +92,19 @@ function AddCourse(props) {
             state.category
           );
         }
+        const data = await courseApi.findById(4);
+        setCourse({
+          id: data.courseid,
+          title: data.courseName,
+          imagePath: data.imagePath,
+          description: data.shortDescription,
+          detailDescription: data.detalDescription,
+          price: data.price,
+          status: '',
+          categoryid: '',
+          teacherid: '',
+          numberOfChapters: 5,
+        });
         setState({
           ...state,
           listcategory: fetch_maincat.data,
@@ -715,4 +728,4 @@ function AddCourse(props) {
   );
 }
 
-export default withStyles(regularFormsStyle)(AddCourse);
+export default withStyles(regularFormsStyle)(EditCourse);

@@ -21,7 +21,7 @@ function Profile({ ...props }) {
     username: currentUser.username,
     fullname: currentUser.fullname,
     email: currentUser.email,
-    phonenumber: '00000000000',
+    phonenumber: '99999999',
     dob: 'Chưa cập nhật',
     reg: 'Chưa cập nhật',
     group: currentUser.groupCode,
@@ -97,6 +97,15 @@ function Profile({ ...props }) {
                   right
                 >
                   Cập nhật thông tin
+                </Button>
+                <Button
+                  color="warning"
+                  onClick={() => {
+                    history.push('/manager/editprofile');
+                  }}
+                  right
+                >
+                  Đổi mật khẩu
                 </Button>
                 <Clearfix />
               </div>

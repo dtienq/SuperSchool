@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
+
 // react component for creating dynamic tables
 import ReactTable from 'react-table';
 // material-ui-icons
@@ -20,7 +22,10 @@ export default function TeacherTable() {
     data: [],
     table: [],
   });
+  let history = useHistory();
   let changeStatus = useRef(null);
+  let changeInfo = useRef(null);
+  let viewProfile = useRef(null);
   changeStatus.current = async (id, status) => {
     try {
       await userApi.userToogleStatus(id, status);
@@ -35,6 +40,20 @@ export default function TeacherTable() {
       alert('Không thể đổi trạng thái tài khoản');
     }
   };
+  viewProfile.current = async (id, email, fullname, status) => {
+    history.push({
+      pathname: '/manager/viewinfo',
+      search: `?id=${id}`,
+      state: {
+        userid: id,
+        email: email,
+        fullname: fullname,
+        status: status,
+        group: 'GIẢNG VIÊN',
+        groupid: 3,
+      },
+    });
+  };
   const createTable = (table) => {
     return table.dataRows.map((prop, key) => {
       return {
@@ -48,8 +67,13 @@ export default function TeacherTable() {
           <div className="actions-right">
             {/* use this button to add a like kind of action */}
             <IconButton
-              onClick={() => {
-                //alert(prop[0]);
+              onClick={async () => {
+                let id = prop[0];
+                let email = prop[1];
+                let fullname = prop[2];
+                let status = prop[3];
+                //changeInfo.current(id, email, fullname, status);
+                //check
               }}
               color="infoNoBackground"
               customClass="like"
@@ -58,18 +82,13 @@ export default function TeacherTable() {
             </IconButton>{' '}
             {/* use this button to add a edit kind of action */}
             <IconButton
-              // onClick={() => {
-              //   let obj = state.data.find((o) => o.r_id === key);
-              //   alert(
-              //     "You've clicked EDIT button on \n{ \nName: " +
-              //       obj.id +
-              //       ', \nname: ' +
-              //       obj.name +
-              //       ', \ncode: ' +
-              //       obj.reg +
-              //       '\n}.'
-              //   );
-              // }}
+              onClick={async () => {
+                let id = prop[0];
+                let email = prop[1];
+                let fullname = prop[2];
+                let status = prop[3];
+                viewProfile.current(id, email, fullname, status);
+              }}
               color="warningNoBackground"
               customClass="edit"
             >

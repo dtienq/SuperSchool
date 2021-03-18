@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
@@ -29,6 +30,7 @@ import categoryApi from '@api/categoryApi';
 import coursesApi from '@api/coursesApi';
 import Close from 'material-ui-icons/Close';
 function TeacherCourses(props) {
+  const currentUser = useSelector(({ userReducer }) => userReducer?.user);
   let location = useLocation();
   const [state, setState] = useState({
     category: location.state
@@ -75,7 +77,9 @@ function TeacherCourses(props) {
             state.category
           );
         }
-        const fetch_data = await coursesApi.getCoursesByAdmin();
+        const fetch_data = await coursesApi.getCoursesByTeacher(
+          currentUser.userId
+        );
         const fetchData = {
           category: state.category,
           subcategory: state.subcategory,
