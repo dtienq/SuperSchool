@@ -213,8 +213,6 @@ module.exports = {
       )
     );
 
-    query.where("title", "like", `%${searchString}%`);
-
     if (fullText) {
       query.whereRaw(
         `to_tsvector(c.title || ' ' || ca.name) @@ plainto_tsquery('${fullText}')`
