@@ -508,60 +508,25 @@ router.post(
       let now = new Date();
       let publicPath = path.dirname(require.main.filename) + "/public/";
       var videos = [];
+      let {title, description, detailDescription, price, categoryId, teacherId, imagePath} = req.body;
 
-      if (requestBody) {
-        course.title = requestBody.title || "";
-        course.description = requestBody.description || "";
-        course.detailDescription = requestBody.detailDescription || "";
-        course.views = 0;
-        course.createddate = now;
-        course.price = requestBody.price || 0;
-        course.categoryid = requestBody.categoryId;
-        course.teacherid = requestBody.teacherId;
+      course = {
+        title, description, detailDescription, price, categoryId, teacherId, imagePath,
+        views: 0,
+        createddate: now
+      };
 
-        if (requestBody.image && requestBody.image.fileName) {
-          let fileName =
-            publicPath + now.getTime() + "_" + requestBody.image.fileName;
-          fs.writeFile(
-            fileName,
-            requestBody.image.data,
-            "binary",
-            function (err) {
-              if (err) {
-                transaction.rollback();
-                res.status(500).json({
-                  message: CONSTANT.ERRORS.SYSTEM_ERROR,
-                });
-              }
-            }
-          );
-          course.imagePath = fileName;
-        }
+      if (requestBody.videos) {
+        requestBody.videos.forEach((element) => {
+          var video = {};
+          video.fileName = element.filePath;
+          video.orderNo = element.orderNo;
+          video.preview = element.preview ? true : false;
+          video.title = element.title;
+          video.description= element.description;
 
-        if (requestBody.videos) {
-          requestBody.videos.forEach((element) => {
-            var video = {};
-            if (element.data) {
-              video.fileName = now.getTime() + "_" + element.fileName;
-
-              fs.writeFile(
-                publicPath + video.fileName,
-                element.data,
-                "binary",
-                function (err) {
-                  if (err) {
-                    transaction.rollback();
-                    res.status(500).json({
-                      message: CONSTANT.ERRORS.SYSTEM_ERROR,
-                    });
-                  }
-                }
-              );
-
-              videos.push(video);
-            }
-          });
-        }
+          videos.push(video);
+        });
       }
 
       courseModel
