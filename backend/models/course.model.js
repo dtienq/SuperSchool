@@ -19,33 +19,6 @@ module.exports = {
       .leftJoin("category as ct", "ct.categoryid", "c.categoryid");
     return query;
   },
-  // getRating: () => {
-  //   let query = db.select();
-  //   return null;
-  // },
-  // findByCategoryId: (categoryId, page, pageSize) => {
-  //     let query = db('course as co')
-  //         .innerJoin('category as ca', 'co.categoryid', 'ca.categoryid')
-  //         .innerJoin('user as u', 'u.userid', 'co.teacherid')
-  //         .leftJoin('review as re', 're.courseid', 'co.courseid')
-  //         .leftJoin('promotion as pr', 'pr.courseid', 'co.courseid');
-
-  //     if (categoryId) {
-  //         query.where('ca.categoryid', categoryId);
-  //     } else {
-  //         query.where('ca.categoryid', null);
-  //     }
-
-  //     if (pageSize && pageSize > 0) {
-  //         query.offset(pageSize * (page - 1));
-  //         query.limit(pageSize);
-  //     }
-
-  //     query.select('co.title as title', 'ca.name as categoryName', 'u.fullname as teacherName', db.raw('sum(re.rating)/count(re.reviewid) as ratingAvg'), db.raw('count(distinct re.userid) as ratingCount'), 'co.imagePath as image', 'co.price as originalPrice', 'pr.value as discountPrice');
-  //     query.groupBy("title", "categoryName", "teacherName", "image", "originalPrice", "discountPrice");
-
-  //     return query;
-  // },
   findByCategoryId: (categoryId, page, pageSize) => {
     let query = db("course");
 
@@ -123,35 +96,6 @@ module.exports = {
       )
       .first();
   },
-  // findById: (id) => {
-  //     return db('course as c')
-  //         .leftJoin('review as r', 'r.courseid', 'c.courseid')
-  //         .leftJoin('student_course as sc', 'sc.courseid', 'c.courseid')
-  //         .leftJoin('promotion as p', 'p.courseid', 'c.courseid')
-  //         .select(
-  //             'c.courseid',
-  //             'c.imagePath',
-  //             'c.title as courseName',
-  //             'c.description as shortDescription',
-  //             'c.detailDescription',
-  //             db.raw('coalesce(round(avg(r.rating), 1), 0) as "ratingAvgPoint"'),
-  //             db.raw('count(distinct r.userid) as "totalReviewPerson"'),
-  //             db.raw('count(distinct sc.studentid) as "totalStudentRegister"'),
-  //             'p.value as priceDiscount',
-  //             'c.price',
-  //             'c.updateddate'
-
-  //     ).where('c.courseid', id).groupBy(
-  //             'c.courseid',
-  //             'c.imagePath',
-  //             'courseName',
-  //             'shortDescription',
-  //             'c.detailDescription',
-  //             'priceDiscount',
-  //             'c.price',
-  //             'c.updateddate',
-  //         ).first();
-  // },
   topView: (quantity) => {
     let query = db("course").orderByRaw("views desc nulls last");
 
@@ -181,28 +125,15 @@ module.exports = {
 
     return query;
   },
-  // searchCourse: (searchString, categoryId, page, pageSize) => {
-  //   let query = db
-  //     .from("course as c")
-  //     .where("title", "like", `%${searchString}%`);
 
-  //   if (categoryId) {
-  //     query.where("categoryid", categoryId);
-  //   }
-
-  //   if (pageSize) {
-  //     query.limit(pageSize);
-  //     query.offset((page - 1) * pageSize);
-  //   }
-
-  //   return query;
   //Change behavior && merge
   searchCourse: (body) => {
     let { searchString, categoryId, orderBy, orderType, fullText } = body;
 
     let query = db.select(
       db.raw(
-        ' c.*, case when maxCourse.courseid = c.courseid then true else false end as "isBestSeller"\n' +
+        ' c.*, count(p.promotionid) as "totalPromotions", u.fullname as "teacherName", ca.name as "categoryName", count(sc.studentcourseid) as totalstudents, coalesce(avg(r.rating), 0) as "averageStar",' +
+        ' case when maxCourse.courseid = c.courseid then true else false end as "isBestSeller"\n' +
           "from course c \n" +
           "inner join category ca \n" +
           "on c.categoryid = ca.categoryid \n" +
@@ -216,6 +147,11 @@ module.exports = {
           "on c.courseid = maxcourse.courseid and maxCourse.totalStudents > 0 "
       )
     );
+
+    query.innerJoin("user as u", "u.userid", "c.teacherid")
+      .leftJoin("review as r", "r.courseid", "c.courseid")
+      .leftJoin("student_course as sc", "sc.courseid", "c.courseid")
+      .leftJoin("promotion as p", "p.courseid", "c.courseid")
 
     if (fullText) {
       query.whereRaw(
@@ -232,6 +168,8 @@ module.exports = {
     if (orderBy) {
       query.orderBy(orderBy, orderType ? orderType : "asc");
     }
+
+    query.groupBy('c.courseid', 'u.userid', 'ca.categoryid', 'maxcourse.courseid');
 
     let queryCount = db
       .from("course as c")

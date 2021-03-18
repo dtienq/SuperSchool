@@ -71,6 +71,7 @@ router.get("/top10View", (req, res, next) => {
     });
   });
 });
+
 router.get(
   "/findByCategoryId",
   validation(require("../schemas/pagination.json")),
