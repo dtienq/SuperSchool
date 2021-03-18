@@ -12,7 +12,7 @@ module.exports = (roles = []) => (req, res, next) => {
             if(roles.indexOf(commonUtils.currentUser.groupCode) < 0) {
                 res.status(403).json({
                     message: "Not have permission",
-                    code: "FORBIDDEN"
+                    code: "FORBIDDEN" 
                 });
             }
         }
