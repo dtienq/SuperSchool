@@ -7,8 +7,10 @@ const randomString = require("randomstring");
 var express = require("express");
 const categoryModel = require("../models/category.model");
 // const courseModel = require("../models/course.model");
+const loginValidation = require('../middlewares/validation.login');
 var router = express.Router();
-router.get("/listuser", (req, res, next) => {
+
+router.get("/listuser", loginValidation(['ADMIN']), (req, res, next) => {
   let queryParams = req.query;
   let body = req.body;
   let page = body.page;
@@ -22,8 +24,9 @@ router.get("/listuser", (req, res, next) => {
     })
     .catch(next);
 });
+
 //Student = 2; Teacher = 3 && Admin = 1
-router.get("/getuserbygroupid/:groupId", (req, res, next) => {
+router.get("/getuserbygroupid/:groupId", loginValidation(['ADMIN']), (req, res, next) => {
   const { groupId } = req.params;
   userModel
     .getUserbyGroupId(groupId)
@@ -35,7 +38,7 @@ router.get("/getuserbygroupid/:groupId", (req, res, next) => {
     .catch(next);
 });
 
-router.post("/togglestatus", (req, res, next) => {
+router.post("/togglestatus", loginValidation(['ADMIN']), (req, res, next) => {
   const { userId, status } = req.body;
   userModel
     .toggleStatus(userId, status)
@@ -47,7 +50,7 @@ router.post("/togglestatus", (req, res, next) => {
     .catch(next);
 });
 
-router.post("/createteacher", (req, res, next) => {
+router.post("/createteacher", loginValidation(['ADMIN']), (req, res, next) => {
   const { fullname, email, picture, usergroupid } = req.body;
   const raw_password = randomString.generate({ length: 6 });
   const password = bcrypt.hashSync(raw_password, constant.SALT_ROUNDS);
@@ -73,7 +76,7 @@ router.post("/createteacher", (req, res, next) => {
     .catch(next);
 });
 
-router.get("/deleteteacher/:userId", (req, res, next) => {
+router.get("/deleteteacher/:userId", loginValidation(['ADMIN']), (req, res, next) => {
   const { userId } = req.params;
   userModel
     .removeTeacher(userId)
@@ -84,8 +87,9 @@ router.get("/deleteteacher/:userId", (req, res, next) => {
     })
     .catch(next);
 });
+
 //without tree
-router.get("/getallcourse", (req, res, next) => {
+router.get("/getallcourse", loginValidation(['ADMIN']), (req, res, next) => {
   categoryModel
     .getParentCategory()
     .then((data) => {
@@ -97,7 +101,7 @@ router.get("/getallcourse", (req, res, next) => {
 });
 
 //with tree.
-router.get("/getcourse", (req, res, next) => {
+router.get("/getcourse", loginValidation(['ADMIN']), (req, res, next) => {
   categoryModel
     .getListCategory(null)
     .then((data) => {
@@ -126,7 +130,7 @@ function customizeListCategory(categoryList) {
   return parentCategories;
 }
 
-router.get("/view/courses/", (req, res, next) => {
+router.get("/view/courses/", loginValidation(['ADMIN']), (req, res, next) => {
   courseModel
     .viewForAdmin()
     .then((data) => res.json({ data: data }))

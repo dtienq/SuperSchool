@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const commonUtils = require('../utils/common');
 const studentCourseModel = require('../models/student-course.model');
+const loginValidation = require("../middlewares/validation.login");
 
-router.post('/', async (req, res, next) => {
+router.post('/', loginValidation(['STUDENT']), async (req, res, next) => {
   const {courseId} = req.query;
   const {userId} = commonUtils.currentUser;
   const studentCourse = {
@@ -31,7 +32,7 @@ router.post('/', async (req, res, next) => {
   ).catch(next);
 });
 
-router.get('/get-list', (req, res, next) => {
+router.get('/get-list', loginValidation(['STUDENT']), (req, res, next) => {
   const { userId } = commonUtils.currentUser;
 
   studentCourseModel.getList(userId).then(

@@ -9,9 +9,11 @@ const constant = require("../utils/constant");
 const bcrypt = require("bcrypt");
 const randomstring = require("randomstring");
 const db = require("../utils/db");
+const loginValidation = require("../middlewares/validation.login");
 
 router.post(
   "/updateInfo",
+  loginValidation(),
   validation(require("../schemas/updateInfo.json")),
   (req, res, next) => {
     let user = req.body;
@@ -41,6 +43,7 @@ router.post(
 
 router.post(
   "/changePassword",
+  loginValidation(),
   validation(require("../schemas/changePassword.json")),
   (req, res, next) => {
     let user = req.body;

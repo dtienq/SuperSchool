@@ -5,7 +5,7 @@
         "categoryId",
         "teacherId"
     ],
-    "additionalProperties": false,
+    "additionalProperties": true,
     "properties": {
         "title": {
             "type": "string",

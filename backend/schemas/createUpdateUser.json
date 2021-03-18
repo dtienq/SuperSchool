@@ -3,7 +3,7 @@
         "name",
         "code"
     ],
-    "additionalProperties": false,
+    "additionalProperties": true,
     "properties": {
         "name": {
             "type": "string",

@@ -1,6 +1,6 @@
 {
   "required": ["categoryId", "name", "code"],
-  "additionalProperties": false,
+  "additionalProperties": true,
   "properties": {
     "categoryId": {
       "type": "number"
