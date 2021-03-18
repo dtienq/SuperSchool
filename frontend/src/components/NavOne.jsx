@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Input } from 'antd';
+import { Input, message } from 'antd';
 import { getListCategory } from '@features/home/homeSlice';
 const { Search } = Input;
 
@@ -12,6 +12,7 @@ function NavOne() {
   const [sticky, setSticky] = useState(false);
   const category = useSelector(({ homeReducer }) => homeReducer?.category);
   const onSearch = (keyword) => {
+    if(!keyword) return message.error("Hãy nhập từ khoá tìm kiếm")
     history.push(`/search/keyword=${keyword}`);
   };
   const mobileMenu = () => {
