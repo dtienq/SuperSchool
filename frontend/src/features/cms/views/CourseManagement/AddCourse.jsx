@@ -1,7 +1,6 @@
 /* eslint-disable */
 
 import React, { useState, useEffect } from 'react';
-
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
 import FormLabel from 'material-ui/Form/FormLabel';
@@ -35,9 +34,15 @@ import InputLabel from 'material-ui/Input/InputLabel';
 import regularFormsStyle from '@cmsassets/jss/material-dashboard-pro-react/views/regularFormsStyle';
 import Button from '@cmscomponents/CustomButtons/Button.jsx';
 import Checkbox from 'material-ui/Checkbox';
-
+import SweetAlert from 'react-bootstrap-sweetalert';
+import coursesApi from '@api/coursesApi';
+import { useSelector } from 'react-redux';
 function AddCourse(props) {
+  const currentUser = useSelector(({ userReducer }) => userReducer?.user);
+  console.log(currentUser);
   const [state, setState] = useState({
+    alert: null,
+    show: false,
     checked: [24, 22],
     selectedValue: null,
     selectedEnabled: 'b',
@@ -49,6 +54,37 @@ function AddCourse(props) {
     listsubcategory: [],
     link: '',
   });
+  const htmlAlert = (value, message) => {
+    setState({
+      ...state,
+      alert: (
+        <SweetAlert
+          style={{ display: 'block', marginTop: '-100px' }}
+          title={value}
+          onConfirm={() => hideAlert()}
+          onCancel={() => hideAlert()}
+          confirmBtnCssClass={
+            props.classes.button + ' ' + props.classes.success
+          }
+        >
+          <b>{value}</b> {message}{' '}
+        </SweetAlert>
+      ),
+    });
+  };
+  const hideAlert = () => {
+    setState({ ...state, alert: null });
+  };
+  //////////////////////////////////Validation by state/////////////////////////
+  const verifyUrl = (value) => {
+    try {
+      new URL(value);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
   const [course, setCourse] = useState({
     title: '',
     imagePath: '',
@@ -56,14 +92,15 @@ function AddCourse(props) {
     detailDescription: '',
     price: 0,
     status: '',
-    categoryid: '',
-    teacherid: '',
+    categoryId: '',
+    teacherId: currentUser?.userId ? +currentUser?.userId : '',
     numberOfChapters: 5,
   });
   const [coursevid, setCoursevid] = useState({
     couseid: false,
     chapters: [],
   });
+
   let moneyisValid = course.price < 1000;
   useEffect(() => {
     let chapters = [];
@@ -135,7 +172,7 @@ function AddCourse(props) {
   };
   const handleSubCategorySelect = (event) => {
     setState({ ...state, subcategory: event.target.value });
-    setCourse({ ...course, categoryid: +event.target.value });
+    setCourse({ ...course, categoryId: +event.target.value });
   };
 
   const statusChange = function (event) {
@@ -145,15 +182,69 @@ function AddCourse(props) {
       status: event.target.value === 'a' ? 'COMPLETE' : 'INCOMPLETE',
     });
   };
-
-  const EditChapter = function (order, value) {
-    for (var chapter in coursevid.chapters) {
-      if (coursevid.chapters[chapter].orderNo === order) {
-        let newChap = coursevid.chapters;
-        newChap[chapter] = [...newChap[chapter], value];
-        setCoursevid({ ...coursevid, chapters: newChap });
-        break;
-      }
+  const isValidated = async () => {
+    let {
+      title,
+      imagePath,
+      description,
+      detailDescription,
+      price,
+      status,
+      categoryId,
+      teacherId,
+      numberOfChapters,
+    } = course;
+    console.log(title);
+    console.log(description);
+    if (title.length <= 30) {
+      htmlAlert('Tên khoá học', 'phải nhiều hơn 20 ký tự');
+      return;
+    }
+    if (!verifyUrl(imagePath)) {
+      htmlAlert('Hình ảnh khoá học', 'phải là đường dẫn');
+      return;
+    }
+    if (categoryId === '') {
+      htmlAlert('Danh mục', 'phải được chọn');
+      return;
+    }
+    if (categoryId === 'c') {
+      htmlAlert('Danh mục', 'phải được chọn');
+      return;
+    }
+    if (detailDescription.length <= 100) {
+      htmlAlert('Mô tả chi tiết', 'phải nhiều hơn 100 ký tự');
+      return;
+    }
+    if (moneyisValid) {
+      htmlAlert('Giá tiền', 'thấp nhất là 1000');
+      return;
+    }
+    if (numberOfChapters < 1 || numberOfChapters > 12) {
+      htmlAlert('Chương khoá học', 'chỉ được phép từ 1 tới tối đa 11 chương');
+      return;
+    }
+    if (status === '') {
+      htmlAlert('Trạng thái', 'phải được chọn');
+      return;
+    }
+    if (teacherId === '') {
+      htmlAlert('Không tìm thấy Giảng viên', 'Missing Teacher');
+      return;
+    }
+    // if(status==='COMPLETE')
+    // {
+    //   let video = coursevid.chapters;
+    //   video.forEach(item=>)
+    // }
+    ////Handle Create Course
+    try {
+      let data = course;
+      data.videos = coursevid.chapters;
+      delete data.numberOfChapters;
+      const result = await coursesApi.teacherCreateCourse(data);
+    } catch (err) {
+      alert(err);
     }
   };
   const loadChapters = function () {
@@ -255,8 +346,8 @@ function AddCourse(props) {
   const { classes } = props;
   return (
     <GridContainer>
+      {state.alert}
       {console.log(course)}
-      {console.log(coursevid)}
       <ItemGrid xs={12} sm={12} md={12}>
         <HeaderCard
           cardTitle="Thông tin khoá học"
@@ -308,6 +399,7 @@ function AddCourse(props) {
                             }}
                             inputProps={{
                               type: 'text',
+                              name: 'title',
                               onChange: (e) => {
                                 setCourse({ ...course, title: e.target.value });
                               },
@@ -407,14 +499,6 @@ function AddCourse(props) {
                                 id: 'subcategory-select',
                               }}
                             >
-                              <MenuItem
-                                classes={{
-                                  root: classes.selectMenuItem,
-                                }}
-                                value=""
-                              >
-                                Tất cả
-                              </MenuItem>
                               {state.listsubcategory.map((prop) =>
                                 +prop.categoryid === state.subcategory ? (
                                   <MenuItem
@@ -506,8 +590,9 @@ function AddCourse(props) {
                             decimalCharacter="."
                             digitGroupSeparator=","
                             error={moneyisValid}
-                            onChange={(e) =>
-                              setCourse({ ...course, price: e.target.value })
+                            outputFormat="number"
+                            onChange={(e, value) =>
+                              setCourse({ ...course, price: value })
                             }
                             helperText={
                               moneyisValid &&
@@ -648,7 +733,7 @@ function AddCourse(props) {
                   tabContent: (
                     <div>
                       <ItemGrid xs={12} sm={12} md={4}>
-                        <Button color="rose" center>
+                        <Button color="rose" onClick={isValidated} center>
                           Đăng ký khoá học
                         </Button>
                       </ItemGrid>

@@ -23,5 +23,10 @@ const coursesApi = {
     const url = `/course/findById/${id}`;
     return axiosClient.get(url);
   },
+  teacherCreateCourse: async (obj) => {
+    console.log(obj);
+    const url = `course/create/`;
+    return axiosClient.post(url, obj);
+  },
 };
 export default coursesApi;
