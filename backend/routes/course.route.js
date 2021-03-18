@@ -10,6 +10,7 @@ const courseModel = require("../models/course.model");
 const courseVideoModel = require("../models/coursevideo.model");
 const constant = require("../utils/constant");
 const db = require("../utils/db");
+const loginValidation = require("../middlewares/validation.login");
 
 //top 3 khóa học nổi bật nhất trong tuần qua (nhiều lượt đăng kí nhất)
 router.get("/top-highlight", function (req, res, next) {
@@ -498,7 +499,7 @@ router.get("findById/:id", (req, res, next) => {
 
 router.post(
   "/create",
-  roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
+  loginValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
   validation(require("../schemas/createUpdateCourse.json")),
   (req, res, next) => {
     db.transaction((transaction) => {

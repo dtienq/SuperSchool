@@ -93,6 +93,7 @@ module.exports = {
         "c.title as courseName",
         "c.description as shortDescription",
         "c.detailDescription",
+        "c.status",
         db.raw(
           'coalesce(round(cast(avg(r.rating) as numeric), 1), 0) as "ratingAvgPoint"'
         ),
