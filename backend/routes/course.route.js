@@ -64,7 +64,7 @@ router.get("/", (req, res, next) => {
 router.get("/top10View", (req, res, next) => {
   let quantity = 10;
 
-  courseModel.getTopByColumnName(quantity, "views", "desc").then((courses) => {
+  courseModel.getTopByColumnName(quantity, "c.views", "desc").then((courses) => {
     res.json({
       data: courses,
     });

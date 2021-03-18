@@ -338,10 +338,20 @@ module.exports = {
     return transaction("course").where("courseid", id).del();
   },
   getTopByColumnName: (quantity, columnName, order) => {
-    let query = db("course");
+    let query = db("course as c")
+
+    query.innerJoin('user as u', 'u.userid', 'c.teacherid');
+    query.innerJoin('category as ca', 'ca.categoryid', 'c.categoryid');
+    query.innerJoin("student_course as sc", "sc.courseid", "c.courseid");
+    query.leftJoin("review as r", "r.courseid", "c.courseid");
 
     query.orderBy(columnName, order);
     query.limit(quantity);
+
+    query.select('c.*','u.fullname as teacherName', 'u.picture as teacherAvatar', 'ca.name as categoryName');
+    query.select(db.raw('count(sc.studentcourseid) as "totalstudents"'));
+    query.select(db.raw('coalesce(avg(r.rating), 0) as "averageStar"'));
+    query.groupBy('c.courseid', 'u.userid', 'ca.categoryid');
 
     return query;
   },
@@ -352,12 +362,16 @@ module.exports = {
     let query = db("course as c");
 
     query.innerJoin("student_course as sc", "sc.courseid", "c.courseid");
-    query.select(db.raw("count(sc.studentcourseid) as totalStudents"));
+    query.leftJoin("review as r", "r.courseid", "c.courseid");
+    query.innerJoin('user as u', 'u.userid', 'c.teacherid');
+    query.innerJoin('category as ca', 'ca.categoryid', 'c.categoryid');
+    query.select(db.raw('count(sc.studentcourseid) as "totalstudents"'));
+    query.select(db.raw('coalesce(avg(r.rating), 0) as "averageStar"'));
 
     query.where("sc.createddate", ">=", mondayOfLastWeek);
     query.where("sc.createddate", "<=", sundayOfLastWeek);
 
-    return query.select("c.*").groupBy("c.courseid").limit(quantity);
+    return query.select('c.*','u.fullname as teacherName', 'u.picture as teacherAvatar', 'ca.name as categoryName').groupBy("c.courseid", "u.userid", 'ca.categoryid').limit(quantity);
   },
   selectByIdSimple: (id) => {
     return db('course').where('courseid', id).first();
