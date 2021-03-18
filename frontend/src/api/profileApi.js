@@ -5,6 +5,10 @@ const profileApi = {
     const url = '/users/changePassword';
     return axiosClient.post(url, data);
   },
+  updateInfo: (data)=>{
+    const url = '/users/updateInfo'
+    return axiosClient.post(url, data)
+  }
 };
 
 export default profileApi;
