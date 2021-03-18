@@ -278,7 +278,7 @@ router.post("/search", function (req, res, next) {
 });
 
 // xem chi tiết khóa học
-router.get("/findById/:id", (req, res, next) => {
+router.get("/findById/:id", loginValidation(['NOT_NEED_LOGIN']), (req, res, next) => {
   let { id } = req.params;
   courseModel
     .findById(id)
@@ -286,7 +286,10 @@ router.get("/findById/:id", (req, res, next) => {
       if (!course.courseid) {
         throw "Not found";
       } else {
+        await courseModel.updateViews(course.courseid, +course.views + 1);
+
         let courseVideo = { courseId: course.courseid };
+
         let result = await courseVideoModel.findByCourseId(courseVideo);
 
         course.videos = result;

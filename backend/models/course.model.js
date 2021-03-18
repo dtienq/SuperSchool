@@ -79,7 +79,8 @@ module.exports = {
         "c.updateddate",
         "u.fullname as teacherName",
         "u.email as teacherEmail",
-        "u.picture as teacherAvatar"
+        "u.picture as teacherAvatar",
+        "c.views"
       )
       .where("c.courseid", id)
       .groupBy(
@@ -153,17 +154,17 @@ module.exports = {
       .leftJoin("student_course as sc", "sc.courseid", "c.courseid")
       .leftJoin("promotion as p", "p.courseid", "c.courseid")
 
+    if (categoryId) {
+      query.where("ca.categoryid", categoryId);
+    }
+
+    query.where("publish", true);
+
     if (fullText) {
       query.whereRaw(
         `to_tsvector(c.title || ' ' || ca.name) @@ plainto_tsquery('${fullText}')`
       );
     }
-
-    if (categoryId) {
-      query.where("categoryid", categoryId);
-    }
-
-    query.where("publish", true);
 
     if (orderBy) {
       query.orderBy(orderBy, orderType ? orderType : "asc");
@@ -179,7 +180,7 @@ module.exports = {
       queryCount.where("categoryid", categoryId);
     }
 
-    queryCount.where("publish", true);
+    queryCount.where("c.publish", true);
 
     queryCount.count("c.courseid as totalItems").first();
 
@@ -284,7 +285,7 @@ module.exports = {
 
     query.innerJoin('user as u', 'u.userid', 'c.teacherid');
     query.innerJoin('category as ca', 'ca.categoryid', 'c.categoryid');
-    query.innerJoin("student_course as sc", "sc.courseid", "c.courseid");
+    query.leftJoin("student_course as sc", "sc.courseid", "c.courseid");
     query.leftJoin("review as r", "r.courseid", "c.courseid");
 
     query.orderBy(columnName, order);
@@ -320,5 +321,10 @@ module.exports = {
   },
   updateSimple: (course) => {
     return db('course').where('courseid', course.courseid).update(course).returning('*');
+  },
+  updateViews: (id, views) => {
+    return db('course').where('courseid', id).update({
+      views: views
+    });
   }
 };

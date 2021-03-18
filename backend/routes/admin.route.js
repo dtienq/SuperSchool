@@ -9,12 +9,9 @@ const categoryModel = require("../models/category.model");
 // const courseModel = require("../models/course.model");
 const loginValidation = require('../middlewares/validation.login');
 var router = express.Router();
+const validation = require("../middlewares/validate.mdw");
 
 router.get("/listuser", loginValidation(['ADMIN']), (req, res, next) => {
-  let queryParams = req.query;
-  let body = req.body;
-  let page = body.page;
-  let pageSize = body.pageSize;
   userModel
     .findAll()
     .then((data) => {
@@ -38,7 +35,7 @@ router.get("/getuserbygroupid/:groupId", loginValidation(['ADMIN']), (req, res, 
     .catch(next);
 });
 
-router.post("/togglestatus", loginValidation(['ADMIN']), (req, res, next) => {
+router.post("/togglestatus", loginValidation(['ADMIN']), validation(require('../schemas/togglestatus.json')), (req, res, next) => {
   const { userId, status } = req.body;
   userModel
     .toggleStatus(userId, status)
@@ -50,13 +47,13 @@ router.post("/togglestatus", loginValidation(['ADMIN']), (req, res, next) => {
     .catch(next);
 });
 
-router.post("/createteacher", loginValidation(['ADMIN']), (req, res, next) => {
+router.post("/createteacher", loginValidation(['ADMIN']), validation(require('../schemas/createteacher.json')), (req, res, next) => {
   const { fullname, email, picture, usergroupid } = req.body;
   const raw_password = randomString.generate({ length: 6 });
   const password = bcrypt.hashSync(raw_password, constant.SALT_ROUNDS);
   const refresh_token = randomString.generate({ length: 255 });
   userModel
-    .addAccount(fullname, email, usergroupid, picture, password, refresh_token)
+    .addAccount(fullname, email, usergroupid, picture || null, password, refresh_token)
     .then((data) => {
       const dataToSend = {
         to: email,
