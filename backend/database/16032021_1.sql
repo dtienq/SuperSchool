@@ -22,4 +22,4 @@ alter table course add column publish boolean not null default true;
 
 alter table coursevideo add column title text;
 
-alter table coursevideo add column description text;
+alter table coursevideo add column description text; 
