@@ -1,5 +1,4 @@
-FROM node:14
-
+FROM node:14-alpine
 MAINTAINER Hoa Nguyen aka Rico 19424023@student.hcmus.edu.vn
 WORKDIR /opt/
 COPY ./backend ./backend/
