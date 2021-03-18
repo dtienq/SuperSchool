@@ -49,7 +49,10 @@ router.post("/login", validation(loginSchema), function (req, res, next) {
           data.password = undefined;
           const access_token = jwt.sign(
             commonUtils.parse2Plain(data),
-            constant.SECRET_KEY
+            constant.SECRET_KEY,
+            {
+              expiresIn: '15s'
+            }
           );
           const refresh_token = data.refresh_token;
           data.refresh_token = undefined;

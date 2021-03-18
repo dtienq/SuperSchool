@@ -353,4 +353,10 @@ module.exports = {
 
     return query.select("c.*").groupBy("c.courseid").limit(quantity);
   },
+  selectByIdSimple: (id) => {
+    return db('course').where('courseid', id).first();
+  },
+  updateSimple: (course) => {
+    return db('course').where('courseid', course.courseid).update(course).returning('*');
+  }
 };
