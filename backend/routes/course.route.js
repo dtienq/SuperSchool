@@ -9,6 +9,7 @@ const path = require("path");
 const courseModel = require("../models/course.model");
 const courseVideoModel = require("../models/coursevideo.model");
 const studentCourseModel = require("../models/student-course.model");
+const favoriteCourseModel = require("../models/favorite-course.model");
 const constant = require("../utils/constant");
 const db = require("../utils/db");
 const loginValidation = require("../middlewares/validation.login");
@@ -282,6 +283,7 @@ router.post("/search", function (req, res, next) {
 // xem chi tiết khóa học
 router.get("/findById/:id", loginValidation(['NOT_NEED_LOGIN']), (req, res, next) => {
   let { id } = req.params;
+  let {userId} = commonUtils.currentUser;
   courseModel
     .findById(id)
     .then(async (course) => {
@@ -289,6 +291,18 @@ router.get("/findById/:id", loginValidation(['NOT_NEED_LOGIN']), (req, res, next
         throw "Not found";
       } else {
         await courseModel.updateViews(course.courseid, +course.views + 1);
+
+        course.favorite = false;
+        if(userId) {
+          let data = await favoriteCourseModel.findByStudentAndCourse({
+            courseId: course.courseid,
+            studentId: userId
+          });
+
+          if(data && data.favoritecourseid){
+            course.favorite = true;
+          }
+        }
 
         course.registered = false;
 
