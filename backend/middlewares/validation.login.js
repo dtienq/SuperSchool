@@ -9,7 +9,7 @@ module.exports = (roles = []) => async (req, res, next) => {
 
         commonUtils.currentUser = jwt.verify(access_token, constant.SECRET_KEY);
 
-        if(roles && roles.length > 0) {
+        if(roles && roles.length > 0 && roles.indexOf('NOT_NEED_LOGIN') === -1) {
             if(roles.indexOf(commonUtils.currentUser.groupCode) < 0) {
                 res.status(403).json({
                     message: "Not have permission",
@@ -20,6 +20,12 @@ module.exports = (roles = []) => async (req, res, next) => {
 
         next();
     } catch (ex) {
+        commonUtils.currentUser = {};
+        if(roles.indexOf('NOT_NEED_LOGIN') > -1) {
+            next();
+            return;
+        }
+
         res.status(401).json({
             message: "Unauthorized",
             code: "UNAUTHORIZED"
