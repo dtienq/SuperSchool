@@ -213,8 +213,6 @@ module.exports = {
       )
     );
 
-    query.where("title", "like", `%${searchString}%`);
-
     if (fullText) {
       query.whereRaw(
         `to_tsvector(c.title || ' ' || ca.name) @@ plainto_tsquery('${fullText}')`
@@ -224,6 +222,8 @@ module.exports = {
     if (categoryId) {
       query.where("categoryid", categoryId);
     }
+
+    query.where("publish", true);
 
     if (orderBy) {
       query.orderBy(orderBy, orderType ? orderType : "asc");
@@ -236,6 +236,8 @@ module.exports = {
     if (categoryId) {
       queryCount.where("categoryid", categoryId);
     }
+
+    queryCount.where("publish", true);
 
     queryCount.count("c.courseid as totalItems").first();
 
@@ -305,6 +307,8 @@ module.exports = {
           videopath: video.fileName,
           orderno: video.orderNo,
           preview: video.preview ? true : false,
+          title: video.title,
+          description: video.description
         });
       });
     }
@@ -318,6 +322,8 @@ module.exports = {
         videopath: video.fileName,
         orderno: video.orderNo,
         preview: video.preview ? true : false,
+        title: video.title,
+        description: video.description
       });
     });
 
@@ -353,4 +359,10 @@ module.exports = {
 
     return query.select("c.*").groupBy("c.courseid").limit(quantity);
   },
+  selectByIdSimple: (id) => {
+    return db('course').where('courseid', id).first();
+  },
+  updateSimple: (course) => {
+    return db('course').where('courseid', course.courseid).update(course).returning('*');
+  }
 };
