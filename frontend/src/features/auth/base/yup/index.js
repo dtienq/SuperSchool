@@ -22,7 +22,8 @@ export const RegisterStepOneValidationSchema = Yup.object().shape({
 });
 export const RegisterStepThreeValidationSchema = Yup.object().shape({
   username: Yup.string()
-    .min(3, 'Mật khẩu có ít nhất 3 ký tự')
+    .min(2, 'Tên có ít nhất 3 ký tự')
+    .max(10, "Tên người dùng không quá 10 ký tự")
     .required('Trường tên người dùng không thể bỏ trống'),
   password: Yup.string()
     .min(6, 'Mật khẩu có ít nhất 6 ký tự')

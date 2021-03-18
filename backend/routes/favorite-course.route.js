@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const favoriteCourseModel = require('../models/favorite-course.model');
 const commonUtils = require('../utils/common');
+const loginValidation = require("../middlewares/validation.login");
 
-router.post('/add-to-favorite', async (req, res, next) => {
+router.post('/add-to-favorite', loginValidation(['STUDENT']), async (req, res, next) => {
   const {courseId} = req.query;
   const {userId} = commonUtils.currentUser;
 
@@ -28,7 +29,7 @@ router.post('/add-to-favorite', async (req, res, next) => {
   }).catch(next);
 });
 
-router.delete('/remove-from-favorite/:id', async (req, res, next) => {
+router.delete('/remove-from-favorite/:id', loginValidation(['STUDENT']), async (req, res, next) => {
   const {id} = req.params;
 
   favoriteCourseModel.removeFromFavorite(id).then(result => {
@@ -38,7 +39,7 @@ router.delete('/remove-from-favorite/:id', async (req, res, next) => {
   }).catch(next);
 });
 
-router.get('/get-list', (req, res, next) => {
+router.get('/get-list', loginValidation(['STUDENT']), (req, res, next) => {
   const {userId} = commonUtils.currentUser;
 
   favoriteCourseModel.getList(userId).then(

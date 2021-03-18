@@ -3,7 +3,6 @@ const morgan = require('morgan');
 const cors = require('cors');
 const path = require('path');
 const app = express();
-const loginValidation = require('./middlewares/validation.login');
 const fs = require('fs');
 const CONSTANT = require('./utils/constant');
 // var bodyParser = require('body-parser');
@@ -22,20 +21,19 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.use('/api/auth', require('./routes/auth.route'));
-app.use('/api/users', loginValidation(), require('./routes/user.route'));
+app.use('/api/users', require('./routes/user.route'));
 app.use('/api/category', require('./routes/category.route'));
 app.use('/api/course', require('./routes/course.route'));
-app.use('/api/course/review', loginValidation(), require('./routes/review.route'));
-app.use('/api/course/video', loginValidation(), require('./routes/coursevideo.route'));
-app.use('/api/course/favorite', loginValidation(), require('./routes/favorite-course.route'));
-app.use('/api/register-course', loginValidation(), require('./routes/course-student.route'));
+app.use('/api/course/review', require('./routes/review.route'));
+app.use('/api/course/video', require('./routes/coursevideo.route'));
+app.use('/api/course/favorite', require('./routes/favorite-course.route'));
+app.use('/api/register-course', require('./routes/course-student.route'));
 
 
-app.use('/api/admin',loginValidation(), require('./routes/admin.route'));
+app.use('/api/admin', require('./routes/admin.route'));
 
 app.use(
   '/api/course/video',
-  loginValidation(),
   require('./routes/coursevideo.route')
 );
 
@@ -62,7 +60,13 @@ app.post('/uploadFile', (req, res, next) => {
 
 //error handler
 app.use((err, req, res, next) => {
-  console.info('Error occurs: ', err);
+  res.status(500).json({
+    message:
+      'Something wrong, please contact administrators for more information!',
+  });
+});
+
+app.use((req, res, next) => {
   res.status(500).json({
     message:
       'Something wrong, please contact administrators for more information!',

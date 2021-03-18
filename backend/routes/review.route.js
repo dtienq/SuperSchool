@@ -9,7 +9,9 @@ const courseModel = require('../models/course.model');
 const constant = require('../utils/constant');
 const db = require('../utils/db');
 const reviewModel = require('../models/review.model');
+const studentCourseModel = require('../models/student-course.model');
 const commonUtils = require('../utils/common');
+const loginValidation = require("../middlewares/validation.login");
 
 router.get('/findByCourseId', (req, res, next) => {
     let courseId = req.body.courseId;
@@ -21,7 +23,7 @@ router.get('/findByCourseId', (req, res, next) => {
     }).catch(next);
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', loginValidation(['STUDENT']), async (req, res, next) => {
     const {courseId, comment, rating} = req.body;
     const {userId} = commonUtils.currentUser;
     const review = {
@@ -32,6 +34,18 @@ router.post('/', (req, res, next) => {
         createdDate: new Date(),
         updatedDate: new Date()
     };
+
+    let registered = await studentCourseModel.findByStudentAndCourse({
+        studentId: userId,
+        courseId
+    });
+
+    if(!registered || !registered.studentcourseid) {
+        return res.status(500).json({
+            message: 'Không thể đánh giá khi chưa tham gia khóa học',
+            code: 'NOT_REGISTER_COURSE'
+        })
+    }
 
     reviewModel.create(review).then(result => {
         res.json({

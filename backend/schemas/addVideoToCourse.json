@@ -3,7 +3,7 @@
         "courseId",
         "videos"
     ],
-    "additionalProperties": false,
+    "additionalProperties": true,
     "properties": {
         "courseId": {
             "type": "number"
@@ -24,7 +24,7 @@
                     }
                 },
                 "required": ["data", "fileName", "orderNo"],
-                "additionalProperties": false
+                "additionalProperties": true
             }
         }
     }

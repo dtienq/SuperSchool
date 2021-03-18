@@ -7,9 +7,11 @@ const CONSTANT = require('../utils/constant');
 const path = require('path');
 const roleValidation = require('../middlewares/validation.role');
 const commonUtils = require('../utils/common');
+const loginValidation = require("../middlewares/validation.login");
 
 router.get(
   '/findByCourseId',
+  loginValidation(['NOT_NEED_LOGIN']),
   paramsValidation(require('../schemas/pagination.json')),
   (req, res, next) => {
     let courseId = req.query.courseId;

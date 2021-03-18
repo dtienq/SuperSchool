@@ -1,20 +1,20 @@
 {
     "required": [
         "fullname",
-        "email",
-        "userId"
+        "email"
     ],
     "additionalProperties": true,
     "properties": {
         "fullname": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
         },
         "email": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
         },
-        "userId": {
+        "picture": {
+            "type": "string"
+        },
+        "usergroupid": {
             "type": "number"
         }
     }

@@ -28,33 +28,6 @@ module.exports = {
       .leftJoin('category as ct', 'ct.categoryid', 'c.categoryid');
     return query;
   },
-  // getRating: () => {
-  //   let query = db.select();
-  //   return null;
-  // },
-  // findByCategoryId: (categoryId, page, pageSize) => {
-  //     let query = db('course as co')
-  //         .innerJoin('category as ca', 'co.categoryid', 'ca.categoryid')
-  //         .innerJoin('user as u', 'u.userid', 'co.teacherid')
-  //         .leftJoin('review as re', 're.courseid', 'co.courseid')
-  //         .leftJoin('promotion as pr', 'pr.courseid', 'co.courseid');
-
-  //     if (categoryId) {
-  //         query.where('ca.categoryid', categoryId);
-  //     } else {
-  //         query.where('ca.categoryid', null);
-  //     }
-
-  //     if (pageSize && pageSize > 0) {
-  //         query.offset(pageSize * (page - 1));
-  //         query.limit(pageSize);
-  //     }
-
-  //     query.select('co.title as title', 'ca.name as categoryName', 'u.fullname as teacherName', db.raw('sum(re.rating)/count(re.reviewid) as ratingAvg'), db.raw('count(distinct re.userid) as ratingCount'), 'co.imagePath as image', 'co.price as originalPrice', 'pr.value as discountPrice');
-  //     query.groupBy("title", "categoryName", "teacherName", "image", "originalPrice", "discountPrice");
-
-  //     return query;
-  // },
   findByCategoryId: (categoryId, page, pageSize) => {
     let query = db('course');
 
@@ -91,6 +64,7 @@ module.exports = {
   },
   findById: (id) => {
     //   return db("course").where("courseid", id).first(); ==> Changed behavior
+<<<<<<< HEAD
     return db('course as c')
       .innerJoin('user as u', 'u.userid', 'c.teacherid')
       .leftJoin('review as r', 'r.courseid', 'c.courseid')
@@ -102,20 +76,47 @@ module.exports = {
         'c.title as courseName',
         'c.description as shortDescription',
         'c.detailDescription',
+=======
+    return db("course as c")
+      .innerJoin("user as u", "u.userid", "c.teacherid")
+      .innerJoin("category as cat", "cat.categoryid", "c.categoryid")
+      .leftJoin("review as r", "r.courseid", "c.courseid")
+      .leftJoin("student_course as sc", "sc.courseid", "c.courseid")
+      .leftJoin("promotion as p", "p.courseid", "c.courseid")
+      .select(
+        "c.courseid",
+        "c.imagePath",
+        "c.title as courseName",
+        "c.description as shortDescription",
+        "c.detailDescription",
+        "c.*",
+        "cat.name as categoryName",
+>>>>>>> release/tienqd
         db.raw(
           'coalesce(round(cast(avg(r.rating) as numeric), 1), 0) as "ratingAvgPoint"'
         ),
         db.raw('count(distinct r.userid) as "totalReviewPerson"'),
         db.raw('count(distinct sc.studentid) as "totalStudentRegister"'),
+<<<<<<< HEAD
         'p.value as priceDiscount',
         'c.price',
         'c.updateddate',
         'u.fullname as teacherName',
         'u.email as teacherEmail',
         'u.picture as teacherAvatar'
+=======
+        "p.value as priceDiscount",
+        "c.price",
+        "c.updateddate",
+        "u.fullname as teacherName",
+        "u.email as teacherEmail",
+        "u.picture as teacherAvatar",
+        "c.views"
+>>>>>>> release/tienqd
       )
       .where('c.courseid', id)
       .groupBy(
+<<<<<<< HEAD
         'c.courseid',
         'c.imagePath',
         'courseName',
@@ -125,38 +126,21 @@ module.exports = {
         'c.price',
         'c.updateddate',
         'u.userid'
+=======
+        "c.courseid",
+        "c.imagePath",
+        "courseName",
+        "shortDescription",
+        "c.detailDescription",
+        "priceDiscount",
+        "c.price",
+        "c.updateddate",
+        "u.userid",
+        "cat.categoryid"
+>>>>>>> release/tienqd
       )
       .first();
   },
-  // findById: (id) => {
-  //     return db('course as c')
-  //         .leftJoin('review as r', 'r.courseid', 'c.courseid')
-  //         .leftJoin('student_course as sc', 'sc.courseid', 'c.courseid')
-  //         .leftJoin('promotion as p', 'p.courseid', 'c.courseid')
-  //         .select(
-  //             'c.courseid',
-  //             'c.imagePath',
-  //             'c.title as courseName',
-  //             'c.description as shortDescription',
-  //             'c.detailDescription',
-  //             db.raw('coalesce(round(avg(r.rating), 1), 0) as "ratingAvgPoint"'),
-  //             db.raw('count(distinct r.userid) as "totalReviewPerson"'),
-  //             db.raw('count(distinct sc.studentid) as "totalStudentRegister"'),
-  //             'p.value as priceDiscount',
-  //             'c.price',
-  //             'c.updateddate'
-
-  //     ).where('c.courseid', id).groupBy(
-  //             'c.courseid',
-  //             'c.imagePath',
-  //             'courseName',
-  //             'shortDescription',
-  //             'c.detailDescription',
-  //             'priceDiscount',
-  //             'c.price',
-  //             'c.updateddate',
-  //         ).first();
-  // },
   topView: (quantity) => {
     let query = db('course').orderByRaw('views desc nulls last');
 
@@ -186,27 +170,14 @@ module.exports = {
 
     return query;
   },
-  // searchCourse: (searchString, categoryId, page, pageSize) => {
-  //   let query = db
-  //     .from("course as c")
-  //     .where("title", "like", `%${searchString}%`);
 
-  //   if (categoryId) {
-  //     query.where("categoryid", categoryId);
-  //   }
-
-  //   if (pageSize) {
-  //     query.limit(pageSize);
-  //     query.offset((page - 1) * pageSize);
-  //   }
-
-  //   return query;
   //Change behavior && merge
   searchCourse: (body) => {
     let { searchString, categoryId, orderBy, orderType, fullText } = body;
 
     let query = db.select(
       db.raw(
+<<<<<<< HEAD
         ' c.*, case when maxCourse.courseid = c.courseid then true else false end as "isBestSeller"\n' +
           'from course c \n' +
           'inner join category ca \n' +
@@ -223,6 +194,34 @@ module.exports = {
     );
 
     query.where('title', 'like', `%${searchString}%`);
+=======
+        ' c.*, count(p.promotionid) as "totalPromotions", u.fullname as "teacherName", ca.name as "categoryName", count(sc.studentcourseid) as totalstudents, coalesce(avg(r.rating), 0) as "averageStar",' +
+        ' case when maxCourse.courseid = c.courseid then true else false end as "isBestSeller"\n' +
+          "from course c \n" +
+          "inner join category ca \n" +
+          "on c.categoryid = ca.categoryid \n" +
+          "left join (\n" +
+          "\tselect sc0.courseid, count(distinct sc0.studentid) as totalStudents\n" +
+          "\tfrom student_course sc0\n" +
+          "\tgroup by sc0.courseid\n" +
+          "\torder by totalStudents\n" +
+          "\tlimit 1\n" +
+          ") as maxCourse\n" +
+          "on c.courseid = maxcourse.courseid and maxCourse.totalStudents > 0 "
+      )
+    );
+
+    query.innerJoin("user as u", "u.userid", "c.teacherid")
+      .leftJoin("review as r", "r.courseid", "c.courseid")
+      .leftJoin("student_course as sc", "sc.courseid", "c.courseid")
+      .leftJoin("promotion as p", "p.courseid", "c.courseid")
+
+    if (categoryId) {
+      query.where("ca.categoryid", categoryId);
+    }
+
+    query.where("publish", true);
+>>>>>>> release/tienqd
 
     if (fullText) {
       query.whereRaw(
@@ -230,13 +229,18 @@ module.exports = {
       );
     }
 
+<<<<<<< HEAD
     if (categoryId) {
       query.where('categoryid', categoryId);
     }
 
+=======
+>>>>>>> release/tienqd
     if (orderBy) {
       query.orderBy(orderBy, orderType ? orderType : 'asc');
     }
+
+    query.groupBy('c.courseid', 'u.userid', 'ca.categoryid', 'maxcourse.courseid');
 
     let queryCount = db
       .from('course as c')
@@ -246,7 +250,13 @@ module.exports = {
       queryCount.where('categoryid', categoryId);
     }
 
+<<<<<<< HEAD
     queryCount.count('c.courseid as totalItems').first();
+=======
+    queryCount.where("c.publish", true);
+
+    queryCount.count("c.courseid as totalItems").first();
+>>>>>>> release/tienqd
 
     return [query, queryCount];
   },
@@ -314,6 +324,8 @@ module.exports = {
           videopath: video.fileName,
           orderno: video.orderNo,
           preview: video.preview ? true : false,
+          title: video.title,
+          description: video.description
         });
       });
     }
@@ -327,6 +339,8 @@ module.exports = {
         videopath: video.fileName,
         orderno: video.orderNo,
         preview: video.preview ? true : false,
+        title: video.title,
+        description: video.description
       });
     });
 
@@ -341,10 +355,24 @@ module.exports = {
     return transaction('course').where('courseid', id).del();
   },
   getTopByColumnName: (quantity, columnName, order) => {
+<<<<<<< HEAD
     let query = db('course');
+=======
+    let query = db("course as c")
+
+    query.innerJoin('user as u', 'u.userid', 'c.teacherid');
+    query.innerJoin('category as ca', 'ca.categoryid', 'c.categoryid');
+    query.leftJoin("student_course as sc", "sc.courseid", "c.courseid");
+    query.leftJoin("review as r", "r.courseid", "c.courseid");
+>>>>>>> release/tienqd
 
     query.orderBy(columnName, order);
     query.limit(quantity);
+
+    query.select('c.*','u.fullname as teacherName', 'u.picture as teacherAvatar', 'ca.name as categoryName');
+    query.select(db.raw('count(sc.studentcourseid) as "totalstudents"'));
+    query.select(db.raw('coalesce(avg(r.rating), 0) as "averageStar"'));
+    query.groupBy('c.courseid', 'u.userid', 'ca.categoryid');
 
     return query;
   },
@@ -354,12 +382,36 @@ module.exports = {
 
     let query = db('course as c');
 
+<<<<<<< HEAD
     query.innerJoin('student_course as sc', 'sc.courseid', 'c.courseid');
     query.select(db.raw('count(sc.studentcourseid) as totalStudents'));
+=======
+    query.innerJoin("student_course as sc", "sc.courseid", "c.courseid");
+    query.leftJoin("review as r", "r.courseid", "c.courseid");
+    query.innerJoin('user as u', 'u.userid', 'c.teacherid');
+    query.innerJoin('category as ca', 'ca.categoryid', 'c.categoryid');
+    query.select(db.raw('count(sc.studentcourseid) as "totalstudents"'));
+    query.select(db.raw('coalesce(avg(r.rating), 0) as "averageStar"'));
+>>>>>>> release/tienqd
 
     query.where('sc.createddate', '>=', mondayOfLastWeek);
     query.where('sc.createddate', '<=', sundayOfLastWeek);
 
+<<<<<<< HEAD
     return query.select('c.*').groupBy('c.courseid').limit(quantity);
+=======
+    return query.select('c.*','u.fullname as teacherName', 'u.picture as teacherAvatar', 'ca.name as categoryName').groupBy("c.courseid", "u.userid", 'ca.categoryid').limit(quantity);
   },
+  selectByIdSimple: (id) => {
+    return db('course').where('courseid', id).first();
+>>>>>>> release/tienqd
+  },
+  updateSimple: (course) => {
+    return db('course').where('courseid', course.courseid).update(course).returning('*');
+  },
+  updateViews: (id, views) => {
+    return db('course').where('courseid', id).update({
+      views: views
+    });
+  }
 };

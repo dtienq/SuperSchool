@@ -3,7 +3,7 @@
         "email",
         "password"
     ],
-    "additionalProperties": false,
+    "additionalProperties": true,
     "properties": {
         "email": {
             "type": "string",
