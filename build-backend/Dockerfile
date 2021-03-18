@@ -4,6 +4,6 @@ WORKDIR /opt/
 COPY ./backend ./backend/
 WORKDIR /opt/backend/
 RUN npm install
-RUN npm -i -g nodemon
+RUN npm i -g nodemon
 EXPOSE 3000
 CMD ["npm","start"]
