@@ -2,7 +2,7 @@
     "required": [
         "refresh_token"
     ],
-    "additionalProperties": false,
+    "additionalProperties": true,
     "properties": {
         "refresh_token": {
             "type": "string",
