@@ -609,6 +609,7 @@ router.delete(
 
 router.get(
   "/findByTeacherId/:teacherId",
+  loginValidation(['TEACHER']),
   formValidation(require("../schemas/pagination.json")),
   (req, res, next) => {
     let teacherId = req.body.teacherId;
@@ -631,7 +632,7 @@ router.get(
   }
 );
 
-router.put('/disable-course/:courseId', (req, res, next) => {
+router.put('/disable-course/:courseId', loginValidation(['ADMIN']), (req, res, next) => {
     let {publish} = req.body;
     let {courseId} = req.params;
 

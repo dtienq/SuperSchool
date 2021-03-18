@@ -17,6 +17,7 @@ const refreshTokenSchema = require("../schemas/refresh-token.json");
 const { request } = require("express");
 const mailService = require("../utils/mailService");
 const rn = require("random-number");
+const loginValidation = require("../middlewares/validation.login");
 
 /**
  * @api {post} /api/auth/login Đăng nhập
