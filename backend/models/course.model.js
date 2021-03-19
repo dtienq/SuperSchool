@@ -239,15 +239,40 @@ module.exports = {
   //     return [query, queryCount];
   // },
   create: async (transaction, course, videos) => {
-    let courseId = await transaction("course")
-      .insert(course)
+    let {
+      title, description, detailDescription, price, categoryId, teacherId, imagePath,
+      views,
+      createddate
+    } = course;
+    return transaction("course")
+      .insert({
+        title, description, detailDescription, price, categoryid: categoryId, teacherid: teacherId, imagePath,
+        views,
+        createddate
+      })
       .returning("courseid");
-
+  },
+  uploadVideos: async (courseId, videos) => {
     if (videos && videos.length > 0) {
-      videos.forEach((video) => {
-        transaction("coursevideo").insert({
+      await videos.forEach(async (video) => {
+        await db("coursevideo").insert({
           courseid: courseId,
-          videopath: video.fileName,
+          videopath: video.filePath,
+          orderno: video.orderNo,
+          preview: video.preview ? true : false,
+          title: video.title,
+          description: video.description
+        });
+      });
+    }
+  },
+  update: async (transaction, course) => {
+    await transaction("coursevideo").where('courseid', course.courseId).del();
+    if(course.videos) {
+      course.videos.forEach((video) => {
+        transaction("coursevideo").insert({
+          courseid: course.courseId,
+          videopath: video.filePath,
           orderno: video.orderNo,
           preview: video.preview ? true : false,
           title: video.title,
@@ -256,25 +281,12 @@ module.exports = {
       });
     }
 
-    return;
-  },
-  update: (transaction, course) => {
-    course.moreVideos.forEach((video) => {
-      transaction("coursevideo").insert({
-        courseid: course.courseId,
-        videopath: video.fileName,
-        orderno: video.orderNo,
-        preview: video.preview ? true : false,
-        title: video.title,
-        description: video.description
-      });
-    });
-
     return transaction("course")
       .where("courseid", course.courseId)
       .update({
         ...course,
-        moreVideos: undefined,
+        videos: undefined,
+        courseId: undefined
       });
   },
   delete: (transaction, id) => {

@@ -98,7 +98,7 @@ router.post("/login", validation(loginSchema), function (req, res, next) {
  *         "refresh_token": "QhnibXASPJRiDt46hDBWQGljURlZnfgkTOV8U6FRCkVqo0P3Rwx4QBjl9DBFyqLYt41jEiKQWjhUCTFn0ESFu2HLGgiu8pAXolHvhCGihEdCBKne3rh4erT5vv3Kc3yjM4EvjQ4Czine7D15oKT5Qh4d5uKgTrHao3BlzceL7HuTL9WKcWMn9YR9OVDoyjGsRwvNXKqE85xaT4XMWtoIdyH2vGCWTiVVF5T4cV2N2Ju4l7bVNrgD5CyXBd4gUFl"
  *     }
  */
-router.post("/register", function (req, res, next) {
+router.post("/register", async function (req, res, next) {
   let userInfo = req.body;
   let newUser = {
     username: userInfo.email,
@@ -110,6 +110,15 @@ router.post("/register", function (req, res, next) {
   };
   newUser.refresh_token = randomstring.generate({ length: 255 });
   newUser.password = bcrypt.hashSync(newUser.password, constant.SALT_ROUNDS);
+
+  let data = await userModel.getByUserEmail(userInfo.email);
+
+  if(data && data.userId) {
+    return res.status(500).json({
+      code: 'DUPLICATE_EMAIL',
+      message: 'Email đã tổn tại'
+    });
+  }
 
   db.transaction((transaction) => {
     userModel

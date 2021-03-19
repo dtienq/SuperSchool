@@ -21,6 +21,7 @@ module.exports = (roles = []) => async (req, res, next) => {
         next();
     } catch (ex) {
         commonUtils.currentUser = {};
+
         if(roles.indexOf('NOT_NEED_LOGIN') > -1) {
             next();
             return;

@@ -60,7 +60,13 @@ app.post('/uploadFile', (req, res, next) => {
 
 //error handler
 app.use((err, req, res, next) => {
-  console.info('Error occurs: ', err);
+  res.status(500).json({
+    message:
+      'Something wrong, please contact administrators for more information!',
+  });
+});
+
+app.use((req, res, next) => {
   res.status(500).json({
     message:
       'Something wrong, please contact administrators for more information!',
