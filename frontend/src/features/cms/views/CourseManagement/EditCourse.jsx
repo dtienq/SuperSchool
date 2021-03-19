@@ -36,9 +36,7 @@ import Button from '@cmscomponents/CustomButtons/Button.jsx';
 import Checkbox from 'material-ui/Checkbox';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import coursesApi from '@api/coursesApi';
-import { useSelector } from 'react-redux';
 function EditCourse(props) {
-  const currentUser = useSelector(({ userReducer }) => userReducer?.user);
   const [state, setState] = useState({
     alert: null,
     show: false,
@@ -92,8 +90,6 @@ function EditCourse(props) {
     price: 0,
     status: '',
     categoryId: '',
-    teacherId: currentUser?.userId ? +currentUser.userId : '',
-    numberOfChapters: 5,
   });
   const [coursevid, setCoursevid] = useState({
     couseid: false,
@@ -101,62 +97,55 @@ function EditCourse(props) {
   });
 
   let moneyisValid = course.price < 1000;
+
   useEffect(() => {
-    let chapters = [];
-    for (let i = 0; i < course.numberOfChapters; i++) {
-      let chapter = {
-        orderNo: i + 1,
-        title: coursevid?.chapters[i]?.title ? coursevid.chapters[i].title : '',
-        filePath: coursevid?.chapters[i]?.filePath
-          ? coursevid.chapters[i].filePath
-          : '',
-        preview: coursevid?.chapters[i]?.preview
-          ? coursevid.chapters[i].preview
-          : false,
-      };
-      chapters.push(chapter);
-    }
-    setCoursevid({ ...coursevid, chapters: chapters });
-  }, [course.numberOfChapters]);
-  useEffect(() => {
-    setTimeout(async () => {
+    const fetch = async () => {
       try {
-        //const fetch_maincat = await categoryApi.getMain();
-        //let fetch_subcat = [];
-        //if (state.category !== '' && state.subcategory !== '') {
-        //fetch_subcat = await categoryApi.getSubCategoryByParentId(
-        //state.category
-        // );
-        //}
-        const fetch_course = await coursesApi.findById(10);
-        console.log(fetch_course.data);
+        const fetch_maincat = await categoryApi.getMain();
+        let fetch_subcat = [];
+        if (state.category !== '' && state.subcategory !== '') {
+          fetch_subcat = await categoryApi.getSubCategoryByParentId(
+            state.category
+          );
+        }
+        const fetchCourse = await coursesApi.findById(3);
         let {
           courseid,
           imagePath,
           title,
+          price,
           description,
           detailDescription,
-          price,
           status,
-        } = fetch_course.data;
+          teacherName,
+          categoryid,
+          categoryName,
+        } = fetchCourse.data;
         setCourse({
           courseid,
           imagePath,
+          categoryId: categoryid,
           title,
+          price,
           description,
           detailDescription,
-          price,
           status,
+          teacherName,
+          categoryName,
         });
+        setCoursevid({ chapters: fetchCourse.data.videos });
+        console.log(coursevid);
         setState({
           ...state,
+          selectedValue: status === 'COMPLETE' ? 'a' : 'b',
           listcategory: fetch_maincat.data,
           listsubcategory: state.subcategory !== '' ? fetch_subcat.data : [],
         });
       } catch (err) {
         alert(err.message);
       }
-    }, 200);
+    };
+    fetch();
   }, []);
   const uploadImage = async (options) => {
     const { file, onSuccess, onError } = options;
@@ -191,7 +180,7 @@ function EditCourse(props) {
   };
   const handleSubCategorySelect = (event) => {
     setState({ ...state, subcategory: event.target.value });
-    //setCourse({ ...course, categoryId: +event.target.value });
+    setCourse({ ...course, categoryId: +event.target.value });
   };
 
   const statusChange = function (event) {
@@ -211,8 +200,9 @@ function EditCourse(props) {
       status,
       categoryId,
       teacherId,
-      numberOfChapters,
     } = course;
+    console.log(title);
+    console.log(description);
     if (title.length <= 30) {
       htmlAlert('Tên khoá học', 'phải nhiều hơn 20 ký tự');
       return;
@@ -235,10 +225,6 @@ function EditCourse(props) {
     }
     if (moneyisValid) {
       htmlAlert('Giá tiền', 'thấp nhất là 1000');
-      return;
-    }
-    if (numberOfChapters < 1 || numberOfChapters > 12) {
-      htmlAlert('Chương khoá học', 'chỉ được phép từ 1 tới tối đa 11 chương');
       return;
     }
     if (status === '') {
@@ -282,8 +268,6 @@ function EditCourse(props) {
     try {
       let data = course;
       data.videos = coursevid.chapters;
-      delete data.numberOfChapters;
-      const result = await coursesApi.teacherCreateCourse(data);
     } catch (err) {
       alert(err);
     }
@@ -291,9 +275,10 @@ function EditCourse(props) {
   const loadChapters = function () {
     let chaparr = [];
     let i = 0;
+    console.log(coursevid.chapters);
     coursevid.chapters.forEach((item) => {
       chaparr.push({
-        title: `Chương #${item.orderNo}`,
+        title: `Chương #${item.orderno}`,
         content: (
           <ItemGrid xs={12} sm={12} md={12}>
             <GridContainer>
@@ -331,7 +316,7 @@ function EditCourse(props) {
                   inputProps={{
                     type: 'text',
                     onChange: (e) => handleVideoChange(e, item.orderNo),
-                    defaultValue: item.filePath,
+                    defaultValue: item.videopath,
                   }}
                 />
               </ItemGrid>
@@ -388,9 +373,7 @@ function EditCourse(props) {
   return (
     <GridContainer>
       {state.alert}
-
       {console.log(course)}
-      {console.log(state)}
       <ItemGrid xs={12} sm={12} md={12}>
         <HeaderCard
           cardTitle="Thông tin khoá học"
@@ -417,7 +400,7 @@ function EditCourse(props) {
                             }}
                             inputProps={{
                               type: 'text',
-                              defaultValue: course.imagePath,
+                              value: course.imagePath,
                               onChange: (e) => {
                                 setCourse({
                                   ...course,
@@ -447,6 +430,7 @@ function EditCourse(props) {
                               onChange: (e) => {
                                 setCourse({ ...course, title: e.target.value });
                               },
+                              value: course.title,
                             }}
                             helpText="Tên khoá học sẽ được hiển thị kèm hình ảnh và mô tả ở đầu khoá học"
                           />
@@ -585,13 +569,13 @@ function EditCourse(props) {
                             }}
                             inputProps={{
                               placeholder: 'Mô tả bằng 10-20 từ',
-                              defaultValue: course.description,
                               onChange: (e) => {
                                 setCourse({
                                   ...course,
                                   description: e.target.value,
                                 });
                               },
+                              value: course.description,
                             }}
                             helpText="Mô tả sơ lược về khoá học."
                           />
@@ -608,7 +592,7 @@ function EditCourse(props) {
                           <Editor
                             id="detailDescription"
                             placeholder={'Mô tả chi tiết khoá học của bạn...'}
-                            value={course.detailDescription}
+                            value=""
                             onChange={(value) =>
                               setCourse({
                                 ...course,
@@ -630,7 +614,7 @@ function EditCourse(props) {
                         <ItemGrid xs={12} sm={10}>
                           <CurrencyTextField
                             label="Nhập số tiền"
-                            value="0"
+                            value={course.price}
                             currencySymbol="VND"
                             decimalCharacter="."
                             digitGroupSeparator=","
@@ -658,15 +642,10 @@ function EditCourse(props) {
                             formControlProps={{
                               fullWidth: true,
                             }}
+                            disabled={true}
                             inputProps={{
                               type: 'number',
-                              disabled: true,
-                              defaultValue: course.numberOfChapters,
-                              onChange: (e) =>
-                                setCourse({
-                                  ...course,
-                                  numberOfChapters: e.target.value,
-                                }),
+                              defaultValue: coursevid.length,
                             }}
                             helpText=""
                           />
@@ -779,7 +758,7 @@ function EditCourse(props) {
                   tabContent: (
                     <div>
                       <ItemGrid xs={12} sm={12} md={4}>
-                        <Button color="rose" onClick={isValidated} center>
+                        <Button color="rose" onClick={isValidated}>
                           Đăng ký khoá học
                         </Button>
                       </ItemGrid>

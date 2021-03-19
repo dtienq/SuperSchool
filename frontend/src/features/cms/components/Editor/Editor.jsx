@@ -12,6 +12,7 @@ export const Editor = (props) => {
         value={props.value}
         defaultValue={props.defaultValue}
         onChange={props.onChange}
+        onKeyUp={props.onKeyUp}
         placeholder={props.placeholder}
         modules={modules}
         formats={formats}
