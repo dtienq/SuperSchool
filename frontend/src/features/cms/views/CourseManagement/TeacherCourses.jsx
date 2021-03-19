@@ -29,6 +29,7 @@ import dashboardStyle from '@cmsassets/jss/material-dashboard-pro-react/views/da
 import categoryApi from '@api/categoryApi';
 import coursesApi from '@api/coursesApi';
 import Close from 'material-ui-icons/Close';
+import moment from 'moment';
 function TeacherCourses(props) {
   const currentUser = useSelector(({ userReducer }) => userReducer?.user);
   let location = useLocation();
@@ -53,7 +54,7 @@ function TeacherCourses(props) {
     last: 0,
     page: 1,
     totalCourses: 0,
-    limit: 2,
+    limit: 10,
   });
 
   const pageHandle = (event, value) => {
@@ -97,7 +98,7 @@ function TeacherCourses(props) {
           totalPages: Math.ceil(fetch_data.data.length / page.limit),
         });
       } catch (err) {
-        alert(err.message);
+        console.log(err.message);
       }
     }, 200);
   }, []);
@@ -306,7 +307,7 @@ function TeacherCourses(props) {
                       text={item.description}
                       price={item.status}
                       statIcon={UpdateIcon}
-                      statText={`Cập nhật:${item.teachername}`}
+                      statText={item.updateddate}
                       hover
                       underImage={
                         <div>
@@ -359,7 +360,7 @@ function TeacherCourses(props) {
                       text={item.description}
                       price={item.status}
                       statIcon={UpdateIcon}
-                      statText={`Cập nhật:${item.updateddate}`}
+                      statText={item.updateddate}
                       hover
                       underImage={
                         <div>
@@ -412,7 +413,7 @@ function TeacherCourses(props) {
                       text={item.description}
                       price={item.status}
                       statIcon={UpdateIcon}
-                      statText={`Cập nhật:${item.teachername}`}
+                      statText={item.updateddate}
                       hover
                       underImage={
                         <div>

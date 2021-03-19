@@ -101,7 +101,7 @@ function AddCourse(props) {
     chapters: [],
   });
 
-  let moneyisValid = course.price < 1000;
+  let moneyisValid = course.price < 1;
   useEffect(() => {
     let chapters = [];
     for (let i = 0; i < course.numberOfChapters; i++) {
@@ -134,9 +134,7 @@ function AddCourse(props) {
           listcategory: fetch_maincat.data,
           listsubcategory: state.subcategory !== '' ? fetch_subcat.data : [],
         });
-      } catch (err) {
-        alert(err.message);
-      }
+      } catch (err) {}
     }, 200);
   }, []);
   const uploadImage = async (options) => {
@@ -267,8 +265,11 @@ function AddCourse(props) {
       data.videos = coursevid.chapters;
       delete data.numberOfChapters;
       const result = await coursesApi.teacherCreateCourse(data);
+      if (result) {
+        htmlAlert('Success', 'Đăng ký khóa học thành công');
+      }
     } catch (err) {
-      alert(err);
+      console.log(err);
     }
   };
   const loadChapters = function () {
@@ -620,7 +621,7 @@ function AddCourse(props) {
                             }
                             helperText={
                               moneyisValid &&
-                              'Giá tiền thấp nhất của khoá học là 1,000VND'
+                              'Giá tiền thấp nhất của khoá học là 1VND'
                             }
                           />
                         </ItemGrid>

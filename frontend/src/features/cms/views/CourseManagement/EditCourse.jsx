@@ -96,7 +96,7 @@ function EditCourse(props) {
     chapters: [],
   });
 
-  let moneyisValid = course.price < 1000;
+  let moneyisValid = course.price < 1;
 
   useEffect(() => {
     const fetch = async () => {
@@ -142,7 +142,7 @@ function EditCourse(props) {
           listsubcategory: state.subcategory !== '' ? fetch_subcat.data : [],
         });
       } catch (err) {
-        alert(err.message);
+        console.log(err.message);
       }
     };
     fetch();
@@ -201,8 +201,6 @@ function EditCourse(props) {
       categoryId,
       teacherId,
     } = course;
-    console.log(title);
-    console.log(description);
     if (title.length <= 30) {
       htmlAlert('Tên khoá học', 'phải nhiều hơn 20 ký tự');
       return;
@@ -211,20 +209,12 @@ function EditCourse(props) {
       htmlAlert('Hình ảnh khoá học', 'phải là đường dẫn');
       return;
     }
-    if (categoryId === '') {
-      htmlAlert('Danh mục', 'phải được chọn');
-      return;
-    }
-    if (categoryId === 'c') {
-      htmlAlert('Danh mục', 'phải được chọn');
-      return;
-    }
     if (detailDescription.length <= 100) {
       htmlAlert('Mô tả chi tiết', 'phải nhiều hơn 100 ký tự');
       return;
     }
     if (moneyisValid) {
-      htmlAlert('Giá tiền', 'thấp nhất là 1000');
+      htmlAlert('Giá tiền', 'thấp nhất là 1');
       return;
     }
     if (status === '') {
@@ -278,7 +268,10 @@ function EditCourse(props) {
     console.log(coursevid.chapters);
     coursevid.chapters.forEach((item) => {
       chaparr.push({
-        title: `Chương #${item.orderno}`,
+        title:
+          item.title === '' || item.videopath === ''
+            ? `Chương #${item.orderno}      Chưa hoàn thành`
+            : `Chương #${item.orderno}`,
         content: (
           <ItemGrid xs={12} sm={12} md={12}>
             <GridContainer>
@@ -440,6 +433,18 @@ function EditCourse(props) {
                         <ItemGrid xs={12} sm={2}>
                           <FormLabel className={classes.labelHorizontal}>
                             Danh mục
+                          </FormLabel>
+                        </ItemGrid>
+                        <ItemGrid xs={12} sm={3}>
+                          <FormLabel className={classes.labelHorizontal}>
+                            {course.categoryName}
+                          </FormLabel>
+                        </ItemGrid>
+                      </GridContainer>
+                      <GridContainer>
+                        <ItemGrid xs={12} sm={2}>
+                          <FormLabel className={classes.labelHorizontal}>
+                            Chọn danh mục mới
                           </FormLabel>
                         </ItemGrid>
                         <ItemGrid xs={12} sm={5}>
@@ -632,27 +637,6 @@ function EditCourse(props) {
                       </GridContainer>
                       <GridContainer>
                         <ItemGrid xs={12} sm={2}>
-                          <FormLabel className={classes.labelHorizontal}>
-                            Số chương của khoá học
-                          </FormLabel>
-                        </ItemGrid>
-                        <ItemGrid xs={12} sm={10}>
-                          <CustomInput
-                            id="help-text"
-                            formControlProps={{
-                              fullWidth: true,
-                            }}
-                            disabled={true}
-                            inputProps={{
-                              type: 'number',
-                              defaultValue: coursevid.length,
-                            }}
-                            helpText=""
-                          />
-                        </ItemGrid>
-                      </GridContainer>
-                      <GridContainer>
-                        <ItemGrid xs={12} sm={2}>
                           <FormLabel
                             className={
                               classes.labelHorizontal +
@@ -757,9 +741,17 @@ function EditCourse(props) {
                   tabButton: 'Xác nhận',
                   tabContent: (
                     <div>
-                      <ItemGrid xs={12} sm={12} md={4}>
-                        <Button color="rose" onClick={isValidated}>
-                          Đăng ký khoá học
+                      <ItemGrid xs={12} sm={6}>
+                        <Button
+                          color="gray"
+                          onClick={() => <Link to="/manager/" />}
+                        >
+                          Hủy bỏ
+                        </Button>
+                      </ItemGrid>
+                      <ItemGrid xs={12} sm={6}>
+                        <Button color="warning" onClick={isValidated}>
+                          Cập nhật khóa học
                         </Button>
                       </ItemGrid>
                     </div>

@@ -129,83 +129,7 @@ class Sidebar extends React.Component {
       cx({
         [classes.photoRTL]: rtlActive,
       });
-    var user = (
-      <div className={userWrapperClass}>
-        <div className={photo}>
-          <img
-            src="https://www.lansweeper.com/wp-content/uploads/2018/05/ASSET-USER-ADMIN.png"
-            className={classes.avatarImg}
-            alt="..."
-          />
-        </div>
-        <List className={classes.list}>
-          <ListItem className={classes.item + ' ' + classes.userItem}>
-            <NavLink
-              to={'#'}
-              className={classes.itemLink + ' ' + classes.userCollapseButton}
-              onClick={() => this.openCollapse('openAvatar')}
-            >
-              <ListItemText
-                primary={rtlActive ? 'تانيا أندرو' : 'Quản trị viên'}
-                secondary={
-                  <b
-                    className={
-                      caret +
-                      ' ' +
-                      classes.userCaret +
-                      ' ' +
-                      (this.state.openAvatar ? classes.caretActive : '')
-                    }
-                  />
-                }
-                disableTypography={true}
-                className={itemText + ' ' + classes.userItemText}
-              />
-            </NavLink>
-            <Collapse in={this.state.openAvatar} unmountOnExit>
-              <List className={classes.list + ' ' + classes.collapseList}>
-                <ListItem className={classes.collapseItem}>
-                  <NavLink
-                    to="/manager/profile"
-                    className={
-                      classes.itemLink + ' ' + classes.userCollapseLinks
-                    }
-                  >
-                    <span className={collapseItemMini}>
-                      {rtlActive ? 'مع' : 'MP'}
-                    </span>
-                    <ListItemText
-                      primary={rtlActive ? 'ملفي' : 'My Profile'}
-                      disableTypography={true}
-                      className={collapseItemText}
-                    />
-                  </NavLink>
-                </ListItem>
-                <ListItem className={classes.collapseItem}>
-                  <NavLink
-                    to="/manager/editprofile"
-                    className={
-                      classes.itemLink + ' ' + classes.userCollapseLinks
-                    }
-                  >
-                    <span className={collapseItemMini}>
-                      {rtlActive ? 'هوع' : 'EP'}
-                    </span>
-                    <ListItemText
-                      primary={
-                        rtlActive ? 'تعديل الملف الشخصي' : 'Edit Profile'
-                      }
-                      disableTypography={true}
-                      className={collapseItemText}
-                    />
-                  </NavLink>
-                </ListItem>
-              </List>
-            </Collapse>
-          </ListItem>
-        </List>
-      </div>
-    );
+    var user = <div></div>;
     var links = (
       <List className={classes.list}>
         {routes.map((prop, key) => {
@@ -378,10 +302,10 @@ class Sidebar extends React.Component {
       });
     var brand = (
       <div className={logoClasses}>
-        <a href="http://www.creative-tim.com" className={logoMini}>
+        <a href="#" className={logoMini}>
           <img src={logo} alt="logo" className={classes.img} />
         </a>
-        <a href="http://www.creative-tim.com" className={logoNormal}>
+        <a href="#" className={logoNormal}>
           {logoText}
         </a>
       </div>

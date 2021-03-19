@@ -28,6 +28,7 @@ import VpnLockIcon from 'material-ui-icons/VpnLock';
 import dashboardStyle from '@cmsassets/jss/material-dashboard-pro-react/views/dashboardStyle';
 import categoryApi from '@api/categoryApi';
 import coursesApi from '@api/coursesApi';
+import EditCourse from './EditCourse.jsx';
 function CoursesList(props) {
   let location = useLocation();
   const [state, setState] = useState({
@@ -51,13 +52,13 @@ function CoursesList(props) {
     last: 0,
     page: 1,
     totalCourses: 0,
-    limit: 2,
+    limit: 10,
   });
   const changePublish = (id, publish) => {
     coursesApi
       .changePublish(id, publish)
       .then((data) => console.log(data))
-      .catch((err) => alert(err));
+      .catch((err) => console.log(err));
   };
   const pageHandle = (event, value) => {
     setPage({
@@ -98,7 +99,7 @@ function CoursesList(props) {
           totalPages: Math.ceil(fetch_data.data.length / page.limit),
         });
       } catch (err) {
-        alert(err.message);
+        console.log(err.message);
       }
     }, 200);
   }, []);
@@ -327,7 +328,11 @@ function CoursesList(props) {
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
-                            <Button color="successNoBackground" justIcon>
+                            <Button
+                              color="successNoBackground"
+                              onClick={}
+                              justIcon
+                            >
                               <EditIcon className={classes.underChartIcons} />
                             </Button>
                           </Tooltip>
@@ -491,7 +496,11 @@ function CoursesList(props) {
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
-                            <Button color="successNoBackground" justIcon>
+                            <Button
+                              color="successNoBackground"
+                              onClick={(item) => {}}
+                              justIcon
+                            >
                               <EditIcon className={classes.underChartIcons} />
                             </Button>
                           </Tooltip>
