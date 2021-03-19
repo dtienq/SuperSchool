@@ -3,6 +3,7 @@ const validation = require('../middlewares/validate.mdw');
 const roleValidation = require('../middlewares/validation.role');
 const formValidation = require('../middlewares/validate.mdw');
 var router = express.Router();
+<<<<<<< HEAD
 var rn = require('random-number');
 const fs = require('fs');
 const path = require('path');
@@ -12,6 +13,18 @@ const studentCourseModel = require('../models/student-course.model');
 const constant = require('../utils/constant');
 const db = require('../utils/db');
 const loginValidation = require('../middlewares/validation.login');
+=======
+var rn = require("random-number");
+const fs = require("fs");
+const path = require("path");
+const courseModel = require("../models/course.model");
+const courseVideoModel = require("../models/coursevideo.model");
+const studentCourseModel = require("../models/student-course.model");
+const favoriteCourseModel = require("../models/favorite-course.model");
+const constant = require("../utils/constant");
+const db = require("../utils/db");
+const loginValidation = require("../middlewares/validation.login");
+>>>>>>> release/tienqd
 const commonUtils = require('../utils/common');
 
 //top 3 khóa học nổi bật nhất trong tuần qua (nhiều lượt đăng kí nhất)
@@ -282,6 +295,7 @@ router.post('/search', function (req, res, next) {
 });
 
 // xem chi tiết khóa học
+<<<<<<< HEAD
 router.get(
   '/findById/:id',
   loginValidation(['NOT_NEED_LOGIN']),
@@ -306,6 +320,38 @@ router.get(
             if (temp1 && temp1.studentcourseid) {
               course.registered = true;
             }
+=======
+router.get("/findById/:id", loginValidation(['NOT_NEED_LOGIN']), (req, res, next) => {
+  let { id } = req.params;
+  let {userId} = commonUtils.currentUser;
+  courseModel
+    .findById(id)
+    .then(async (course) => {
+      if (!course.courseid) {
+        throw "Not found";
+      } else {
+        await courseModel.updateViews(course.courseid, +course.views + 1);
+
+        course.favorite = false;
+        if(userId) {
+          let data = await favoriteCourseModel.findByStudentAndCourse({
+            courseId: course.courseid,
+            studentId: userId
+          });
+
+          if(data && data.favoritecourseid){
+            course.favorite = true;
+          }
+        }
+
+        course.registered = false;
+
+        if(commonUtils.currentUser.userId) {
+          let temp1 = await studentCourseModel.findByStudentAndCourse({studentId: commonUtils.currentUser.userId, courseId: course.courseid});
+
+          if(temp1 && temp1.studentcourseid) {
+            course.registered = true;
+>>>>>>> release/tienqd
           }
 
           let courseVideo = { courseId: course.courseid };
@@ -325,15 +371,22 @@ router.get(
 
 // Tạo khóa học
 router.post(
+<<<<<<< HEAD
   '/create',
   roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
   validation(require('../schemas/createUpdateCourse.json')),
+=======
+  "/create",
+  loginValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
+  validation(require("../schemas/createUpdateCourse.json")),
+>>>>>>> release/tienqd
   (req, res, next) => {
     db.transaction((transaction) => {
       //init data before insert
       let course = {};
       let requestBody = req.body;
       let now = new Date();
+<<<<<<< HEAD
       let publicPath = path.dirname(require.main.filename) + '/public/';
       var videos = [];
       let {
@@ -345,17 +398,19 @@ router.post(
         teacherId,
         image,
       } = req.body;
+=======
+      let publicPath = path.dirname(require.main.filename) + "/public/";
+      let { title, description, detailDescription, price, categoryId, imagePath, videos } = req.body;
+      let teacherId = commonUtils.currentUser.userId;
+>>>>>>> release/tienqd
 
       if (requestBody) {
         course = {
-          title,
-          description,
-          detailDescription,
-          price,
-          categoryId,
-          teacherId,
-          image,
+          title, description, detailDescription, price, categoryId, teacherId, imagePath, videos,
+          views: 0,
+          createddate: now
         };
+<<<<<<< HEAD
         course.views = 0;
         course.createddate = now;
 
@@ -377,13 +432,17 @@ router.post(
           );
           course.imagePath = fileName;
         }
+=======
+>>>>>>> release/tienqd
 
-        if (requestBody.videos) {
-          requestBody.videos.forEach((element) => {
+        if (videos) {
+          videos.forEach((element) => {
             var video = {};
-            video.fileName = element.filePath;
+            video.filePath = element.filePath;
             video.orderNo = element.orderNo;
             video.preview = element.preview;
+            video.title = element.title;
+            video.description = element.description;
 
             videos.push(video);
           });
@@ -392,7 +451,8 @@ router.post(
 
       courseModel
         .create(transaction, course, videos)
-        .then((_) => {
+        .then(async (courseIds) => {
+          await courseModel.uploadVideos(courseIds[0], videos);
           transaction.commit();
           res.json({
             data: 'Success',
@@ -408,9 +468,15 @@ router.post(
 
 //Bổ sung thông tin, bài giảng cho khóa học
 router.put(
+<<<<<<< HEAD
   '/update',
   roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
   validation(require('../schemas/createUpdateCourse.json')),
+=======
+  "/update/:id",
+  loginValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
+  validation(require("../schemas/createUpdateCourse.json")),
+>>>>>>> release/tienqd
   (req, res, next) => {
     db.transaction((transaction) => {
       //init data before update
@@ -423,15 +489,17 @@ router.put(
         description,
         detailDescription,
         categoryId,
-        teacherId,
         price,
-        deletedVideoIds,
-        moreVideos,
+        videos,
       } = req.body;
+      let teacherId = commonUtils.currentUser.userId;
+      let courseId = req.params.id;
 
-      deletedVideoIds.forEach(async (e) => {
-        await courseVideoModel.deleteById(e);
-      });
+      // if(deletedVideoIds) {
+      //   deletedVideoIds.forEach(async (e) => {
+      //     await courseVideoModel.deleteById(e);
+      //   });
+      // }
 
       if (requestBody) {
         course = {
@@ -442,7 +510,8 @@ router.put(
           categoryid: categoryId,
           teacherid: teacherId,
           price,
-          moreVideos,
+          courseId,
+          videos,
         };
         course.updateddate = now;
       }
