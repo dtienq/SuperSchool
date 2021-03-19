@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function CoursesItem({ data }) {
+function LikeCoursesItem({ data }) {
   const renderStar = (n) => {
     const arr = [];
     for (let i = 1; i <= n; i++) {
@@ -105,4 +105,4 @@ function CoursesItem({ data }) {
   );
 }
 
-export default React.memo(CoursesItem);
+export default React.memo(LikeCoursesItem);

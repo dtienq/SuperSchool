@@ -52,7 +52,7 @@ router.post("/login", validation(loginSchema), function (req, res, next) {
             commonUtils.parse2Plain(data),
             constant.SECRET_KEY,
             {
-              expiresIn: "15s",
+              expiresIn: "3600s",
             }
           );
           const refresh_token = data.refresh_token;
@@ -128,7 +128,8 @@ router.post("/register", async function (req, res, next) {
         data.refresh_token = undefined;
         access_token = jwt.sign(
           commonUtils.parse2Plain(data),
-          constant.SECRET_KEY
+          constant.SECRET_KEY,
+          { expiresIn: "3600s" }
         );
         transaction.commit();
         res.json({
@@ -161,7 +162,7 @@ router.post("/google-login", (req, res) => {
               const access_token = jwt.sign(
                 commonUtils.parse2Plain(data),
                 constant.SECRET_KEY,
-                { expiresIn: 3600 }
+                { expiresIn: "3600s" }
               );
               const refresh_token = data.refresh_token;
               data.refresh_token = undefined;
@@ -257,7 +258,7 @@ router.post(
           const access_token = jwt.sign(
             commonUtils.parse2Plain(data),
             constant.SECRET_KEY,
-            { expiresIn: 3600 }
+            { expiresIn: "3600s" }
           );
           res.json({
             access_token: access_token,

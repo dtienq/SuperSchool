@@ -13,7 +13,7 @@ const studentCourseModel = require('../models/student-course.model');
 const commonUtils = require('../utils/common');
 const loginValidation = require("../middlewares/validation.login");
 
-router.get('/findByCourseId', (req, res, next) => {
+router.post('/findByCourseId', (req, res, next) => {
     let courseId = req.body.courseId;
 
     reviewModel.findByCourseId(courseId).then(reviews => {

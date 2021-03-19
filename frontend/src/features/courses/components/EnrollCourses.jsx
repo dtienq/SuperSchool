@@ -1,19 +1,18 @@
 import { DownOutlined } from '@ant-design/icons';
-import CoursesItem from '@components/CoursesItem';
+import EnrollCoursesItem from './EnrollCoursesItem';
 import { Button, Dropdown, Menu, Pagination, Spin } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 const numEachPage = 3;
 
-const Courses = () => {
+const EnrollCourses = ({ dataEnroll }) => {
   const [min, setMin] = useState(0);
   const [max, setMax] = useState(numEachPage);
   const [sort, setSort] = useState('Sắp xếp');
   const [page, setPage] = useState(1);
   const [data, setData] = useState([]);
-  const dataSearch = useSelector(({ searchReducer }) => searchReducer?.courses);
-  const loading = useSelector(({ searchReducer }) => searchReducer?.loading);
+  const loading = useSelector(({ coursesReducer }) => coursesReducer?.loading);
 
   const handleChange = (value) => {
     setMin((value - 1) * numEachPage);
@@ -22,11 +21,11 @@ const Courses = () => {
   };
 
   useEffect(() => {
-    setData(dataSearch);
-  }, [dataSearch]);
+    setData(dataEnroll);
+  }, [dataEnroll]);
 
   const handleClick = ({ key }) => {
-    const newArray = [...dataSearch];
+    const newArray = [...data];
     if (key === 'default') {
       setSort('Sắp xếp');
       setData(newArray);
@@ -77,7 +76,7 @@ const Courses = () => {
               data.length > 0 &&
               data.slice(min, max).map((item, index) => (
                 <div className="col-lg-4" key={index}>
-                  <CoursesItem data={item} />
+                  <EnrollCoursesItem data={item} />
                 </div>
               ))}
           </div>
@@ -96,4 +95,4 @@ const Courses = () => {
   );
 };
 
-export default Courses;
+export default React.memo(EnrollCourses);
