@@ -266,23 +266,27 @@ module.exports = {
       });
     }
   },
-  update: (transaction, course) => {
-    course.moreVideos.forEach((video) => {
-      transaction("coursevideo").insert({
-        courseid: course.courseId,
-        videopath: video.fileName,
-        orderno: video.orderNo,
-        preview: video.preview ? true : false,
-        title: video.title,
-        description: video.description
+  update: async (transaction, course) => {
+    await transaction("coursevideo").where('courseid', course.courseId).del();
+    if(course.videos) {
+      course.videos.forEach((video) => {
+        transaction("coursevideo").insert({
+          courseid: course.courseId,
+          videopath: video.filePath,
+          orderno: video.orderNo,
+          preview: video.preview ? true : false,
+          title: video.title,
+          description: video.description
+        });
       });
-    });
+    }
 
     return transaction("course")
       .where("courseid", course.courseId)
       .update({
         ...course,
-        moreVideos: undefined,
+        videos: undefined,
+        courseId: undefined
       });
   },
   delete: (transaction, id) => {

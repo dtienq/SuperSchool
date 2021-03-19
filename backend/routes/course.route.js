@@ -383,8 +383,8 @@ router.post(
 
 //Bổ sung thông tin, bài giảng cho khóa học
 router.put(
-  "/update",
-  roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
+  "/update/:id",
+  loginValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
   validation(require("../schemas/createUpdateCourse.json")),
   (req, res, next) => {
     db.transaction((transaction) => {
@@ -398,15 +398,17 @@ router.put(
         description,
         detailDescription,
         categoryId,
-        teacherId,
         price,
-        deletedVideoIds,
-        moreVideos,
+        videos,
       } = req.body;
+      let teacherId = commonUtils.currentUser.userId;
+      let courseId = req.params.id;
 
-      deletedVideoIds.forEach(async (e) => {
-        await courseVideoModel.deleteById(e);
-      });
+      // if(deletedVideoIds) {
+      //   deletedVideoIds.forEach(async (e) => {
+      //     await courseVideoModel.deleteById(e);
+      //   });
+      // }
 
       if (requestBody) {
         course = {
@@ -417,7 +419,8 @@ router.put(
           categoryid: categoryId,
           teacherid: teacherId,
           price,
-          moreVideos,
+          courseId,
+          videos,
         };
         course.updateddate = now;
       }
