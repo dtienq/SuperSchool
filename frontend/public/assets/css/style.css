@@ -491,7 +491,7 @@ a:visited {
 .header-navigation ul.navigation-box > li > ul > li > .sub-menu {
   position: absolute;
   top: 0%;
-  left: 100%;
+  right: 100%;
   z-index: 911;
   float: left;
   min-width: 220px;
