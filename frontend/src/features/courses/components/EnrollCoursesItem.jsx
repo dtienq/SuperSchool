@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function CoursesItem({ data }) {
+function EnrollCoursesItem({ data }) {
   const renderStar = (n) => {
     const arr = [];
     for (let i = 1; i <= n; i++) {
@@ -74,7 +74,7 @@ function CoursesItem({ data }) {
           style={{ height: '55px', textOverflow: 'ellipsis', fontSize: '18px' }}
         >
           <Link to={`/courses/detail/${data?.courseid}`}>
-            <a>{data?.title}</a>
+            <a>{data?.courseName}</a>
           </Link>
         </h2>
         <div className="course-one__stars d-flex justify-content-between">
@@ -105,4 +105,4 @@ function CoursesItem({ data }) {
   );
 }
 
-export default React.memo(CoursesItem);
+export default React.memo(EnrollCoursesItem);

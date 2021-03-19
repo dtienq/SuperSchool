@@ -1,18 +1,23 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Input, message } from 'antd';
-import { getListCategory } from '@features/home/homeSlice';
+import { getCoursesWhenSearch } from '@features/search/searchSlice';
 const { Search } = Input;
 
 function NavOne() {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { keyword } = useParams();
   const [sticky, setSticky] = useState(false);
   const category = useSelector(({ homeReducer }) => homeReducer?.category);
   const onSearch = (keyword) => {
-    if(!keyword) return message.error("Hãy nhập từ khoá tìm kiếm")
+    if (!keyword) return message.error('Hãy nhập từ khoá tìm kiếm');
+    const dataToSend = {
+      fullText: keyword,
+    };
+    if (keyword) dispatch(getCoursesWhenSearch(dataToSend));
     history.push(`/search/keyword=${keyword}`);
   };
   const mobileMenu = () => {
@@ -29,9 +34,6 @@ function NavOne() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
-  useEffect(() => {
-    !category?.length && dispatch(getListCategory());
   }, []);
   const handleScroll = () => {
     if (window.scrollY > 70) {
@@ -73,6 +75,7 @@ function NavOne() {
               enterButton
               onSearch={onSearch}
               style={{ width: 350 }}
+              defaultValue={keyword}
             />
           </div>
           <div>
@@ -119,4 +122,4 @@ function NavOne() {
   );
 }
 
-export default NavOne;
+export default React.memo(NavOne);

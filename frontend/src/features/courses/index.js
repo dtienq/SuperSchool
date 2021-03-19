@@ -2,6 +2,8 @@ import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import CoursesDetailPage from './page/CoursesDetailPage';
 import CoursesPage from './page/CoursesPage';
+const LikeCoursesPage = React.lazy(()=>import('./page/LikeCoursesPage'))
+const EnrollCoursesPage = React.lazy(()=>import('./page/EnrollCoursesPage'))
 const NotFoundPage = React.lazy(() => import('@components/NotFound'));
 
 function Courses() {
@@ -9,6 +11,8 @@ function Courses() {
   return (
     <Switch>
       <Route exact path={match.url} component={CoursesPage} />
+      <Route path="/courses/like" component={LikeCoursesPage} />
+      <Route path="/courses/enroll" component={EnrollCoursesPage} />
       <Route path={`/courses/category/:categoryId?`} component={CoursesPage} />
       <Route
         exact
