@@ -39,7 +39,7 @@ import coursesApi from '@api/coursesApi';
 import { useSelector } from 'react-redux';
 function AddCourse(props) {
   const currentUser = useSelector(({ userReducer }) => userReducer?.user);
-  console.log(currentUser);
+  console.log(currentUser.userId);
   const [state, setState] = useState({
     alert: null,
     show: false,
@@ -93,7 +93,7 @@ function AddCourse(props) {
     price: 0,
     status: '',
     categoryId: '',
-    teacherId: currentUser?.userId ? +currentUser?.userId : '',
+    teacherId: currentUser?.userId ? +currentUser.userId : '',
     numberOfChapters: 5,
   });
   const [coursevid, setCoursevid] = useState({
@@ -232,11 +232,35 @@ function AddCourse(props) {
       htmlAlert('Không tìm thấy Giảng viên', 'Missing Teacher');
       return;
     }
-    // if(status==='COMPLETE')
-    // {
-    //   let video = coursevid.chapters;
-    //   video.forEach(item=>)
-    // }
+    if (status === 'COMPLETE') {
+      let previewcount = 0;
+      let video = coursevid.chapters;
+      for (let i = 0; i < video.length; i++) {
+        if (video[i].title === '') {
+          htmlAlert(
+            `Chương số ${video[i].orderNo}`,
+            'Vui lòng nhập tên chương'
+          );
+          return;
+        } else if (video[i].filePath === '') {
+          htmlAlert(
+            `Chương số ${video[i].orderNo}`,
+            'Vui lòng nhập đường dẫn Video'
+          );
+          return;
+        }
+        if (video[i].preview) {
+          previewcount++;
+        }
+      }
+      if (previewcount === 0) {
+        htmlAlert(
+          'Chương Preview',
+          'Mỗi khoá học nên có ít nhất 1 chương preview'
+        );
+        return;
+      }
+    }
     ////Handle Create Course
     try {
       let data = course;

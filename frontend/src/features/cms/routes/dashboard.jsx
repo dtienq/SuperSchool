@@ -1,13 +1,13 @@
 import CoursesList from '@cmsviews/CourseManagement/CoursesList';
 import TeacherCourses from '@cmsviews/CourseManagement/TeacherCourses';
 import AddCourse from '@cmsviews/CourseManagement/AddCourse.jsx';
+import EditCourse from '@cmsviews/CourseManagement/EditCourse.jsx';
 import ListIcon from 'material-ui-icons/List';
 // Users
 import AdminTable from '@cmsviews/UsersManagement/AdminTable.jsx';
 import StudentTable from '@cmsviews/UsersManagement/StudentTable.jsx';
 import TeacherTable from '@cmsviews/UsersManagement/TeacherTable.jsx';
 import AccountRegister from '@cmsviews/UsersManagement/AccountRegister.jsx';
-import UserProfile from '@cmsviews/UsersManagement/UserProfile.jsx';
 import Profile from '@cmsviews/UsersManagement/Profile.jsx';
 import UserAndCourse from '@cmsviews/UsersManagement/UserAndCourses.jsx';
 // material-ui-icons
@@ -142,10 +142,16 @@ var dashRoutes = [
     component: TeacherCourses,
   },
   {
+    path: '/manager/edit-course',
+    icon: DashboardIcon,
+    name: 'Chỉnh sửa khoá học',
+    component: EditCourse,
+  },
+  {
     redirect: true,
     path: '/',
     pathTo: '/manager/profile',
     name: 'Dashboard',
   },
 ];
-export default managerRoutes;
+export default dashRoutes;

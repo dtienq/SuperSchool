@@ -1,7 +1,6 @@
 /* eslint-disable */
 
 import React, { useState, useEffect } from 'react';
-
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
 import FormLabel from 'material-ui/Form/FormLabel';
@@ -18,10 +17,9 @@ import CurrencyTextField from '@unicef/material-ui-currency-textfield';
 
 //APIS
 import categoryApi from '@api/categoryApi';
-import coursesApi from '@api/coursesApi';
+
 // core components
 import { Upload } from 'antd';
-import { useLocation } from 'react-router-dom';
 import { uploadService } from '@utils/uploadService';
 import NavPills from '@cmscomponents/NavPills/NavPills.jsx';
 import GridContainer from '@cmscomponents/Grid/GridContainer.jsx';
@@ -36,19 +34,56 @@ import InputLabel from 'material-ui/Input/InputLabel';
 import regularFormsStyle from '@cmsassets/jss/material-dashboard-pro-react/views/regularFormsStyle';
 import Button from '@cmscomponents/CustomButtons/Button.jsx';
 import Checkbox from 'material-ui/Checkbox';
-
+import SweetAlert from 'react-bootstrap-sweetalert';
+import coursesApi from '@api/coursesApi';
+import { useSelector } from 'react-redux';
 function EditCourse(props) {
-  let location = useLocation();
+  const currentUser = useSelector(({ userReducer }) => userReducer?.user);
   const [state, setState] = useState({
+    alert: null,
+    show: false,
     checked: [24, 22],
     selectedValue: null,
     selectedEnabled: 'b',
+    createCourse: false,
+    editCourse: false,
     category: '',
     subcategory: '',
     listcategory: [],
     listsubcategory: [],
     link: '',
   });
+  const htmlAlert = (value, message) => {
+    setState({
+      ...state,
+      alert: (
+        <SweetAlert
+          style={{ display: 'block', marginTop: '-100px' }}
+          title={value}
+          onConfirm={() => hideAlert()}
+          onCancel={() => hideAlert()}
+          confirmBtnCssClass={
+            props.classes.button + ' ' + props.classes.success
+          }
+        >
+          <b>{value}</b> {message}{' '}
+        </SweetAlert>
+      ),
+    });
+  };
+  const hideAlert = () => {
+    setState({ ...state, alert: null });
+  };
+  //////////////////////////////////Validation by state/////////////////////////
+  const verifyUrl = (value) => {
+    try {
+      new URL(value);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
   const [course, setCourse] = useState({
     title: '',
     imagePath: '',
@@ -56,14 +91,15 @@ function EditCourse(props) {
     detailDescription: '',
     price: 0,
     status: '',
-    categoryid: '',
-    teacherid: '',
+    categoryId: '',
+    teacherId: currentUser?.userId ? +currentUser.userId : '',
     numberOfChapters: 5,
   });
   const [coursevid, setCoursevid] = useState({
-    couseid: location?.state?.courseid ? location?.state?.courseid : false,
+    couseid: false,
     chapters: [],
   });
+
   let moneyisValid = course.price < 1000;
   useEffect(() => {
     let chapters = [];
@@ -85,25 +121,32 @@ function EditCourse(props) {
   useEffect(() => {
     setTimeout(async () => {
       try {
-        const fetch_maincat = await categoryApi.getMain();
-        let fetch_subcat = [];
-        if (state.category !== '' && state.subcategory !== '') {
-          fetch_subcat = await categoryApi.getSubCategoryByParentId(
-            state.category
-          );
-        }
-        const data = await courseApi.findById(4);
+        //const fetch_maincat = await categoryApi.getMain();
+        //let fetch_subcat = [];
+        //if (state.category !== '' && state.subcategory !== '') {
+        //fetch_subcat = await categoryApi.getSubCategoryByParentId(
+        //state.category
+        // );
+        //}
+        const fetch_course = await coursesApi.findById(10);
+        console.log(fetch_course.data);
+        let {
+          courseid,
+          imagePath,
+          title,
+          description,
+          detailDescription,
+          price,
+          status,
+        } = fetch_course.data;
         setCourse({
-          id: data.courseid,
-          title: data.courseName,
-          imagePath: data.imagePath,
-          description: data.shortDescription,
-          detailDescription: data.detalDescription,
-          price: data.price,
-          status: '',
-          categoryid: '',
-          teacherid: '',
-          numberOfChapters: 5,
+          courseid,
+          imagePath,
+          title,
+          description,
+          detailDescription,
+          price,
+          status,
         });
         setState({
           ...state,
@@ -148,7 +191,7 @@ function EditCourse(props) {
   };
   const handleSubCategorySelect = (event) => {
     setState({ ...state, subcategory: event.target.value });
-    setCourse({ ...course, categoryid: +event.target.value });
+    //setCourse({ ...course, categoryId: +event.target.value });
   };
 
   const statusChange = function (event) {
@@ -158,15 +201,91 @@ function EditCourse(props) {
       status: event.target.value === 'a' ? 'COMPLETE' : 'INCOMPLETE',
     });
   };
-
-  const EditChapter = function (order, value) {
-    for (var chapter in coursevid.chapters) {
-      if (coursevid.chapters[chapter].orderNo === order) {
-        let newChap = coursevid.chapters;
-        newChap[chapter] = [...newChap[chapter], value];
-        setCoursevid({ ...coursevid, chapters: newChap });
-        break;
+  const isValidated = async () => {
+    let {
+      title,
+      imagePath,
+      description,
+      detailDescription,
+      price,
+      status,
+      categoryId,
+      teacherId,
+      numberOfChapters,
+    } = course;
+    if (title.length <= 30) {
+      htmlAlert('Tên khoá học', 'phải nhiều hơn 20 ký tự');
+      return;
+    }
+    if (!verifyUrl(imagePath)) {
+      htmlAlert('Hình ảnh khoá học', 'phải là đường dẫn');
+      return;
+    }
+    if (categoryId === '') {
+      htmlAlert('Danh mục', 'phải được chọn');
+      return;
+    }
+    if (categoryId === 'c') {
+      htmlAlert('Danh mục', 'phải được chọn');
+      return;
+    }
+    if (detailDescription.length <= 100) {
+      htmlAlert('Mô tả chi tiết', 'phải nhiều hơn 100 ký tự');
+      return;
+    }
+    if (moneyisValid) {
+      htmlAlert('Giá tiền', 'thấp nhất là 1000');
+      return;
+    }
+    if (numberOfChapters < 1 || numberOfChapters > 12) {
+      htmlAlert('Chương khoá học', 'chỉ được phép từ 1 tới tối đa 11 chương');
+      return;
+    }
+    if (status === '') {
+      htmlAlert('Trạng thái', 'phải được chọn');
+      return;
+    }
+    if (teacherId === '') {
+      htmlAlert('Không tìm thấy Giảng viên', 'Missing Teacher');
+      return;
+    }
+    if (status === 'COMPLETE') {
+      let previewcount = 0;
+      let video = coursevid.chapters;
+      for (let i = 0; i < video.length; i++) {
+        if (video[i].title === '') {
+          htmlAlert(
+            `Chương số ${video[i].orderNo}`,
+            'Vui lòng nhập tên chương'
+          );
+          return;
+        } else if (video[i].filePath === '') {
+          htmlAlert(
+            `Chương số ${video[i].orderNo}`,
+            'Vui lòng nhập đường dẫn Video'
+          );
+          return;
+        }
+        if (video[i].preview) {
+          previewcount++;
+        }
       }
+      if (previewcount === 0) {
+        htmlAlert(
+          'Chương Preview',
+          'Mỗi khoá học nên có ít nhất 1 chương preview'
+        );
+        return;
+      }
+    }
+    ////Handle Create Course
+    try {
+      let data = course;
+      data.videos = coursevid.chapters;
+      delete data.numberOfChapters;
+      const result = await coursesApi.teacherCreateCourse(data);
+    } catch (err) {
+      alert(err);
     }
   };
   const loadChapters = function () {
@@ -268,8 +387,10 @@ function EditCourse(props) {
   const { classes } = props;
   return (
     <GridContainer>
+      {state.alert}
+
       {console.log(course)}
-      {console.log(coursevid)}
+      {console.log(state)}
       <ItemGrid xs={12} sm={12} md={12}>
         <HeaderCard
           cardTitle="Thông tin khoá học"
@@ -296,6 +417,7 @@ function EditCourse(props) {
                             }}
                             inputProps={{
                               type: 'text',
+                              defaultValue: course.imagePath,
                               onChange: (e) => {
                                 setCourse({
                                   ...course,
@@ -321,6 +443,7 @@ function EditCourse(props) {
                             }}
                             inputProps={{
                               type: 'text',
+                              name: 'title',
                               onChange: (e) => {
                                 setCourse({ ...course, title: e.target.value });
                               },
@@ -420,14 +543,6 @@ function EditCourse(props) {
                                 id: 'subcategory-select',
                               }}
                             >
-                              <MenuItem
-                                classes={{
-                                  root: classes.selectMenuItem,
-                                }}
-                                value=""
-                              >
-                                Tất cả
-                              </MenuItem>
                               {state.listsubcategory.map((prop) =>
                                 +prop.categoryid === state.subcategory ? (
                                   <MenuItem
@@ -470,6 +585,7 @@ function EditCourse(props) {
                             }}
                             inputProps={{
                               placeholder: 'Mô tả bằng 10-20 từ',
+                              defaultValue: course.description,
                               onChange: (e) => {
                                 setCourse({
                                   ...course,
@@ -519,8 +635,9 @@ function EditCourse(props) {
                             decimalCharacter="."
                             digitGroupSeparator=","
                             error={moneyisValid}
-                            onChange={(e) =>
-                              setCourse({ ...course, price: e.target.value })
+                            outputFormat="number"
+                            onChange={(e, value) =>
+                              setCourse({ ...course, price: value })
                             }
                             helperText={
                               moneyisValid &&
@@ -543,6 +660,7 @@ function EditCourse(props) {
                             }}
                             inputProps={{
                               type: 'number',
+                              disabled: true,
                               defaultValue: course.numberOfChapters,
                               onChange: (e) =>
                                 setCourse({
@@ -661,7 +779,7 @@ function EditCourse(props) {
                   tabContent: (
                     <div>
                       <ItemGrid xs={12} sm={12} md={4}>
-                        <Button color="rose" center>
+                        <Button color="rose" onClick={isValidated} center>
                           Đăng ký khoá học
                         </Button>
                       </ItemGrid>
