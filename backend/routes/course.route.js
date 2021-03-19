@@ -331,7 +331,7 @@ router.get("/findById/:id", loginValidation(['NOT_NEED_LOGIN']), (req, res, next
 // Tạo khóa học
 router.post(
   "/create",
-  roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
+  loginValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
   validation(require("../schemas/createUpdateCourse.json")),
   (req, res, next) => {
     db.transaction((transaction) => {
@@ -340,55 +340,24 @@ router.post(
       let requestBody = req.body;
       let now = new Date();
       let publicPath = path.dirname(require.main.filename) + "/public/";
-      var videos = [];
-      let {
-        title,
-        description,
-        detailDescription,
-        price,
-        categoryId,
-        teacherId,
-        image,
-      } = req.body;
+      let { title, description, detailDescription, price, categoryId, imagePath, videos } = req.body;
+      let teacherId = commonUtils.currentUser.userId;
 
       if (requestBody) {
         course = {
-          title,
-          description,
-          detailDescription,
-          price,
-          categoryId,
-          teacherId,
-          image,
+          title, description, detailDescription, price, categoryId, teacherId, imagePath, videos,
+          views: 0,
+          createddate: now
         };
-        course.views = 0;
-        course.createddate = now;
 
-        if (requestBody.image && requestBody.image.fileName) {
-          let fileName =
-            publicPath + now.getTime() + "_" + requestBody.image.fileName;
-          fs.writeFile(
-            fileName,
-            requestBody.image.data,
-            "binary",
-            function (err) {
-              if (err) {
-                transaction.rollback();
-                res.status(500).json({
-                  message: CONSTANT.ERRORS.SYSTEM_ERROR,
-                });
-              }
-            }
-          );
-          course.imagePath = fileName;
-        }
-
-        if (requestBody.videos) {
-          requestBody.videos.forEach((element) => {
+        if (videos) {
+          videos.forEach((element) => {
             var video = {};
-            video.fileName = element.filePath;
+            video.filePath = element.filePath;
             video.orderNo = element.orderNo;
             video.preview = element.preview;
+            video.title = element.title;
+            video.description = element.description;
 
             videos.push(video);
           });
@@ -397,7 +366,8 @@ router.post(
 
       courseModel
         .create(transaction, course, videos)
-        .then((_) => {
+        .then(async (courseIds) => {
+          await courseModel.uploadVideos(courseIds[0], videos);
           transaction.commit();
           res.json({
             data: "Success",
