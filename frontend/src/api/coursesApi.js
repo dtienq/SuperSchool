@@ -11,7 +11,7 @@ const coursesApi = {
   },
   changePublish: async (id, check) => {
     const url = `/course/disable-course/${id}`;
-    return await axiosClient.put(url, { disabled: check });
+    return await axiosClient.put(url, { publish: check });
   },
   getCoursesByTeacher: async (id) => {
     const url = `/admin/view/teachercourses/${id}`;
@@ -86,6 +86,10 @@ const coursesApi = {
   deleteLikeCourses: (id) => {
     const url = `/course/favorite/remove-from-favorite/${id}`;
     return axiosClient.delete(url);
+  },
+  updateCourse: (id, data) => {
+    const url = `/course/update/${id}`;
+    return axiosClient.put(url, data);
   },
 };
 export default coursesApi;

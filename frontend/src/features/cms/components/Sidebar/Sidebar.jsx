@@ -136,6 +136,9 @@ class Sidebar extends React.Component {
           if (prop.redirect) {
             return null;
           }
+          if (prop.hidden) {
+            return null;
+          }
           if (prop.collapse) {
             const navLinkClasses =
               classes.itemLink +

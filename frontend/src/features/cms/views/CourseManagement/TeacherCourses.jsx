@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
 import Tooltip from 'material-ui/Tooltip';
@@ -317,9 +316,11 @@ function TeacherCourses(props) {
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
-                            <Button color="defaultNoBackground" justIcon>
-                              <ArtTrack className={classes.underChartIcons} />
-                            </Button>
+                            <Link to={`/courses/detail/${item?.courseid}`}>
+                              <Button color="defaultNoBackground" justIcon>
+                                <ArtTrack className={classes.underChartIcons} />
+                              </Button>
+                            </Link>
                           </Tooltip>
                           <Tooltip
                             id="tooltip-top"
@@ -327,19 +328,11 @@ function TeacherCourses(props) {
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
-                            <Button color="successNoBackground" justIcon>
-                              <Edit className={classes.underChartIcons} />
-                            </Button>
-                          </Tooltip>
-                          <Tooltip
-                            id="tooltip-top"
-                            title="Đình chỉ"
-                            placement="bottom"
-                            classes={{ tooltip: classes.tooltip }}
-                          >
-                            <Button color="dangerNoBackground" justIcon>
-                              <Close className={classes.underChartIcons} />
-                            </Button>
+                            <Link to={`/manager/edit-course/${item.courseid}`}>
+                              <Button color="successNoBackground" justIcon>
+                                <Edit className={classes.underChartIcons} />
+                              </Button>
+                            </Link>
                           </Tooltip>
                         </div>
                       }
@@ -370,9 +363,11 @@ function TeacherCourses(props) {
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
-                            <Button color="defaultNoBackground" justIcon>
-                              <ArtTrack className={classes.underChartIcons} />
-                            </Button>
+                            <Link to={`/courses/detail/${item?.courseid}`}>
+                              <Button color="defaultNoBackground" justIcon>
+                                <ArtTrack className={classes.underChartIcons} />
+                              </Button>
+                            </Link>
                           </Tooltip>
                           <Tooltip
                             id="tooltip-top"
@@ -380,21 +375,11 @@ function TeacherCourses(props) {
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
-                            <Button color="successNoBackground" justIcon>
-                              <Edit className={classes.underChartIcons} />
-                            </Button>
-                          </Tooltip>
-                          <Tooltip
-                            id="tooltip-top"
-                            title="Remove"
-                            placement="bottom"
-                            classes={{ tooltip: classes.tooltip }}
-                          >
-                            <Button color="dangerNoBackground" justIcon>
-                              <VpnLockIcon
-                                className={classes.underChartIcons}
-                              />
-                            </Button>
+                            <Link to={`/manager/edit-course/${item.courseid}`}>
+                              <Button color="successNoBackground" justIcon>
+                                <Edit className={classes.underChartIcons} />
+                              </Button>
+                            </Link>
                           </Tooltip>
                         </div>
                       }
@@ -419,13 +404,15 @@ function TeacherCourses(props) {
                         <div>
                           <Tooltip
                             id="tooltip-top"
-                            title="View"
+                            title="Xem"
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
-                            <Button color="defaultNoBackground" justIcon>
-                              <ArtTrack className={classes.underChartIcons} />
-                            </Button>
+                            <Link to={`/courses/detail/${item?.courseid}`}>
+                              <Button color="defaultNoBackground" justIcon>
+                                <ArtTrack className={classes.underChartIcons} />
+                              </Button>
+                            </Link>
                           </Tooltip>
                           <Tooltip
                             id="tooltip-top"
@@ -435,18 +422,6 @@ function TeacherCourses(props) {
                           >
                             <Button color="successNoBackground" justIcon>
                               <Edit className={classes.underChartIcons} />
-                            </Button>
-                          </Tooltip>
-                          <Tooltip
-                            id="tooltip-top"
-                            title="Remove"
-                            placement="bottom"
-                            classes={{ tooltip: classes.tooltip }}
-                          >
-                            <Button color="dangerNoBackground" justIcon>
-                              <VpnLockIcon
-                                className={classes.underChartIcons}
-                              />
                             </Button>
                           </Tooltip>
                         </div>

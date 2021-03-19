@@ -28,36 +28,10 @@ function Footer({ ...props }) {
   return (
     <footer className={classes.footer}>
       <div className={container}>
-        <div className={classes.left}>
-          <List className={classes.list}>
-            <ListItem className={classes.inlineBlock}>
-              <a href="#home" className={block}>
-                Home
-              </a>
-            </ListItem>
-            <ListItem className={classes.inlineBlock}>
-              <a href="#company" className={block}>
-                {rtlActive ? 'شركة' : 'Company'}
-              </a>
-            </ListItem>
-            <ListItem className={classes.inlineBlock}>
-              <a href="#portfolio" className={block}>
-                {rtlActive ? 'بعدسة' : 'Portfolio'}
-              </a>
-            </ListItem>
-            <ListItem className={classes.inlineBlock}>
-              <a href="#blog" className={block}>
-                {rtlActive ? 'مدونة' : 'Blog'}
-              </a>
-            </ListItem>
-          </List>
-        </div>
+        <div className={classes.left}></div>
         <p className={classes.right}>
           &copy; {1900 + new Date().getYear()}{' '}
-          <a href="http://www.creative-tim.com" className={anchor}>
-            Super School
-          </a>
-          , study is a key to success
+          <a className={anchor}>Super School</a>, study is a key to success
         </p>
       </div>
     </footer>

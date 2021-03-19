@@ -1,6 +1,7 @@
 /* eslint-disable */
 
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
 import FormLabel from 'material-ui/Form/FormLabel';
@@ -37,6 +38,7 @@ import Checkbox from 'material-ui/Checkbox';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import coursesApi from '@api/coursesApi';
 function EditCourse(props) {
+  let { id } = useParams();
   const [state, setState] = useState({
     alert: null,
     show: false,
@@ -51,6 +53,7 @@ function EditCourse(props) {
     listsubcategory: [],
     link: '',
   });
+  const [detailDec, setdetailDec] = useState({ text: '' });
   const htmlAlert = (value, message) => {
     setState({
       ...state,
@@ -108,7 +111,10 @@ function EditCourse(props) {
             state.category
           );
         }
-        const fetchCourse = await coursesApi.findById(3);
+        if (id === undefined) {
+          return;
+        }
+        const fetchCourse = await coursesApi.findById(id);
         let {
           courseid,
           imagePath,
@@ -124,7 +130,7 @@ function EditCourse(props) {
         setCourse({
           courseid,
           imagePath,
-          categoryId: categoryid,
+          categoryId: +categoryid,
           title,
           price,
           description,
@@ -133,8 +139,21 @@ function EditCourse(props) {
           teacherName,
           categoryName,
         });
-        setCoursevid({ chapters: fetchCourse.data.videos });
-        console.log(coursevid);
+        let videos = fetchCourse.data.videos.map(
+          ({
+            orderno: orderNo,
+            videopath: filePath,
+            title: title,
+            preview: preview,
+          }) => ({
+            orderNo,
+            filePath,
+            title,
+            preview,
+          })
+        );
+        setdetailDec({ text: detailDescription });
+        setCoursevid({ chapters: videos });
         setState({
           ...state,
           selectedValue: status === 'COMPLETE' ? 'a' : 'b',
@@ -195,18 +214,22 @@ function EditCourse(props) {
       title,
       imagePath,
       description,
-      detailDescription,
       price,
       status,
       categoryId,
       teacherId,
     } = course;
+    let detailDescription = detailDec.text;
     if (title.length <= 30) {
       htmlAlert('Tên khoá học', 'phải nhiều hơn 20 ký tự');
       return;
     }
     if (!verifyUrl(imagePath)) {
       htmlAlert('Hình ảnh khoá học', 'phải là đường dẫn');
+      return;
+    }
+    if (detailDescription.length <= 50) {
+      htmlAlert('Mô tả ', 'phải nhiều hơn 50 ký tự');
       return;
     }
     if (detailDescription.length <= 100) {
@@ -254,12 +277,39 @@ function EditCourse(props) {
         return;
       }
     }
-    ////Handle Create Course
+    if (status === 'INCOMPLETE') {
+      let video = coursevid.chapters;
+      let count = 0;
+      for (let i = 0; i < video.length; i++) {
+        if (video[i].title === '' || video[i].filePath === '') {
+          count++;
+        }
+      }
+      if (count === 0) {
+        htmlAlert(
+          'Sai thông tin trạng thái',
+          'Bạn đã nhập toàn bộ chương, vui lòng chọn trạng thái khoá học là "Hoàn thành"'
+        );
+        return;
+      }
+    }
+    ////Handle Edit Course
     try {
       let data = course;
+      data.detailDescription = detailDescription;
       data.videos = coursevid.chapters;
+      delete data.courseid;
+      let result = await coursesApi.updateCourse(id, data);
+      if (result.data) {
+        htmlAlert(
+          'Sửa thông tin thành công!',
+          'Chúc mừng! Thông tin khoá học của bạn đã được cập nhật'
+        );
+      } else {
+        alert('Sửa khoá học thất bại');
+      }
     } catch (err) {
-      alert(err);
+      console.log(err);
     }
   };
   const loadChapters = function () {
@@ -269,9 +319,9 @@ function EditCourse(props) {
     coursevid.chapters.forEach((item) => {
       chaparr.push({
         title:
-          item.title === '' || item.videopath === ''
-            ? `Chương #${item.orderno}      Chưa hoàn thành`
-            : `Chương #${item.orderno}`,
+          item.title === '' || item.filePath === ''
+            ? `Chương #${item.orderNo}      Chưa hoàn thành`
+            : `Chương #${item.orderNo}`,
         content: (
           <ItemGrid xs={12} sm={12} md={12}>
             <GridContainer>
@@ -309,7 +359,7 @@ function EditCourse(props) {
                   inputProps={{
                     type: 'text',
                     onChange: (e) => handleVideoChange(e, item.orderNo),
-                    defaultValue: item.videopath,
+                    defaultValue: item.filePath,
                   }}
                 />
               </ItemGrid>
@@ -597,11 +647,10 @@ function EditCourse(props) {
                           <Editor
                             id="detailDescription"
                             placeholder={'Mô tả chi tiết khoá học của bạn...'}
-                            value=""
+                            value={detailDec.text}
                             onChange={(value) =>
-                              setCourse({
-                                ...course,
-                                detailDescription: value,
+                              setdetailDec({
+                                text: value,
                               })
                             }
                           />
@@ -630,7 +679,7 @@ function EditCourse(props) {
                             }
                             helperText={
                               moneyisValid &&
-                              'Giá tiền thấp nhất của khoá học là 1,000VND'
+                              'Giá tiền thấp nhất của khoá học là 1VND'
                             }
                           />
                         </ItemGrid>

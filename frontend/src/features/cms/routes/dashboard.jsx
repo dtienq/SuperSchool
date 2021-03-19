@@ -113,6 +113,14 @@ var managerRoutes = [
     icon: DashboardIcon,
     name: 'Thông tin người dùng',
     component: UserAndCourse,
+    hidden: true,
+  },
+  {
+    path: '/manager/edit-course/:id',
+    icon: DashboardIcon,
+    name: 'Chỉnh sửa khoá học',
+    hidden: true,
+    component: EditCourse,
   },
   {
     redirect: true,
@@ -129,12 +137,7 @@ var dashRoutes = [
     name: 'Thông tin cá nhân',
     component: Profile,
   },
-  {
-    path: '/manager/add-course',
-    name: 'Thêm khoá học',
-    icon: DashboardIcon,
-    component: AddCourse,
-  },
+
   {
     path: '/manager/teachercourses',
     icon: DashboardIcon,
@@ -142,9 +145,16 @@ var dashRoutes = [
     component: TeacherCourses,
   },
   {
-    path: '/manager/edit-course',
+    path: '/manager/add-course',
+    name: 'Thêm khoá học',
+    icon: DashboardIcon,
+    component: AddCourse,
+  },
+  {
+    path: '/manager/edit-course/:id',
     icon: DashboardIcon,
     name: 'Chỉnh sửa khoá học',
+    hidden: true,
     component: EditCourse,
   },
   {
@@ -154,4 +164,4 @@ var dashRoutes = [
     name: 'Dashboard',
   },
 ];
-export default dashRoutes;
+export default managerRoutes;
