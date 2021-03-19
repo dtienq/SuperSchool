@@ -3,7 +3,8 @@
         "title",
         "price",
         "categoryId",
-        "teacherId"
+        "teacherId",
+        "videos"
     ],
     "additionalProperties": true,
     "properties": {
