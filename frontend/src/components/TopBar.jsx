@@ -31,14 +31,14 @@ function Topbar() {
         className="d-flex align-items-center"
       >
         <LikeOutlined />
-        <Link to="love-courses">Khoá học yêu thích</Link>
+        <Link to="/courses/like">Khoá học yêu thích</Link>
       </Menu.Item>
       <Menu.Item
         style={{ height: 50, width: 250 }}
         className="d-flex align-items-center"
       >
         <BookOutlined />
-        <Link to="studying-courses">Khoá học đang theo học</Link>
+        <Link to="/courses/enroll">Khoá học đang theo học</Link>
       </Menu.Item>
       <Menu.Item
         onClick={() => dispatch(logout())}

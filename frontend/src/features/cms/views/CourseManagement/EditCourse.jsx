@@ -36,10 +36,7 @@ import Button from '@cmscomponents/CustomButtons/Button.jsx';
 import Checkbox from 'material-ui/Checkbox';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import coursesApi from '@api/coursesApi';
-import { useSelector } from 'react-redux';
-function AddCourse(props) {
-  const currentUser = useSelector(({ userReducer }) => userReducer?.user);
-  console.log(currentUser.userId);
+function EditCourse(props) {
   const [state, setState] = useState({
     alert: null,
     show: false,
@@ -93,8 +90,6 @@ function AddCourse(props) {
     price: 0,
     status: '',
     categoryId: '',
-    teacherId: currentUser?.userId ? +currentUser.userId : '',
-    numberOfChapters: 5,
   });
   const [coursevid, setCoursevid] = useState({
     couseid: false,
@@ -102,25 +97,9 @@ function AddCourse(props) {
   });
 
   let moneyisValid = course.price < 1;
+
   useEffect(() => {
-    let chapters = [];
-    for (let i = 0; i < course.numberOfChapters; i++) {
-      let chapter = {
-        orderNo: i + 1,
-        title: coursevid?.chapters[i]?.title ? coursevid.chapters[i].title : '',
-        filePath: coursevid?.chapters[i]?.filePath
-          ? coursevid.chapters[i].filePath
-          : '',
-        preview: coursevid?.chapters[i]?.preview
-          ? coursevid.chapters[i].preview
-          : false,
-      };
-      chapters.push(chapter);
-    }
-    setCoursevid({ ...coursevid, chapters: chapters });
-  }, [course.numberOfChapters]);
-  useEffect(() => {
-    setTimeout(async () => {
+    const fetch = async () => {
       try {
         const fetch_maincat = await categoryApi.getMain();
         let fetch_subcat = [];
@@ -129,13 +108,44 @@ function AddCourse(props) {
             state.category
           );
         }
+        const fetchCourse = await coursesApi.findById(3);
+        let {
+          courseid,
+          imagePath,
+          title,
+          price,
+          description,
+          detailDescription,
+          status,
+          teacherName,
+          categoryid,
+          categoryName,
+        } = fetchCourse.data;
+        setCourse({
+          courseid,
+          imagePath,
+          categoryId: categoryid,
+          title,
+          price,
+          description,
+          detailDescription,
+          status,
+          teacherName,
+          categoryName,
+        });
+        setCoursevid({ chapters: fetchCourse.data.videos });
+        console.log(coursevid);
         setState({
           ...state,
+          selectedValue: status === 'COMPLETE' ? 'a' : 'b',
           listcategory: fetch_maincat.data,
           listsubcategory: state.subcategory !== '' ? fetch_subcat.data : [],
         });
-      } catch (err) {}
-    }, 200);
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+    fetch();
   }, []);
   const uploadImage = async (options) => {
     const { file, onSuccess, onError } = options;
@@ -190,10 +200,7 @@ function AddCourse(props) {
       status,
       categoryId,
       teacherId,
-      numberOfChapters,
     } = course;
-    console.log(title);
-    console.log(description);
     if (title.length <= 30) {
       htmlAlert('Tên khoá học', 'phải nhiều hơn 20 ký tự');
       return;
@@ -202,24 +209,12 @@ function AddCourse(props) {
       htmlAlert('Hình ảnh khoá học', 'phải là đường dẫn');
       return;
     }
-    if (categoryId === '') {
-      htmlAlert('Danh mục', 'phải được chọn');
-      return;
-    }
-    if (categoryId === 'c') {
-      htmlAlert('Danh mục', 'phải được chọn');
-      return;
-    }
     if (detailDescription.length <= 100) {
       htmlAlert('Mô tả chi tiết', 'phải nhiều hơn 100 ký tự');
       return;
     }
     if (moneyisValid) {
-      htmlAlert('Giá tiền', 'thấp nhất là 1000');
-      return;
-    }
-    if (numberOfChapters < 1 || numberOfChapters > 12) {
-      htmlAlert('Chương khoá học', 'chỉ được phép từ 1 tới tối đa 11 chương');
+      htmlAlert('Giá tiền', 'thấp nhất là 1');
       return;
     }
     if (status === '') {
@@ -263,21 +258,20 @@ function AddCourse(props) {
     try {
       let data = course;
       data.videos = coursevid.chapters;
-      delete data.numberOfChapters;
-      const result = await coursesApi.teacherCreateCourse(data);
-      if (result) {
-        htmlAlert('Success', 'Đăng ký khóa học thành công');
-      }
     } catch (err) {
-      console.log(err);
+      alert(err);
     }
   };
   const loadChapters = function () {
     let chaparr = [];
     let i = 0;
+    console.log(coursevid.chapters);
     coursevid.chapters.forEach((item) => {
       chaparr.push({
-        title: `Chương #${item.orderNo}`,
+        title:
+          item.title === '' || item.videopath === ''
+            ? `Chương #${item.orderno}      Chưa hoàn thành`
+            : `Chương #${item.orderno}`,
         content: (
           <ItemGrid xs={12} sm={12} md={12}>
             <GridContainer>
@@ -315,7 +309,7 @@ function AddCourse(props) {
                   inputProps={{
                     type: 'text',
                     onChange: (e) => handleVideoChange(e, item.orderNo),
-                    defaultValue: item.filePath,
+                    defaultValue: item.videopath,
                   }}
                 />
               </ItemGrid>
@@ -399,6 +393,7 @@ function AddCourse(props) {
                             }}
                             inputProps={{
                               type: 'text',
+                              value: course.imagePath,
                               onChange: (e) => {
                                 setCourse({
                                   ...course,
@@ -428,6 +423,7 @@ function AddCourse(props) {
                               onChange: (e) => {
                                 setCourse({ ...course, title: e.target.value });
                               },
+                              value: course.title,
                             }}
                             helpText="Tên khoá học sẽ được hiển thị kèm hình ảnh và mô tả ở đầu khoá học"
                           />
@@ -437,6 +433,18 @@ function AddCourse(props) {
                         <ItemGrid xs={12} sm={2}>
                           <FormLabel className={classes.labelHorizontal}>
                             Danh mục
+                          </FormLabel>
+                        </ItemGrid>
+                        <ItemGrid xs={12} sm={3}>
+                          <FormLabel className={classes.labelHorizontal}>
+                            {course.categoryName}
+                          </FormLabel>
+                        </ItemGrid>
+                      </GridContainer>
+                      <GridContainer>
+                        <ItemGrid xs={12} sm={2}>
+                          <FormLabel className={classes.labelHorizontal}>
+                            Chọn danh mục mới
                           </FormLabel>
                         </ItemGrid>
                         <ItemGrid xs={12} sm={5}>
@@ -572,6 +580,7 @@ function AddCourse(props) {
                                   description: e.target.value,
                                 });
                               },
+                              value: course.description,
                             }}
                             helpText="Mô tả sơ lược về khoá học."
                           />
@@ -588,7 +597,7 @@ function AddCourse(props) {
                           <Editor
                             id="detailDescription"
                             placeholder={'Mô tả chi tiết khoá học của bạn...'}
-                            value={course.detailDescription}
+                            value=""
                             onChange={(value) =>
                               setCourse({
                                 ...course,
@@ -610,7 +619,7 @@ function AddCourse(props) {
                         <ItemGrid xs={12} sm={10}>
                           <CurrencyTextField
                             label="Nhập số tiền"
-                            value="0"
+                            value={course.price}
                             currencySymbol="VND"
                             decimalCharacter="."
                             digitGroupSeparator=","
@@ -621,33 +630,8 @@ function AddCourse(props) {
                             }
                             helperText={
                               moneyisValid &&
-                              'Giá tiền thấp nhất của khoá học là 1VND'
+                              'Giá tiền thấp nhất của khoá học là 1,000VND'
                             }
-                          />
-                        </ItemGrid>
-                      </GridContainer>
-                      <GridContainer>
-                        <ItemGrid xs={12} sm={2}>
-                          <FormLabel className={classes.labelHorizontal}>
-                            Số chương của khoá học
-                          </FormLabel>
-                        </ItemGrid>
-                        <ItemGrid xs={12} sm={10}>
-                          <CustomInput
-                            id="help-text"
-                            formControlProps={{
-                              fullWidth: true,
-                            }}
-                            inputProps={{
-                              type: 'number',
-                              defaultValue: course.numberOfChapters,
-                              onChange: (e) =>
-                                setCourse({
-                                  ...course,
-                                  numberOfChapters: e.target.value,
-                                }),
-                            }}
-                            helpText=""
                           />
                         </ItemGrid>
                       </GridContainer>
@@ -757,9 +741,17 @@ function AddCourse(props) {
                   tabButton: 'Xác nhận',
                   tabContent: (
                     <div>
-                      <ItemGrid xs={12} sm={12} md={4}>
-                        <Button color="rose" onClick={isValidated} center>
-                          Đăng ký khoá học
+                      <ItemGrid xs={12} sm={6}>
+                        <Button
+                          color="gray"
+                          onClick={() => <Link to="/manager/" />}
+                        >
+                          Hủy bỏ
+                        </Button>
+                      </ItemGrid>
+                      <ItemGrid xs={12} sm={6}>
+                        <Button color="warning" onClick={isValidated}>
+                          Cập nhật khóa học
                         </Button>
                       </ItemGrid>
                     </div>
@@ -825,4 +817,4 @@ function AddCourse(props) {
   );
 }
 
-export default withStyles(regularFormsStyle)(AddCourse);
+export default withStyles(regularFormsStyle)(EditCourse);

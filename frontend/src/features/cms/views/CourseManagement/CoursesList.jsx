@@ -23,10 +23,12 @@ import CustomInput from '@cmscomponents/CustomInput/CustomInput.jsx';
 import InputAdornment from 'material-ui/Input/InputAdornment';
 import SearchIcon from 'material-ui-icons/Search';
 import PublicIcon from 'material-ui-icons/Public';
+import EditIcon from 'material-ui-icons/Edit';
 import VpnLockIcon from 'material-ui-icons/VpnLock';
 import dashboardStyle from '@cmsassets/jss/material-dashboard-pro-react/views/dashboardStyle';
 import categoryApi from '@api/categoryApi';
 import coursesApi from '@api/coursesApi';
+import EditCourse from './EditCourse.jsx';
 function CoursesList(props) {
   let location = useLocation();
   const [state, setState] = useState({
@@ -50,9 +52,14 @@ function CoursesList(props) {
     last: 0,
     page: 1,
     totalCourses: 0,
-    limit: 2,
+    limit: 10,
   });
-
+  const changePublish = (id, publish) => {
+    coursesApi
+      .changePublish(id, publish)
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
+  };
   const pageHandle = (event, value) => {
     setPage({
       ...page,
@@ -92,7 +99,7 @@ function CoursesList(props) {
           totalPages: Math.ceil(fetch_data.data.length / page.limit),
         });
       } catch (err) {
-        alert(err.message);
+        console.log(err.message);
       }
     }, 200);
   }, []);
@@ -317,26 +324,58 @@ function CoursesList(props) {
                           </Tooltip>
                           <Tooltip
                             id="tooltip-top"
-                            title="Trực tuyến"
+                            title="Sửa"
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
-                            <Button color="successNoBackground" justIcon>
-                              <PublicIcon className={classes.underChartIcons} />
+                            <Button
+                              color="successNoBackground"
+                              onClick={}
+                              justIcon
+                            >
+                              <EditIcon className={classes.underChartIcons} />
                             </Button>
                           </Tooltip>
-                          <Tooltip
-                            id="tooltip-top"
-                            title="Đình chỉ"
-                            placement="bottom"
-                            classes={{ tooltip: classes.tooltip }}
-                          >
-                            <Button color="dangerNoBackground" justIcon>
-                              <VpnLockIcon
-                                className={classes.underChartIcons}
-                              />
-                            </Button>
-                          </Tooltip>
+                          {item.publish === true && (
+                            <Tooltip
+                              id="tooltip-top"
+                              title="Đình chỉ"
+                              placement="bottom"
+                              classes={{ tooltip: classes.tooltip }}
+                            >
+                              <Button
+                                color="dangerNoBackground"
+                                onClick={() =>
+                                  changePublish(item.courseid, !item.publish)
+                                }
+                                justIcon
+                              >
+                                <VpnLockIcon
+                                  className={classes.underChartIcons}
+                                />
+                              </Button>
+                            </Tooltip>
+                          )}
+                          {item.publish === false && (
+                            <Tooltip
+                              id="tooltip-top"
+                              title="Trực tuyến"
+                              placement="bottom"
+                              classes={{ tooltip: classes.tooltip }}
+                            >
+                              <Button
+                                color="primaryNoBackground"
+                                onClick={() =>
+                                  changePublish(item.courseid, !item.publish)
+                                }
+                                justIcon
+                              >
+                                <PublicIcon
+                                  className={classes.underChartIcons}
+                                />
+                              </Button>
+                            </Tooltip>
+                          )}
                         </div>
                       }
                     />
@@ -372,26 +411,54 @@ function CoursesList(props) {
                           </Tooltip>
                           <Tooltip
                             id="tooltip-top"
-                            title="Edit"
+                            title="Sửa"
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
                             <Button color="successNoBackground" justIcon>
-                              <PublicIcon className={classes.underChartIcons} />
+                              <EditIcon className={classes.underChartIcons} />
                             </Button>
                           </Tooltip>
-                          <Tooltip
-                            id="tooltip-top"
-                            title="Remove"
-                            placement="bottom"
-                            classes={{ tooltip: classes.tooltip }}
-                          >
-                            <Button color="dangerNoBackground" justIcon>
-                              <VpnLockIcon
-                                className={classes.underChartIcons}
-                              />
-                            </Button>
-                          </Tooltip>
+                          {item.publish === true && (
+                            <Tooltip
+                              id="tooltip-top"
+                              title="Đình chỉ"
+                              placement="bottom"
+                              classes={{ tooltip: classes.tooltip }}
+                            >
+                              <Button
+                                color="dangerNoBackground"
+                                onClick={() =>
+                                  changePublish(item.courseid, !item.publish)
+                                }
+                                justIcon
+                              >
+                                <VpnLockIcon
+                                  className={classes.underChartIcons}
+                                />
+                              </Button>
+                            </Tooltip>
+                          )}
+                          {item.publish === false && (
+                            <Tooltip
+                              id="tooltip-top"
+                              title="Trực tuyến"
+                              placement="bottom"
+                              classes={{ tooltip: classes.tooltip }}
+                            >
+                              <Button
+                                color="primaryNoBackground"
+                                onClick={() =>
+                                  changePublish(item.courseid, !item.publish)
+                                }
+                                justIcon
+                              >
+                                <PublicIcon
+                                  className={classes.underChartIcons}
+                                />
+                              </Button>
+                            </Tooltip>
+                          )}
                         </div>
                       }
                     />
@@ -415,7 +482,7 @@ function CoursesList(props) {
                         <div>
                           <Tooltip
                             id="tooltip-top"
-                            title="View"
+                            title="Xem"
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
@@ -425,26 +492,58 @@ function CoursesList(props) {
                           </Tooltip>
                           <Tooltip
                             id="tooltip-top"
-                            title="Edit"
+                            title="Sửa"
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
-                            <Button color="successNoBackground" justIcon>
-                              <PublicIcon className={classes.underChartIcons} />
+                            <Button
+                              color="successNoBackground"
+                              onClick={(item) => {}}
+                              justIcon
+                            >
+                              <EditIcon className={classes.underChartIcons} />
                             </Button>
                           </Tooltip>
-                          <Tooltip
-                            id="tooltip-top"
-                            title="Remove"
-                            placement="bottom"
-                            classes={{ tooltip: classes.tooltip }}
-                          >
-                            <Button color="dangerNoBackground" justIcon>
-                              <VpnLockIcon
-                                className={classes.underChartIcons}
-                              />
-                            </Button>
-                          </Tooltip>
+                          {item.publish === true && (
+                            <Tooltip
+                              id="tooltip-top"
+                              title="Đình chỉ"
+                              placement="bottom"
+                              classes={{ tooltip: classes.tooltip }}
+                            >
+                              <Button
+                                color="dangerNoBackground"
+                                onClick={() =>
+                                  changePublish(item.courseid, !item.publish)
+                                }
+                                justIcon
+                              >
+                                <VpnLockIcon
+                                  className={classes.underChartIcons}
+                                />
+                              </Button>
+                            </Tooltip>
+                          )}
+                          {item.publish === false && (
+                            <Tooltip
+                              id="tooltip-top"
+                              title="Trực tuyến"
+                              placement="bottom"
+                              classes={{ tooltip: classes.tooltip }}
+                            >
+                              <Button
+                                color="primaryNoBackground"
+                                onClick={() =>
+                                  changePublish(item.courseid, !item.publish)
+                                }
+                                justIcon
+                              >
+                                <PublicIcon
+                                  className={classes.underChartIcons}
+                                />
+                              </Button>
+                            </Tooltip>
+                          )}
                         </div>
                       }
                     />

@@ -12,7 +12,7 @@ const favoriteCourseModel = require("../models/favorite-course.model");
 const constant = require("../utils/constant");
 const db = require("../utils/db");
 const loginValidation = require("../middlewares/validation.login");
-const commonUtils = require('../utils/common');
+const commonUtils = require("../utils/common");
 
 //top 3 khóa học nổi bật nhất trong tuần qua (nhiều lượt đăng kí nhất)
 router.get("/top-highlight", function (req, res, next) {
@@ -67,11 +67,13 @@ router.get("/", (req, res, next) => {
 router.get("/top10View", (req, res, next) => {
   let quantity = 10;
 
-  courseModel.getTopByColumnName(quantity, "c.views", "desc").then((courses) => {
-    res.json({
-      data: courses,
+  courseModel
+    .getTopByColumnName(quantity, "c.views", "desc")
+    .then((courses) => {
+      res.json({
+        data: courses,
+      });
     });
-  });
 });
 
 router.get(
@@ -280,52 +282,59 @@ router.post("/search", function (req, res, next) {
 });
 
 // xem chi tiết khóa học
-router.get("/findById/:id", loginValidation(['NOT_NEED_LOGIN']), (req, res, next) => {
-  let { id } = req.params;
-  let {userId} = commonUtils.currentUser;
-  courseModel
-    .findById(id)
-    .then(async (course) => {
-      if (!course.courseid) {
-        throw "Not found";
-      } else {
-        await courseModel.updateViews(course.courseid, +course.views + 1);
+router.get(
+  "/findById/:id",
+  loginValidation(["NOT_NEED_LOGIN"]),
+  (req, res, next) => {
+    let { id } = req.params;
+    let { userId } = commonUtils.currentUser;
+    courseModel
+      .findById(id)
+      .then(async (course) => {
+        if (!course.courseid) {
+          throw "Not found";
+        } else {
+          await courseModel.updateViews(course.courseid, +course.views + 1);
 
-        course.favorite = false;
-        if(userId) {
-          let data = await favoriteCourseModel.findByStudentAndCourse({
-            courseId: course.courseid,
-            studentId: userId
-          });
+          course.favorite = false;
+          if (userId) {
+            let data = await favoriteCourseModel.findByStudentAndCourse({
+              courseId: course.courseid,
+              studentId: userId,
+            });
 
-          if(data && data.favoritecourseid){
-            course.favorite = true;
+            if (data && data.favoritecourseid) {
+              course.favorite = true;
+            }
+          }
+
+          course.registered = false;
+
+          if (commonUtils.currentUser.userId) {
+            let temp1 = await studentCourseModel.findByStudentAndCourse({
+              studentId: commonUtils.currentUser.userId,
+              courseId: course.courseid,
+            });
+
+            if (temp1 && temp1.studentcourseid) {
+              course.registered = true;
+            }
+
+            let courseVideo = { courseId: course.courseid };
+
+            let result = await courseVideoModel.findByCourseId(courseVideo);
+
+            course.videos = result;
+
+            res.json({
+              data: course,
+            });
           }
         }
-
-        course.registered = false;
-
-        if(commonUtils.currentUser.userId) {
-          let temp1 = await studentCourseModel.findByStudentAndCourse({studentId: commonUtils.currentUser.userId, courseId: course.courseid});
-
-          if(temp1 && temp1.studentcourseid) {
-            course.registered = true;
-          }
-        }
-
-        let courseVideo = { courseId: course.courseid };
-
-        let result = await courseVideoModel.findByCourseId(courseVideo);
-
-        course.videos = result;
-
-        res.json({
-          data: course,
-        });
-      }
-    })
-    .catch(next);
-});
+      })
+      .catch(next);
+  }
+);
 
 // Tạo khóa học
 router.post(
@@ -339,14 +348,29 @@ router.post(
       let requestBody = req.body;
       let now = new Date();
       let publicPath = path.dirname(require.main.filename) + "/public/";
-      let { title, description, detailDescription, price, categoryId, imagePath, videos } = req.body;
+      let {
+        title,
+        description,
+        detailDescription,
+        price,
+        categoryId,
+        imagePath,
+        videos,
+      } = req.body;
       let teacherId = commonUtils.currentUser.userId;
 
       if (requestBody) {
         course = {
-          title, description, detailDescription, price, categoryId, teacherId, imagePath, videos,
+          title,
+          description,
+          detailDescription,
+          price,
+          categoryId,
+          teacherId,
+          imagePath,
+          videos,
           views: 0,
-          createddate: now
+          createddate: now,
         };
 
         if (videos) {
@@ -511,12 +535,26 @@ router.post(
       let now = new Date();
       let publicPath = path.dirname(require.main.filename) + "/public/";
       var videos = [];
-      let {title, description, detailDescription, price, categoryId, teacherId, imagePath} = req.body;
+      let {
+        title,
+        description,
+        detailDescription,
+        price,
+        categoryId,
+        teacherId,
+        imagePath,
+      } = req.body;
 
       course = {
-        title, description, detailDescription, price, categoryId, teacherId, imagePath,
+        title,
+        description,
+        detailDescription,
+        price,
+        categoryId,
+        teacherId,
+        imagePath,
         views: 0,
-        createddate: now
+        createddate: now,
       };
 
       if (requestBody.videos) {
@@ -526,7 +564,7 @@ router.post(
           video.orderNo = element.orderNo;
           video.preview = element.preview ? true : false;
           video.title = element.title;
-          video.description= element.description;
+          video.description = element.description;
 
           videos.push(video);
         });
@@ -558,15 +596,31 @@ router.put(
       let course = {};
       let requestBody = req.body;
       let now = new Date();
-      let {title, imagePath, description, detailDescription, price, categoryId, teacherId, deletedVideoIds ,moreVideos} = req.body;
+      let {
+        title,
+        imagePath,
+        description,
+        detailDescription,
+        price,
+        categoryId,
+        teacherId,
+        deletedVideoIds,
+        moreVideos,
+      } = req.body;
 
       course = {
-        title, imagePath, description, detailDescription, price, categoryId, teacherId,
-        updateddate: now
+        title,
+        imagePath,
+        description,
+        detailDescription,
+        price,
+        categoryId,
+        teacherId,
+        updateddate: now,
       };
 
       //delete the video
-      if(deletedVideoIds) {
+      if (deletedVideoIds) {
         deletedVideoIds.forEach(async (e) => {
           await courseVideoModel.deleteById(e);
         });
@@ -611,10 +665,10 @@ router.delete(
 
 router.get(
   "/findByTeacherId/:teacherId",
-  loginValidation(['TEACHER']),
+  loginValidation(["TEACHER"]),
   formValidation(require("../schemas/pagination.json")),
   (req, res, next) => {
-    let teacherId = req.body.teacherId;
+    let teacherId = req.params.teacherId;
     let page;
     let pageSize;
 
@@ -634,19 +688,27 @@ router.get(
   }
 );
 
-router.put('/disable-course/:courseId', loginValidation(['ADMIN']), validation(require('../schemas/disable-course.json')), (req, res, next) => {
-    let {publish} = req.body;
-    let {courseId} = req.params;
+router.put(
+  "/disable-course/:courseId",
+  loginValidation(["ADMIN"]),
+  validation(require("../schemas/disable-course.json")),
+  (req, res, next) => {
+    let { publish } = req.body;
+    let { courseId } = req.params;
 
-    courseModel.selectByIdSimple(courseId).then(async course => {
+    courseModel
+      .selectByIdSimple(courseId)
+      .then(async (course) => {
         course.publish = publish;
 
         course = await courseModel.updateSimple(course);
 
         res.json({
-            data: course
+          data: course,
         });
-    }).catch(next);
-});
+      })
+      .catch(next);
+  }
+);
 
 module.exports = router;

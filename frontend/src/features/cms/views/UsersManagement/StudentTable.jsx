@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
 // react component for creating dynamic tables
 import ReactTable from 'react-table';
 // material-ui-icons
@@ -15,12 +16,14 @@ import IconCard from '@cmscomponents/Cards/IconCard.jsx';
 import IconButton from '@cmscomponents/CustomButtons/IconButton.jsx';
 import userApi from '@api/userApi.js';
 export default function StudentTable() {
+  let history = useHistory();
   const [state, setState] = useState({
     title: '',
     data: [],
     table: [],
   });
   let changeStatus = useRef(null);
+  let viewProfile = useRef(null);
   changeStatus.current = async (id, status) => {
     try {
       await userApi.userToogleStatus(id, status);
@@ -34,6 +37,20 @@ export default function StudentTable() {
     } catch (err) {
       alert('Không thể đổi trạng thái tài khoản');
     }
+  };
+  viewProfile.current = async (id, email, fullname, status) => {
+    history.push({
+      pathname: '/manager/viewinfo',
+      search: `?id=${id}`,
+      state: {
+        userid: id,
+        email: email,
+        fullname: fullname,
+        status: status,
+        group: 'HỌC VIÊN',
+        groupid: 2,
+      },
+    });
   };
   const createTable = (table) => {
     return table.dataRows.map((prop, key) => {
@@ -58,18 +75,13 @@ export default function StudentTable() {
             </IconButton>{' '}
             {/* use this button to add a edit kind of action */}
             <IconButton
-              // onClick={() => {
-              //   let obj = state.data.find((o) => o.r_id === key);
-              //   alert(
-              //     "You've clicked EDIT button on \n{ \nName: " +
-              //       obj.id +
-              //       ', \nname: ' +
-              //       obj.name +
-              //       ', \ncode: ' +
-              //       obj.reg +
-              //       '\n}.'
-              //   );
-              // }}
+              onClick={async () => {
+                let id = prop[0];
+                let email = prop[1];
+                let fullname = prop[2];
+                let status = prop[3];
+                viewProfile.current(id, email, fullname, status);
+              }}
               color="warningNoBackground"
               customClass="edit"
             >

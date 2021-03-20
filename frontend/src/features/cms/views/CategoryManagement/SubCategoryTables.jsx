@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, { useState, useEffect, useRef } from 'react';
 // react component for creating dynamic tables
 import ReactTable from 'react-table';

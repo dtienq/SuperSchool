@@ -52,7 +52,7 @@ router.post("/login", validation(loginSchema), function (req, res, next) {
             commonUtils.parse2Plain(data),
             constant.SECRET_KEY,
             {
-              expiresIn: '15s'
+              expiresIn: "3600s",
             }
           );
           const refresh_token = data.refresh_token;
@@ -106,17 +106,17 @@ router.post("/register", async function (req, res, next) {
     usergroupid: 2,
     fullname: userInfo.username,
     email: userInfo.email,
-    picture: userInfo.picture
+    picture: userInfo.picture,
   };
   newUser.refresh_token = randomstring.generate({ length: 255 });
   newUser.password = bcrypt.hashSync(newUser.password, constant.SALT_ROUNDS);
 
   let data = await userModel.getByUserEmail(userInfo.email);
 
-  if(data && data.userId) {
+  if (data && data.userId) {
     return res.status(500).json({
-      code: 'DUPLICATE_EMAIL',
-      message: 'Email đã tổn tại'
+      code: "DUPLICATE_EMAIL",
+      message: "Email đã tổn tại",
     });
   }
 
@@ -128,7 +128,8 @@ router.post("/register", async function (req, res, next) {
         data.refresh_token = undefined;
         access_token = jwt.sign(
           commonUtils.parse2Plain(data),
-          constant.SECRET_KEY
+          constant.SECRET_KEY,
+          { expiresIn: "3600s" }
         );
         transaction.commit();
         res.json({
@@ -161,7 +162,7 @@ router.post("/google-login", (req, res) => {
               const access_token = jwt.sign(
                 commonUtils.parse2Plain(data),
                 constant.SECRET_KEY,
-                { expiresIn: 3600 }
+                { expiresIn: "3600s" }
               );
               const refresh_token = data.refresh_token;
               data.refresh_token = undefined;
@@ -174,7 +175,10 @@ router.post("/google-login", (req, res) => {
               // This email not existed
               // Register account with email from google
               const raw_password = randomstring.generate({ length: 6 });
-              const password = bcrypt.hashSync(raw_password, constant.SALT_ROUNDS);
+              const password = bcrypt.hashSync(
+                raw_password,
+                constant.SALT_ROUNDS
+              );
               const rfToken = randomstring.generate({ length: 255 });
               let userInfo = {
                 usergroupid: 2,
@@ -254,7 +258,7 @@ router.post(
           const access_token = jwt.sign(
             commonUtils.parse2Plain(data),
             constant.SECRET_KEY,
-            { expiresIn: 3600 }
+            { expiresIn: "3600s" }
           );
           res.json({
             access_token: access_token,

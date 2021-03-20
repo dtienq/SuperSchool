@@ -2,7 +2,10 @@ const db = require('../utils/db');
 
 module.exports = {
     findByCourseId: (courseId) => {
-        return db('review').where('courseid', courseId).orderBy('updateddate', 'desc');
+        return db.from('review as r')
+        .where('courseid', courseId)
+        .leftJoin("user as us", "r.userid", "us.userid")
+        .orderBy('updateddate', 'desc');
     },
     create: (review) => {
         return db('review').insert({

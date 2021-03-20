@@ -19,6 +19,15 @@ module.exports = {
       .leftJoin("category as ct", "ct.categoryid", "c.categoryid");
     return query;
   },
+  viewForTeacher: (id) => {
+    let query = db
+      .select("c.*", "u.fullname as teachername", "ct.parentid as parentid")
+      .from("course as c")
+      .where("c.teacherid", id)
+      .leftJoin("user as u", "c.teacherid", "u.userid")
+      .leftJoin("category as ct", "ct.categoryid", "c.categoryid");
+    return query;
+  },
   findByCategoryId: (categoryId, page, pageSize) => {
     let query = db("course");
 
@@ -134,7 +143,7 @@ module.exports = {
     let query = db.select(
       db.raw(
         ' c.*, count(p.promotionid) as "totalPromotions", u.fullname as "teacherName", ca.name as "categoryName", count(sc.studentcourseid) as totalstudents, coalesce(avg(r.rating), 0) as "averageStar",' +
-        ' case when maxCourse.courseid = c.courseid then true else false end as "isBestSeller"\n' +
+          ' case when maxCourse.courseid = c.courseid then true else false end as "isBestSeller"\n' +
           "from course c \n" +
           "inner join category ca \n" +
           "on c.categoryid = ca.categoryid \n" +
@@ -149,10 +158,11 @@ module.exports = {
       )
     );
 
-    query.innerJoin("user as u", "u.userid", "c.teacherid")
+    query
+      .innerJoin("user as u", "u.userid", "c.teacherid")
       .leftJoin("review as r", "r.courseid", "c.courseid")
       .leftJoin("student_course as sc", "sc.courseid", "c.courseid")
-      .leftJoin("promotion as p", "p.courseid", "c.courseid")
+      .leftJoin("promotion as p", "p.courseid", "c.courseid");
 
     if (categoryId) {
       query.where("ca.categoryid", categoryId);
@@ -170,7 +180,12 @@ module.exports = {
       query.orderBy(orderBy, orderType ? orderType : "asc");
     }
 
-    query.groupBy('c.courseid', 'u.userid', 'ca.categoryid', 'maxcourse.courseid');
+    query.groupBy(
+      "c.courseid",
+      "u.userid",
+      "ca.categoryid",
+      "maxcourse.courseid"
+    );
 
     let queryCount = db
       .from("course as c")
@@ -240,15 +255,27 @@ module.exports = {
   // },
   create: async (transaction, course, videos) => {
     let {
-      title, description, detailDescription, price, categoryId, teacherId, imagePath,
+      title,
+      description,
+      detailDescription,
+      price,
+      categoryId,
+      teacherId,
+      imagePath,
       views,
-      createddate
+      createddate,
     } = course;
     return transaction("course")
       .insert({
-        title, description, detailDescription, price, categoryid: categoryId, teacherid: teacherId, imagePath,
+        title,
+        description,
+        detailDescription,
+        price,
+        categoryid: categoryId,
+        teacherid: teacherId,
+        imagePath,
         views,
-        createddate
+        createddate,
       })
       .returning("courseid");
   },
@@ -261,7 +288,7 @@ module.exports = {
           orderno: video.orderNo,
           preview: video.preview ? true : false,
           title: video.title,
-          description: video.description
+          description: video.description,
         });
       });
     }
@@ -276,7 +303,7 @@ module.exports = {
           orderno: video.orderNo,
           preview: video.preview ? true : false,
           title: video.title,
-          description: video.description
+          description: video.description,
         });
       });
     }
@@ -286,27 +313,32 @@ module.exports = {
       .update({
         ...course,
         videos: undefined,
-        courseId: undefined
+        courseId: undefined,
       });
   },
   delete: (transaction, id) => {
     return transaction("course").where("courseid", id).del();
   },
   getTopByColumnName: (quantity, columnName, order) => {
-    let query = db("course as c")
+    let query = db("course as c");
 
-    query.innerJoin('user as u', 'u.userid', 'c.teacherid');
-    query.innerJoin('category as ca', 'ca.categoryid', 'c.categoryid');
+    query.innerJoin("user as u", "u.userid", "c.teacherid");
+    query.innerJoin("category as ca", "ca.categoryid", "c.categoryid");
     query.leftJoin("student_course as sc", "sc.courseid", "c.courseid");
     query.leftJoin("review as r", "r.courseid", "c.courseid");
 
     query.orderBy(columnName, order);
     query.limit(quantity);
 
-    query.select('c.*','u.fullname as teacherName', 'u.picture as teacherAvatar', 'ca.name as categoryName');
+    query.select(
+      "c.*",
+      "u.fullname as teacherName",
+      "u.picture as teacherAvatar",
+      "ca.name as categoryName"
+    );
     query.select(db.raw('count(sc.studentcourseid) as "totalstudents"'));
     query.select(db.raw('coalesce(avg(r.rating), 0) as "averageStar"'));
-    query.groupBy('c.courseid', 'u.userid', 'ca.categoryid');
+    query.groupBy("c.courseid", "u.userid", "ca.categoryid");
 
     return query;
   },
@@ -318,25 +350,36 @@ module.exports = {
 
     query.innerJoin("student_course as sc", "sc.courseid", "c.courseid");
     query.leftJoin("review as r", "r.courseid", "c.courseid");
-    query.innerJoin('user as u', 'u.userid', 'c.teacherid');
-    query.innerJoin('category as ca', 'ca.categoryid', 'c.categoryid');
+    query.innerJoin("user as u", "u.userid", "c.teacherid");
+    query.innerJoin("category as ca", "ca.categoryid", "c.categoryid");
     query.select(db.raw('count(sc.studentcourseid) as "totalstudents"'));
     query.select(db.raw('coalesce(avg(r.rating), 0) as "averageStar"'));
 
     query.where("sc.createddate", ">=", mondayOfLastWeek);
     query.where("sc.createddate", "<=", sundayOfLastWeek);
 
-    return query.select('c.*','u.fullname as teacherName', 'u.picture as teacherAvatar', 'ca.name as categoryName').groupBy("c.courseid", "u.userid", 'ca.categoryid').limit(quantity);
+    return query
+      .select(
+        "c.*",
+        "u.fullname as teacherName",
+        "u.picture as teacherAvatar",
+        "ca.name as categoryName"
+      )
+      .groupBy("c.courseid", "u.userid", "ca.categoryid")
+      .limit(quantity);
   },
   selectByIdSimple: (id) => {
-    return db('course').where('courseid', id).first();
+    return db("course").where("courseid", id).first();
   },
   updateSimple: (course) => {
-    return db('course').where('courseid', course.courseid).update(course).returning('*');
+    return db("course")
+      .where("courseid", course.courseid)
+      .update(course)
+      .returning("*");
   },
   updateViews: (id, views) => {
-    return db('course').where('courseid', id).update({
-      views: views
+    return db("course").where("courseid", id).update({
+      views: views,
     });
-  }
+  },
 };

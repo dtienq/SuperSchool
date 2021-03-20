@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
@@ -28,7 +29,9 @@ import dashboardStyle from '@cmsassets/jss/material-dashboard-pro-react/views/da
 import categoryApi from '@api/categoryApi';
 import coursesApi from '@api/coursesApi';
 import Close from 'material-ui-icons/Close';
+import moment from 'moment';
 function TeacherCourses(props) {
+  const currentUser = useSelector(({ userReducer }) => userReducer?.user);
   let location = useLocation();
   const [state, setState] = useState({
     category: location.state
@@ -51,7 +54,7 @@ function TeacherCourses(props) {
     last: 0,
     page: 1,
     totalCourses: 0,
-    limit: 2,
+    limit: 10,
   });
 
   const pageHandle = (event, value) => {
@@ -75,7 +78,9 @@ function TeacherCourses(props) {
             state.category
           );
         }
-        const fetch_data = await coursesApi.getCoursesByAdmin();
+        const fetch_data = await coursesApi.getCoursesByTeacher(
+          currentUser.userId
+        );
         const fetchData = {
           category: state.category,
           subcategory: state.subcategory,
@@ -93,7 +98,7 @@ function TeacherCourses(props) {
           totalPages: Math.ceil(fetch_data.data.length / page.limit),
         });
       } catch (err) {
-        alert(err.message);
+        console.log(err.message);
       }
     }, 200);
   }, []);
@@ -302,7 +307,7 @@ function TeacherCourses(props) {
                       text={item.description}
                       price={item.status}
                       statIcon={UpdateIcon}
-                      statText={`Cập nhật:${item.teachername}`}
+                      statText={item.updateddate}
                       hover
                       underImage={
                         <div>
@@ -355,7 +360,7 @@ function TeacherCourses(props) {
                       text={item.description}
                       price={item.status}
                       statIcon={UpdateIcon}
-                      statText={`Cập nhật:${item.updateddate}`}
+                      statText={item.updateddate}
                       hover
                       underImage={
                         <div>
@@ -408,7 +413,7 @@ function TeacherCourses(props) {
                       text={item.description}
                       price={item.status}
                       statIcon={UpdateIcon}
-                      statText={`Cập nhật:${item.teachername}`}
+                      statText={item.updateddate}
                       hover
                       underImage={
                         <div>

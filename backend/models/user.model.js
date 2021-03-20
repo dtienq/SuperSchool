@@ -98,7 +98,7 @@ module.exports = {
         'u.userid as userId',
         'u.username',
         'u.fullname',
-        'u.phonenumber as phoneNumber',
+        // 'u.phonenumber as phoneNumber',
         'u.email',
         'g.code as groupCode'
       )
