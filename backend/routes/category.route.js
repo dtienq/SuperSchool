@@ -7,7 +7,6 @@ const courseModel = require("../models/course.model");
 const common = require("../utils/common");
 const constant = require("../utils/constant");
 const db = require("../utils/db");
-const roleValidation = require("../middlewares/validation.role");
 const loginValidation = require("../middlewares/validation.login");
 
 /**
@@ -144,7 +143,7 @@ router.get("/register/top", function (req, res, next) {
  */
 router.get(
   "/findById/:id",
-  roleValidation([constant.USER_GROUP.ADMIN]),
+  loginValidation([constant.USER_GROUP.ADMIN]),
   (req, res, next) => {
     categoryModel
       .findById(req.params.id)
@@ -177,7 +176,7 @@ router.get(
  */
 router.post(
   "/create",
-  roleValidation([constant.USER_GROUP.ADMIN]),
+  loginValidation([constant.USER_GROUP.ADMIN]),
   validateMdw(require("../schemas/createCategory.json")),
   (req, res, next) => {
     db.transaction((transaction) => {
@@ -210,8 +209,7 @@ router.post(
  */
 router.delete(
   "/delete/:id",
-  loginValidation(),
-  roleValidation([constant.USER_GROUP.ADMIN]),
+  loginValidation([constant.USER_GROUP.ADMIN]),
   async (req, res, next) => {
     let { id } = req.params;
     let categories = await categoryModel.findByParentId(id);
@@ -245,7 +243,7 @@ router.delete(
 
 router.put(
   "/update",
-  roleValidation([constant.USER_GROUP.ADMIN]),
+  loginValidation([constant.USER_GROUP.ADMIN]),
   validateMdw(require("../schemas/updateCategory.json")),
   (req, res, next) => {
     db.transaction((transaction) => {

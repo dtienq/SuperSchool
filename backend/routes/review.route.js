@@ -1,6 +1,5 @@
 var express = require('express');
 const validation = require('../middlewares/validate.mdw');
-const roleValidation = require('../middlewares/validation.role');
 var router = express.Router();
 var rn = require('random-number');
 const fs = require('fs');

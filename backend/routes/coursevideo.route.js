@@ -5,7 +5,6 @@ const paramsValidation = require('../middlewares/validate.mdw');
 const fs = require('fs');
 const CONSTANT = require('../utils/constant');
 const path = require('path');
-const roleValidation = require('../middlewares/validation.role');
 const commonUtils = require('../utils/common');
 const loginValidation = require("../middlewares/validation.login");
 
@@ -40,7 +39,7 @@ router.get(
 
 router.post(
   '/addVideosToCourse',
-  roleValidation([CONSTANT.USER_GROUP.ADMIN, CONSTANT.USER_GROUP.TEACHER]),
+  loginValidation([CONSTANT.USER_GROUP.ADMIN, CONSTANT.USER_GROUP.TEACHER]),
   paramsValidation(require('../schemas/addVideoToCourse.json')),
   function (req, res, next) {
     let requestBody = req.body;
