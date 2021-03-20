@@ -20,17 +20,17 @@ function NavOne() {
     if (keyword) dispatch(getCoursesWhenSearch(dataToSend));
     history.push(`/search/keyword=${keyword}`);
   };
-  const mobileMenu = () => {
-    let mainNavToggler = document.querySelector('.menu-toggler');
-    let mainNav = document.querySelector('.main-navigation');
-    mainNavToggler.addEventListener('click', function () {
-      mainNav.style.display =
-        mainNav.style.display != 'block' ? 'block' : 'none';
-    });
-  };
+  // const mobileMenu = () => {
+  //   let mainNavToggler = document.querySelector('.menu-toggler');
+  //   let mainNav = document.querySelector('.main-navigation');
+  //   mainNavToggler.addEventListener('click', function () {
+  //     mainNav?.style?.display =
+  //       mainNav?.style?.display !== 'block' ? 'block' : 'none';
+  //   });
+  // };
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
-    mobileMenu();
+    // mobileMenu();
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };

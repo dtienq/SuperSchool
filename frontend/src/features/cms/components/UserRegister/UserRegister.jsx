@@ -135,7 +135,7 @@ class UserRegister extends React.Component {
     var total = this.props.steps.length;
     var li_width = 100 / total;
     var total_steps = this.props.steps.length;
-    var move_distance = this.refs.wizard.children[0].offsetWidth / total_steps;
+    var move_distance = this?.refs?.wizard?.children[0]?.offsetWidth / total_steps;
     var index_temp = index;
     var vertical_level = 0;
 
