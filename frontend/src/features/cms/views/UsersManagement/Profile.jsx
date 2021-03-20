@@ -89,24 +89,22 @@ function Profile({ ...props }) {
                     <h5>{info.reg}</h5>
                   </ItemGrid>
                 </GridContainer>
-                <Button
-                  color="rose"
-                  onClick={() => {
-                    history.push('/manager/editprofile');
-                  }}
-                  right
-                >
-                  Cập nhật thông tin
-                </Button>
-                <Button
-                  color="warning"
-                  onClick={() => {
-                    history.push('/manager/editprofile');
-                  }}
-                  right
-                >
-                  Đổi mật khẩu
-                </Button>
+                <Link to="/profile">
+                  <Button color="rose" right>
+                    Cập nhật thông tin
+                  </Button>
+                </Link>
+                <Link to="/profile/change-password">
+                  <Button
+                    color="warning"
+                    onClick={() => {
+                      history.push('/manager/editprofile');
+                    }}
+                    right
+                  >
+                    Đổi mật khẩu
+                  </Button>
+                </Link>
                 <Clearfix />
               </div>
             }

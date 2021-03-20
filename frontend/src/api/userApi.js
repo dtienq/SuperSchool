@@ -26,7 +26,7 @@ const userApi = {
   },
   userToogleStatus: async (id, status) => {
     const url = 'admin/togglestatus';
-    return await axiosClient.post(url, { userId: id, status: status });
+    return await axiosClient.post(url, { userId: +id, status: status });
   },
   get: (id) => {
     const url = `/user/${id}`;

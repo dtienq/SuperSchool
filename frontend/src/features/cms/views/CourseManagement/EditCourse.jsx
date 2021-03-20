@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
 import FormLabel from 'material-ui/Form/FormLabel';
@@ -125,6 +125,7 @@ function EditCourse(props) {
           status,
           teacherName,
           categoryid,
+          teacherid,
           categoryName,
         } = fetchCourse.data;
         setCourse({
@@ -132,9 +133,10 @@ function EditCourse(props) {
           imagePath,
           categoryId: +categoryid,
           title,
-          price,
+          price: +price,
           description,
           detailDescription,
+          teacherId: +teacherid,
           status,
           teacherName,
           categoryName,
@@ -299,6 +301,7 @@ function EditCourse(props) {
       data.detailDescription = detailDescription;
       data.videos = coursevid.chapters;
       delete data.courseid;
+      console.log(data);
       let result = await coursesApi.updateCourse(id, data);
       if (result.data) {
         htmlAlert(
@@ -791,12 +794,9 @@ function EditCourse(props) {
                   tabContent: (
                     <div>
                       <ItemGrid xs={12} sm={6}>
-                        <Button
-                          color="gray"
-                          onClick={() => <Link to="/manager/" />}
-                        >
-                          Hủy bỏ
-                        </Button>
+                        <Link to="/manager/">
+                          <Button color="info">Hủy bỏ</Button>
+                        </Link>
                       </ItemGrid>
                       <ItemGrid xs={12} sm={6}>
                         <Button color="warning" onClick={isValidated}>

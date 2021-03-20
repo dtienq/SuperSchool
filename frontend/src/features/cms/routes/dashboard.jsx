@@ -19,6 +19,7 @@ import PersonIcon from 'material-ui-icons/Person';
 import MainCategoryTables from '@cmsviews/CategoryManagement/MainCategoryTables';
 import SubCategoryTables from '@cmsviews/CategoryManagement/SubCategoryTables';
 import CategoryForm from '@cmsviews/CategoryManagement/CategoryForm';
+import { useSelector } from 'react-redux';
 
 var managerRoutes = [
   // User Info
@@ -130,7 +131,7 @@ var managerRoutes = [
   },
 ];
 
-var dashRoutes = [
+var teacherRoutes = [
   {
     path: '/manager/profile',
     icon: PersonIcon,
@@ -164,4 +165,12 @@ var dashRoutes = [
     name: 'Dashboard',
   },
 ];
-export default managerRoutes;
+let dashRoutes = managerRoutes;
+// let dashRoutes = [];
+// if (role === 'ADMIN') {
+//   dashRoutes = managerRoutes;
+// } else if (role === 'TEACHER') {
+//   dashRoutes = teacherRoutes;
+// }
+
+export default dashRoutes;
