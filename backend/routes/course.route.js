@@ -1,6 +1,5 @@
 var express = require("express");
 const validation = require("../middlewares/validate.mdw");
-const roleValidation = require("../middlewares/validation.role");
 const formValidation = require("../middlewares/validate.mdw");
 var router = express.Router();
 var rn = require("random-number");
@@ -467,7 +466,7 @@ router.put(
 
 router.delete(
   "/delete/:id",
-  roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
+  loginValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
   (req, res, next) => {
     db.transaction((transaction) => {
       courseModel
@@ -589,7 +588,7 @@ router.post(
 
 router.put(
   "/update",
-  roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
+  loginValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
   validation(require("../schemas/createUpdateCourse.json")),
   (req, res, next) => {
     db.transaction((transaction) => {
@@ -645,7 +644,7 @@ router.put(
 
 router.delete(
   "/delete/:id",
-  roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
+  loginValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
   (req, res, next) => {
     db.transaction((transaction) => {
       courseModel

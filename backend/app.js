@@ -62,7 +62,7 @@ app.post('/uploadFile', (req, res, next) => {
 app.use((err, req, res, next) => {
   res.status(500).json({
     message:
-      'Something wrong, please contact administrators for more information!',
+      err.message
   });
 });
 
