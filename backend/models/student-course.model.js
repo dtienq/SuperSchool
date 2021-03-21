@@ -1,32 +1,45 @@
-const knex = require('../utils/db');
+const knex = require("../utils/db");
 
 module.exports = {
   registerCourse: (studentCourse) => {
-    return knex('student_course').insert({
+    return knex("student_course").insert({
       studentid: studentCourse.studentId,
       courseid: studentCourse.courseId,
       createddate: studentCourse.createdDate
-    }).returning('*');
+    }).returning("*");
   },
   findByStudentAndCourse: (studentCourse) => {
-    return knex('student_course').where({
+    return knex("student_course").where({
       studentid: studentCourse.studentId,
-      courseid: studentCourse.courseId,
+      courseid: studentCourse.courseId
     }).first();
   },
   getList: (userId) => {
-    return knex('student_course as sc')
-      .innerJoin('course as c', 'sc.courseid', 'c.courseid')
+    return knex("student_course as sc")
+      .innerJoin("course as c", "sc.courseid", "c.courseid")
+      .innerJoin('user as t', 'c.teacherid', 't.userid')
+      .innerJoin('category as ca', 'c.categoryid', 'ca.categoryid')
+      .leftJoin('review as r', 'c.courseid', 'r.courseid')
       .where({
-      studentid: userId
-    })
-      .orderBy('sc.createddate', 'desc')
+        studentid: userId
+      })
+      .orderBy("sc.createddate", "desc")
       .select(
+        "c.courseid",
+        "c.title as courseName",
+        "c.imagePath as imagePath",
+        "c.description",
+        "sc.status",
+        'ca.name as categoryName',
+        't.fullname as teacherName',
+        't.picture as teacherAvatar',
+        knex.raw('coalesce(avg(r.rating), 0) as averageStar')
+      )
+      .groupBy(
         'c.courseid',
-        'c.title as courseName',
-        'c.imagePath as imagePath',
-        'c.description',
-        'sc.status'
+        't.userid',
+        'ca.categoryid',
+        'sc.studentcourseid'
       );
   }
 };

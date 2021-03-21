@@ -1,8 +1,9 @@
+/* eslint-disable*/
 import React from 'react';
 import PropTypes from 'prop-types';
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from 'perfect-scrollbar';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import cx from 'classnames';
 
 // material-ui components
@@ -134,6 +135,9 @@ class Sidebar extends React.Component {
       <List className={classes.list}>
         {routes.map((prop, key) => {
           if (prop.redirect) {
+            return null;
+          }
+          if (prop.hidden) {
             return null;
           }
           if (prop.collapse) {
@@ -305,9 +309,9 @@ class Sidebar extends React.Component {
         <a href="#" className={logoMini}>
           <img src={logo} alt="logo" className={classes.img} />
         </a>
-        <a href="#" className={logoNormal}>
+        <Link to="/" className={logoNormal}>
           {logoText}
-        </a>
+        </Link>
       </div>
     );
     const drawerPaper =

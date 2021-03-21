@@ -12,9 +12,8 @@ import Button from '@cmscomponents/CustomButtons/Button.jsx';
 import { Link } from 'react-router-dom';
 import Clearfix from '@cmscomponents/Clearfix/Clearfix.jsx';
 import { useHistory } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-function Profile({ ...props }) {
-  const dispatch = useDispatch();
+import { useSelector } from 'react-redux';
+function Profile() {
   const currentUser = useSelector(({ userReducer }) => userReducer?.user);
   const history = useHistory();
   const info = {
@@ -89,24 +88,22 @@ function Profile({ ...props }) {
                     <h5>{info.reg}</h5>
                   </ItemGrid>
                 </GridContainer>
-                <Button
-                  color="rose"
-                  onClick={() => {
-                    history.push('/manager/editprofile');
-                  }}
-                  right
-                >
-                  Cập nhật thông tin
-                </Button>
-                <Button
-                  color="warning"
-                  onClick={() => {
-                    history.push('/manager/editprofile');
-                  }}
-                  right
-                >
-                  Đổi mật khẩu
-                </Button>
+                <Link to="/profile">
+                  <Button color="rose" right>
+                    Cập nhật thông tin
+                  </Button>
+                </Link>
+                <Link to="/profile/change-password">
+                  <Button
+                    color="warning"
+                    onClick={() => {
+                      history.push('/manager/editprofile');
+                    }}
+                    right
+                  >
+                    Đổi mật khẩu
+                  </Button>
+                </Link>
                 <Clearfix />
               </div>
             }

@@ -1,6 +1,5 @@
 var express = require("express");
 const validation = require("../middlewares/validate.mdw");
-const roleValidation = require("../middlewares/validation.role");
 const formValidation = require("../middlewares/validate.mdw");
 var router = express.Router();
 var rn = require("random-number");
@@ -298,6 +297,7 @@ router.get(
           await courseModel.updateViews(course.courseid, +course.views + 1);
 
           course.favorite = false;
+          console.info('hihihi', course);
           if (userId) {
             let data = await favoriteCourseModel.findByStudentAndCourse({
               courseId: course.courseid,
@@ -320,17 +320,16 @@ router.get(
             if (temp1 && temp1.studentcourseid) {
               course.registered = true;
             }
-
-            let courseVideo = { courseId: course.courseid };
-
-            let result = await courseVideoModel.findByCourseId(courseVideo);
-
-            course.videos = result;
-
-            res.json({
-              data: course,
-            });
           }
+          let courseVideo = { courseId: course.courseid };
+
+          let result = await courseVideoModel.findByCourseId(courseVideo);
+
+          course.videos = result;
+
+          res.json({
+            data: course,
+          });
         }
       })
       .catch(next);
@@ -467,7 +466,7 @@ router.put(
 
 router.delete(
   "/delete/:id",
-  roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
+  loginValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
   (req, res, next) => {
     db.transaction((transaction) => {
       courseModel
@@ -589,7 +588,7 @@ router.post(
 
 router.put(
   "/update",
-  roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
+  loginValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
   validation(require("../schemas/createUpdateCourse.json")),
   (req, res, next) => {
     db.transaction((transaction) => {
@@ -645,7 +644,7 @@ router.put(
 
 router.delete(
   "/delete/:id",
-  roleValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
+  loginValidation([constant.USER_GROUP.ADMIN, constant.USER_GROUP.TEACHER]),
   (req, res, next) => {
     db.transaction((transaction) => {
       courseModel

@@ -19,7 +19,9 @@ import PersonIcon from 'material-ui-icons/Person';
 import MainCategoryTables from '@cmsviews/CategoryManagement/MainCategoryTables';
 import SubCategoryTables from '@cmsviews/CategoryManagement/SubCategoryTables';
 import CategoryForm from '@cmsviews/CategoryManagement/CategoryForm';
+import parseJwt from '@utils/parseJwt';
 
+const group = parseJwt(localStorage.token).groupCode;
 var managerRoutes = [
   // User Info
   {
@@ -113,38 +115,13 @@ var managerRoutes = [
     icon: DashboardIcon,
     name: 'Thông tin người dùng',
     component: UserAndCourse,
+    hidden: true,
   },
   {
-    redirect: true,
-    path: '/',
-    pathTo: '/manager/profile',
-    name: 'Dashboard',
-  },
-];
-
-var dashRoutes = [
-  {
-    path: '/manager/profile',
-    icon: PersonIcon,
-    name: 'Thông tin cá nhân',
-    component: Profile,
-  },
-  {
-    path: '/manager/add-course',
-    name: 'Thêm khoá học',
-    icon: DashboardIcon,
-    component: AddCourse,
-  },
-  {
-    path: '/manager/teachercourses',
-    icon: DashboardIcon,
-    name: 'Khoá học của tôi',
-    component: TeacherCourses,
-  },
-  {
-    path: '/manager/edit-course',
+    path: '/manager/edit-course/:id',
     icon: DashboardIcon,
     name: 'Chỉnh sửa khoá học',
+    hidden: true,
     component: EditCourse,
   },
   {
@@ -154,4 +131,46 @@ var dashRoutes = [
     name: 'Dashboard',
   },
 ];
+
+var teacherRoutes = [
+  {
+    path: '/manager/profile',
+    icon: PersonIcon,
+    name: 'Thông tin cá nhân',
+    component: Profile,
+  },
+
+  {
+    path: '/manager/teachercourses',
+    icon: DashboardIcon,
+    name: 'Khoá học của tôi',
+    component: TeacherCourses,
+  },
+  {
+    path: '/manager/add-course',
+    name: 'Thêm khoá học',
+    icon: DashboardIcon,
+    component: AddCourse,
+  },
+  {
+    path: '/manager/edit-course/:id',
+    icon: DashboardIcon,
+    name: 'Chỉnh sửa khoá học',
+    hidden: true,
+    component: EditCourse,
+  },
+  {
+    redirect: true,
+    path: '/',
+    pathTo: '/manager/profile',
+    name: 'Dashboard',
+  },
+];
+let dashRoutes = [];
+if (group === 'ADMIN') {
+  dashRoutes = managerRoutes;
+} else if (group === 'TEACHER') {
+  dashRoutes = teacherRoutes;
+}
+
 export default dashRoutes;

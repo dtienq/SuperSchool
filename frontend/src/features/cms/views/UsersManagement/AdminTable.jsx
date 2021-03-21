@@ -1,3 +1,4 @@
+/* eslint-disable*/
 import React, { useState, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 // react component for creating dynamic tables

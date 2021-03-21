@@ -22,7 +22,6 @@ const TestUploadPage = React.lazy(() => import('./test/Upload'));
 const CmsPage = React.lazy(() => import('@features/cms/cms'));
 function App() {
   const category = useSelector(({ homeReducer }) => homeReducer?.category);
-
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -39,7 +38,7 @@ function App() {
   }, [dispatch]);
   useEffect(() => {
     !category?.length && dispatch(getListCategory());
-  }, []);
+  }, [category?.length, dispatch]);
   return (
     <Spin spinning={loading}>
       <Suspense fallback={<LoadingScreen />}>

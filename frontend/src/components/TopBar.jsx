@@ -17,6 +17,9 @@ function Topbar() {
   const currentUser = useSelector(
     ({ userReducer }) => userReducer?.user?.fullname
   );
+  const groupCode = useSelector(
+    ({ userReducer }) => userReducer?.user?.groupCode
+  );
   const menu = (
     <Menu size="large">
       <Menu.Item
@@ -40,6 +43,15 @@ function Topbar() {
         <BookOutlined />
         <Link to="/courses/enroll">Khoá học đang theo học</Link>
       </Menu.Item>
+      {groupCode === 'ADMIN' && (
+        <Menu.Item
+          style={{ height: 50, width: 250 }}
+          className="d-flex align-items-center"
+        >
+          <BookOutlined />
+          <Link to="/manager">Admin Dashboard</Link>
+        </Menu.Item>
+      )}
       <Menu.Item
         onClick={() => dispatch(logout())}
         style={{ height: 50, width: 250 }}

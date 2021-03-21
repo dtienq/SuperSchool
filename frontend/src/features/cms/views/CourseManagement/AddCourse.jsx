@@ -1,6 +1,7 @@
 /* eslint-disable */
 
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
 import FormLabel from 'material-ui/Form/FormLabel';
@@ -61,13 +62,31 @@ function AddCourse(props) {
         <SweetAlert
           style={{ display: 'block', marginTop: '-100px' }}
           title={value}
-          onConfirm={() => hideAlert()}
+          onConfirm={() => <Link to="/manager/teachercourses" />}
           onCancel={() => hideAlert()}
           confirmBtnCssClass={
             props.classes.button + ' ' + props.classes.success
           }
         >
           <b>{value}</b> {message}{' '}
+        </SweetAlert>
+      ),
+    });
+  };
+  const successAlert = () => {
+    this.setState({
+      alert: (
+        <SweetAlert
+          success
+          style={{ display: 'block', marginTop: '-100px' }}
+          title="Đăng ký hoàn tất!"
+          onConfirm={() => hideAlert()}
+          onCancel={() => hideAlert()}
+          confirmBtnCssClass={
+            this.props.classes.button + ' ' + this.props.classes.success
+          }
+        >
+          Chúc mừng bạn đã đăng ký khoá học thành công!
         </SweetAlert>
       ),
     });
@@ -192,8 +211,6 @@ function AddCourse(props) {
       teacherId,
       numberOfChapters,
     } = course;
-    console.log(title);
-    console.log(description);
     if (title.length <= 30) {
       htmlAlert('Tên khoá học', 'phải nhiều hơn 20 ký tự');
       return;
@@ -251,12 +268,21 @@ function AddCourse(props) {
           previewcount++;
         }
       }
-      if (previewcount === 0) {
-        htmlAlert(
-          'Chương Preview',
-          'Mỗi khoá học nên có ít nhất 1 chương preview'
-        );
-        return;
+      if (status === 'INCOMPLETE') {
+        let video = coursevid.chapters;
+        let count = 0;
+        for (let i = 0; i < video.length; i++) {
+          if (video[i].title === '' || video[i].filePath === '') {
+            count++;
+          }
+        }
+        if (count === 0) {
+          htmlAlert(
+            'Sai thông tin trạng thái',
+            'Bạn đã nhập toàn bộ chương, vui lòng chọn trạng thái khoá học là "Hoàn thành"'
+          );
+          return;
+        }
       }
     }
     ////Handle Create Course
@@ -266,7 +292,7 @@ function AddCourse(props) {
       delete data.numberOfChapters;
       const result = await coursesApi.teacherCreateCourse(data);
       if (result) {
-        htmlAlert('Success', 'Đăng ký khóa học thành công');
+        successAlert();
       }
     } catch (err) {
       console.log(err);

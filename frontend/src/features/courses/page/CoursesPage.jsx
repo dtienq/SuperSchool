@@ -14,7 +14,7 @@ function CoursesPage() {
   useEffect(() => {
     if (categoryId) return dispatch(getListCourses({ categoryId: categoryId }));
     dispatch(getListCourses());
-  }, [categoryId]);
+  }, [categoryId, dispatch]);
   return (
     <>
       <TopBar />

@@ -15,7 +15,7 @@ function CoursesDetailPage() {
     if (coursesId) {
       dispatch(getDetailCourses(coursesId));
     }
-  }, []);
+  }, [coursesId, dispatch]);
   return (
     <>
       <TopBar />

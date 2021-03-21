@@ -1,6 +1,7 @@
+/* eslint-disable*/
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
@@ -57,7 +58,15 @@ function CoursesList(props) {
   const changePublish = (id, publish) => {
     coursesApi
       .changePublish(id, publish)
-      .then((data) => console.log(data))
+      .then((data) => {
+        if (data.data) {
+          let courses = state.data.map((item) =>
+            item.courseid === id ? { ...item, publish: publish } : item
+          );
+
+          setState({ ...state, data: courses });
+        }
+      })
       .catch((err) => console.log(err));
   };
   const pageHandle = (event, value) => {
@@ -318,9 +327,11 @@ function CoursesList(props) {
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
-                            <Button color="defaultNoBackground" justIcon>
-                              <ArtTrack className={classes.underChartIcons} />
-                            </Button>
+                            <Link to={`/courses/detail/${item?.courseid}`}>
+                              <Button color="defaultNoBackground" justIcon>
+                                <ArtTrack className={classes.underChartIcons} />
+                              </Button>
+                            </Link>
                           </Tooltip>
                           <Tooltip
                             id="tooltip-top"
@@ -328,13 +339,11 @@ function CoursesList(props) {
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
-                            <Button
-                              color="successNoBackground"
-                              onClick={}
-                              justIcon
-                            >
-                              <EditIcon className={classes.underChartIcons} />
-                            </Button>
+                            <Link to={`/manager/edit-course/${item?.courseid}`}>
+                              <Button color="successNoBackground" justIcon>
+                                <EditIcon className={classes.underChartIcons} />
+                              </Button>
+                            </Link>
                           </Tooltip>
                           {item.publish === true && (
                             <Tooltip
@@ -405,9 +414,11 @@ function CoursesList(props) {
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
-                            <Button color="defaultNoBackground" justIcon>
-                              <ArtTrack className={classes.underChartIcons} />
-                            </Button>
+                            <Link to={`/courses/detail/${item?.courseid}`}>
+                              <Button color="defaultNoBackground" justIcon>
+                                <ArtTrack className={classes.underChartIcons} />
+                              </Button>
+                            </Link>
                           </Tooltip>
                           <Tooltip
                             id="tooltip-top"
@@ -415,9 +426,11 @@ function CoursesList(props) {
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
-                            <Button color="successNoBackground" justIcon>
-                              <EditIcon className={classes.underChartIcons} />
-                            </Button>
+                            <Link to={`/manager/edit-course/${item?.courseid}`}>
+                              <Button color="successNoBackground" justIcon>
+                                <EditIcon className={classes.underChartIcons} />
+                              </Button>
+                            </Link>
                           </Tooltip>
                           {item.publish === true && (
                             <Tooltip
@@ -486,9 +499,11 @@ function CoursesList(props) {
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
-                            <Button color="defaultNoBackground" justIcon>
-                              <ArtTrack className={classes.underChartIcons} />
-                            </Button>
+                            <Link to={`/courses/detail/${item?.courseid}`}>
+                              <Button color="defaultNoBackground" justIcon>
+                                <ArtTrack className={classes.underChartIcons} />
+                              </Button>
+                            </Link>
                           </Tooltip>
                           <Tooltip
                             id="tooltip-top"
@@ -496,13 +511,11 @@ function CoursesList(props) {
                             placement="bottom"
                             classes={{ tooltip: classes.tooltip }}
                           >
-                            <Button
-                              color="successNoBackground"
-                              onClick={(item) => {}}
-                              justIcon
-                            >
-                              <EditIcon className={classes.underChartIcons} />
-                            </Button>
+                            <Link to={`/manager/edit-course/${item?.courseid}`}>
+                              <Button color="successNoBackground" justIcon>
+                                <EditIcon className={classes.underChartIcons} />
+                              </Button>
+                            </Link>
                           </Tooltip>
                           {item.publish === true && (
                             <Tooltip

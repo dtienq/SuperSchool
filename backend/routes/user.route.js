@@ -3,7 +3,6 @@ var router = express.Router();
 
 const userModel = require("../models/user.model");
 const validation = require("../middlewares/validate.mdw");
-const roleValidation = require("../middlewares/validation.role");
 const commonUtils = require("../utils/common");
 const constant = require("../utils/constant");
 const bcrypt = require("bcrypt");
@@ -102,7 +101,7 @@ router.post(
 
 router.get(
   "/search",
-  roleValidation([constant.USER_GROUP.ADMIN]),
+  loginValidation([constant.USER_GROUP.ADMIN]),
   function (req, res, next) {
     userModel
       .search(req.body)
@@ -128,7 +127,7 @@ router.get("/getTeacherInfo/:id", (req, res, next) => {
 
 router.post(
   "/create",
-  roleValidation([constant.USER_GROUP.ADMIN]),
+  loginValidation([constant.USER_GROUP.ADMIN]),
   validation(require("../schemas/createUpdateUser.json")),
   (req, res, next) => {
     db.transaction((transaction) => {

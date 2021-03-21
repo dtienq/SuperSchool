@@ -294,10 +294,10 @@ module.exports = {
     }
   },
   update: async (transaction, course) => {
-    await transaction("coursevideo").where("courseid", course.courseId).del();
-    if (course.videos) {
-      course.videos.forEach((video) => {
-        transaction("coursevideo").insert({
+    await transaction("coursevideo").where('courseid', course.courseId).del();
+    if(course.videos) {
+      course.videos.forEach(async (video) => {
+        await transaction("coursevideo").insert({
           courseid: course.courseId,
           videopath: video.filePath,
           orderno: video.orderNo,

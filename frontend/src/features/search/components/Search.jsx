@@ -16,7 +16,7 @@ function Search() {
       fullText: keyword,
     };
     if (keyword) dispatch(getCoursesWhenSearch(dataToSend));
-  }, []);
+  }, [keyword, dispatch]);
   return (
     <>
       <TopBar />
