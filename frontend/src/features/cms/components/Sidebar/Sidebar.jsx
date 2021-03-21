@@ -1,3 +1,4 @@
+/* eslint-disable*/
 import React from 'react';
 import PropTypes from 'prop-types';
 // javascript plugin used to create scrollbars on windows

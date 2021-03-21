@@ -24,16 +24,16 @@ function HomePage() {
   );
   useEffect(() => {
     if (!coursesHightLight?.length) return dispatch(getCoursesHightLight());
-  }, []);
+  }, [coursesHightLight?.length, dispatch]);
   useEffect(() => {
     if (!top10View?.length) return dispatch(getTop10View());
-  }, []);
+  }, [top10View?.length, dispatch]);
   useEffect(() => {
     if (!top10New?.length) return dispatch(getTop10New());
-  }, []);
+  }, [top10New?.length, dispatch]);
   useEffect(() => {
     if (!topRegisterCategory?.length) return dispatch(getTopRegisterCategory());
-  }, []);
+  }, [topRegisterCategory?.length, dispatch]);
   return (
     <>
       <TopBar />

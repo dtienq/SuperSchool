@@ -12,9 +12,8 @@ import Button from '@cmscomponents/CustomButtons/Button.jsx';
 import { Link } from 'react-router-dom';
 import Clearfix from '@cmscomponents/Clearfix/Clearfix.jsx';
 import { useHistory } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-function Profile({ ...props }) {
-  const dispatch = useDispatch();
+import { useSelector } from 'react-redux';
+function Profile() {
   const currentUser = useSelector(({ userReducer }) => userReducer?.user);
   const history = useHistory();
   const info = {
