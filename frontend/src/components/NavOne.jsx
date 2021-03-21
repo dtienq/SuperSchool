@@ -87,9 +87,7 @@ function NavOne() {
                 <ul className="sub-menu">
                   {category?.map((cat) => (
                     <li key={cat?.categoryId}>
-                      <Link to={`/courses/category/${cat?.categoryId}?`}>
-                        {cat?.categoryName}
-                      </Link>
+                      <Link>{cat?.categoryName}</Link>
                       {cat?.children?.length ? (
                         <ul className="sub-menu">
                           {cat.children.map((child) => (
