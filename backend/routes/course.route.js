@@ -297,6 +297,7 @@ router.get(
           await courseModel.updateViews(course.courseid, +course.views + 1);
 
           course.favorite = false;
+          console.info('hihihi', course);
           if (userId) {
             let data = await favoriteCourseModel.findByStudentAndCourse({
               courseId: course.courseid,
@@ -319,17 +320,16 @@ router.get(
             if (temp1 && temp1.studentcourseid) {
               course.registered = true;
             }
-
-            let courseVideo = { courseId: course.courseid };
-
-            let result = await courseVideoModel.findByCourseId(courseVideo);
-
-            course.videos = result;
-
-            res.json({
-              data: course,
-            });
           }
+          let courseVideo = { courseId: course.courseid };
+
+          let result = await courseVideoModel.findByCourseId(courseVideo);
+
+          course.videos = result;
+
+          res.json({
+            data: course,
+          });
         }
       })
       .catch(next);
