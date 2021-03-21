@@ -19,8 +19,9 @@ import PersonIcon from 'material-ui-icons/Person';
 import MainCategoryTables from '@cmsviews/CategoryManagement/MainCategoryTables';
 import SubCategoryTables from '@cmsviews/CategoryManagement/SubCategoryTables';
 import CategoryForm from '@cmsviews/CategoryManagement/CategoryForm';
-import { useSelector } from 'react-redux';
+import parseJwt from '@utils/parseJwt';
 
+const group = parseJwt(localStorage.token).groupCode;
 var managerRoutes = [
   // User Info
   {
@@ -165,12 +166,11 @@ var teacherRoutes = [
     name: 'Dashboard',
   },
 ];
-let dashRoutes = managerRoutes;
-// let dashRoutes = [];
-// if (role === 'ADMIN') {
-//   dashRoutes = managerRoutes;
-// } else if (role === 'TEACHER') {
-//   dashRoutes = teacherRoutes;
-// }
+let dashRoutes = [];
+if (group === 'ADMIN') {
+  dashRoutes = managerRoutes;
+} else if (group === 'TEACHER') {
+  dashRoutes = teacherRoutes;
+}
 
 export default dashRoutes;
