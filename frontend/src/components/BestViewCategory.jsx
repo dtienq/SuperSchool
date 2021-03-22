@@ -55,7 +55,7 @@ function BestViewCategory({ data }) {
               ))}
             </Swiper>
           ) : (
-            <Skeleton />
+            <Skeleton paragraph={{ rows: 6 }} />
           )}
         </div>
       </div>

@@ -55,7 +55,7 @@ function CoursesCarousel({ type, data }) {
                 ))}
               </Swiper>
             ) : (
-              <Skeleton />
+              <Skeleton paragraph={{ rows: 15 }} />
             )}
           </div>
         </div>
