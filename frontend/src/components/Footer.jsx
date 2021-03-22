@@ -18,19 +18,6 @@ const Footer = () => {
               >
                 <i className="kipso-icon-top-arrow"></i>
               </div>
-
-              <Link to="/">
-                <i className="fab fa-twitter"></i>
-              </Link>
-              <Link to="/">
-                <i className="fab fa-facebook-square"></i>
-              </Link>
-              <Link to="/">
-                <i className="fab fa-pinterest-p"></i>
-              </Link>
-              <Link to="/">
-                <i className="fab fa-instagram"></i>
-              </Link>
             </div>
           </div>
         </div>
