@@ -172,7 +172,7 @@ module.exports = {
 
     if (fullText) {
       query.whereRaw(
-        `to_tsvector(c.title || ' ' || ca.name) @@ plainto_tsquery('${fullText}')`
+        `to_tsvector(unaccent(c.title) || ' ' || unaccent(ca.name)) @@ plainto_tsquery(unaccent('${fullText}'))`
       );
     }
 
