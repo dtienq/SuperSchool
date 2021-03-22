@@ -4,8 +4,12 @@ import store from '../app/store';
 import { logout } from '@app/userSlice';
 
 const { dispatch } = store;
+const BASE_URL =
+  process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_API_DEVELOPMENT
+    : process.env.REACT_APP_API_PRODUCTION;
 const axiosClient = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: BASE_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -79,7 +83,7 @@ function getLocalToken() {
   return token;
 }
 function refreshToken() {
-  return axios.post(`${process.env.REACT_APP_API_URL}/auth/refresh-token`, {
+  return axios.post(`${BASE_URL}/auth/refresh-token`, {
     refresh_token: getLocalRefreshToken(),
     access_token: getLocalToken(),
   });
