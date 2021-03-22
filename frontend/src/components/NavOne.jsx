@@ -81,13 +81,11 @@ function NavOne() {
           <div>
             <ul className=" navigation-box">
               <li>
-                <Link to="/courses">
-                  <a>Các lĩnh vực</a>
-                </Link>
+                <Link to="/courses">Các lĩnh vực</Link>
                 <ul className="sub-menu">
                   {category?.map((cat) => (
                     <li key={cat?.categoryId}>
-                      <Link>{cat?.categoryName}</Link>
+                      <a>{cat?.categoryName}</a>
                       {cat?.children?.length ? (
                         <ul className="sub-menu">
                           {cat.children.map((child) => (
