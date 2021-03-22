@@ -64,10 +64,7 @@ function CoursesItem({ data }) {
             }
             alt=""
           />
-          by{' '}
-          <Link href="/teacher-details">
-            <a>{data?.teacherName}</a>
-          </Link>
+          <div>{data?.teacherName}</div>
         </div>
         <h2
           className="course-one__title"
