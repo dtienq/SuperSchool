@@ -9,6 +9,8 @@ import {
   LikeOutlined,
   BookOutlined,
   LogoutOutlined,
+  UserSwitchOutlined,
+  GithubOutlined,
 } from '@ant-design/icons';
 
 function Topbar() {
@@ -43,13 +45,22 @@ function Topbar() {
         <BookOutlined />
         <Link to="/courses/enroll">Khoá học đang theo học</Link>
       </Menu.Item>
+
       {groupCode === 'ADMIN' && (
         <Menu.Item
           style={{ height: 50, width: 250 }}
           className="d-flex align-items-center"
         >
-          <BookOutlined />
-          <Link to="/manager">Admin Dashboard</Link>
+          <UserSwitchOutlined /> <Link to="/manager">Admin Dashboard</Link>
+        </Menu.Item>
+      )}
+      {groupCode === 'TEACHER' && (
+        <Menu.Item
+          style={{ height: 50, width: 250 }}
+          className="d-flex align-items-center"
+        >
+          <GithubOutlined />
+          <Link to="/manager/courses">Quản lý khoá học của bạn</Link>
         </Menu.Item>
       )}
       <Menu.Item

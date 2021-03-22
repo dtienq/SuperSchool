@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function LikeCoursesItem({ data }) {
+function LikeCoursesItem({ data, deleteLikeCourse }) {
   const renderStar = (n) => {
     const arr = [];
     for (let i = 1; i <= n; i++) {
@@ -65,7 +65,7 @@ function LikeCoursesItem({ data }) {
             alt=""
           />
           by{' '}
-          <Link href="/teacher-details">
+          <Link>
             <a>{data?.teacherName}</a>
           </Link>
         </div>
@@ -73,8 +73,8 @@ function LikeCoursesItem({ data }) {
           className="course-one__title"
           style={{ height: '55px', textOverflow: 'ellipsis', fontSize: '18px' }}
         >
-          <Link to={`/courses/detail/${data?.courseid}`}>
-            <a>{data?.title}</a>
+          <Link to={`/courses/detail/${data?.courseId}`}>
+            <a>{data?.courseName}</a>
           </Link>
         </h2>
         <div className="course-one__stars d-flex justify-content-between">
@@ -85,20 +85,12 @@ function LikeCoursesItem({ data }) {
             </span>
             <span className="course-one__count">{data?.averageStar}</span>
           </div>
-          <span className="course-one__stars-count">View {data?.views}</span>
-        </div>
-        <div className="course-one__meta">
-          <a href="/course-details">
-            <i className="fas fa-user"></i>
-            {data?.totalstudents}
-          </a>
-          <a>{data?.price}$</a>
         </div>
         <Link
-          to={`/courses/detail/${data?.courseid}`}
           className="course-one__link"
+          onClick={() => deleteLikeCourse(data?.courseId)}
         >
-          Xem chi tiết
+          Xoá khỏi yêu thích
         </Link>
       </div>
     </div>

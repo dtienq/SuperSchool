@@ -44,7 +44,7 @@ module.exports = {
   },
   removeFromFavorite: (id) => {
     return knex("favoritecourse").where({
-      "favoritecourseid": id
+      "courseid": id
     }).del().returning("*");
   }
 };

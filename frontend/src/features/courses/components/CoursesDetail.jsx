@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import coursesApi from '@api/coursesApi';
 import { getDetailCourses } from '@features/courses/coursesSlice';
+import { useHistory } from 'react-router-dom';
 
 const SModal = styled(Modal)`
   .ant-modal-footer {
@@ -20,6 +21,9 @@ const CoursesDetail = ({ coursesId }) => {
   const [loadingC, setLoadingC] = useState(false);
   const [comment, setComment] = useState('');
   const [review, setReview] = useState([]);
+
+  const history = useHistory();
+  const isLogin = useSelector(({ userReducer }) => userReducer?.isLogin);
   const detailCourses = useSelector(
     ({ coursesReducer }) => coursesReducer?.detailCourses
   );
@@ -35,6 +39,8 @@ const CoursesDetail = ({ coursesId }) => {
   }, []);
 
   const handleClickVideo = (item) => {
+    if (!item?.preview && !detailCourses?.registered)
+      return message.error('Tham gia khoá học này để xem video');
     setUrlVideo(item?.videopath);
     setShow(true);
     setVideoTitle(item?.title);
@@ -47,12 +53,16 @@ const CoursesDetail = ({ coursesId }) => {
     return arr;
   };
   const postComment = async (data) => {
+    if (!detailCourses?.registered)
+      return message.error('Không thể đánh giá khoá học khi chưa ghi danh');
     await coursesApi.reviewCourses(data);
     fetchReview({ courseId: +coursesId });
     dispatch(getDetailCourses(coursesId));
   };
   const handleSubmitForm = (e) => {
     e.preventDefault();
+    if (!isLogin)
+      return message.error('Bạn cần đăng nhập để thực hiện nhận xét');
     if (!rate) return message.error('Bạn chưa đánh giá sao');
     if (!comment) return message.error('Bạn chưa nhận xét khoá học này');
     const dataToSend = {
@@ -65,15 +75,17 @@ const CoursesDetail = ({ coursesId }) => {
     setRate(0);
   };
   const handleEnroll = async () => {
-    setLoadingC(true)
+    if (!isLogin) return history.push('/login');
+    setLoadingC(true);
     await coursesApi.registerCourses(+coursesId);
-    setLoadingC(false)
+    setLoadingC(false);
     dispatch(getDetailCourses(coursesId));
   };
-  const handleLike = async() => {
-    setLoadingC(true)
+  const handleLike = async () => {
+    if (!isLogin) return history.push('/login');
+    setLoadingC(true);
     await coursesApi.likeCourses(+coursesId);
-    setLoadingC(false)
+    setLoadingC(false);
     dispatch(getDetailCourses(coursesId));
   };
   return (
@@ -83,6 +95,7 @@ const CoursesDetail = ({ coursesId }) => {
         visible={show}
         onCancel={() => setShow(false)}
         width="610px"
+        destroyOnClose
       >
         <iframe
           width="560"
@@ -215,6 +228,7 @@ const CoursesDetail = ({ coursesId }) => {
                                   {item?.title}
                                 </div>
                               </div>
+                              {item?.preview && <div>Xem thử</div>}
                             </li>
                           );
                         })}
@@ -313,28 +327,28 @@ const CoursesDetail = ({ coursesId }) => {
                   {detailCourses?.price} $
                 </p>
                 <Spin spinning={loadingC}>
-                {detailCourses?.registered ? (
-                  <div>Đã ghi danh</div>
-                ) : (
-                  <div
-                    className="thm-btn course-details__price-btn"
-                    style={{ cursor: 'pointer' }}
-                    onClick={handleEnroll}
-                  >
-                    Ghi danh khoá học này
-                  </div>
-                )}
-                {detailCourses?.favorite ? (
-                  <div>Đã yêu thích khoá họcn này</div>
+                  {detailCourses?.registered ? (
+                    <div>Đã ghi danh</div>
                   ) : (
                     <div
-                    className="thm-btn course-details__price-btn"
-                    style={{ cursor: 'pointer', backgroundColor: 'red' }}
-                    onClick={handleLike}
+                      className="thm-btn course-details__price-btn"
+                      style={{ cursor: 'pointer' }}
+                      onClick={handleEnroll}
                     >
-                    Yêu thích khoá học này
-                  </div>
-                )}
+                      Ghi danh khoá học này
+                    </div>
+                  )}
+                  {detailCourses?.favorite ? (
+                    <div>Đã yêu thích khoá họcn này</div>
+                  ) : (
+                    <div
+                      className="thm-btn course-details__price-btn"
+                      style={{ cursor: 'pointer', backgroundColor: 'red' }}
+                      onClick={handleLike}
+                    >
+                      Yêu thích khoá học này
+                    </div>
+                  )}
                 </Spin>
               </div>
               <div className="course-details__list">

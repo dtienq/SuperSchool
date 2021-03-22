@@ -5,24 +5,35 @@ import PageHeader from '@components/PageHeader';
 import LikeCourses from '../components/LikeCourses';
 import TopBar from '@components/TopBar';
 import coursesApi from '@api/coursesApi';
+import { Spin } from 'antd';
 
 function LikeCoursesPage() {
   const [likeCourses, setLikeCourses] = useState([]);
+  const [loading, setLoading] = useState(false);
   const fetchLikeCourses = async () => {
+    setLoading(true);
     const res = await coursesApi.listLikeCourses();
-    setLikeCourses(res?.data)
+    setLikeCourses(res?.data);
+    setLoading(false);
+  };
+  const handleDeleteLikeCourse = async (e) => {
+    await coursesApi.deleteLikeCourses(e);
+    fetchLikeCourses();
   };
   useEffect(() => {
-    fetchLikeCourses()
+    fetchLikeCourses();
   }, []);
   return (
-    <>
+    <Spin spinning={loading}>
       <TopBar />
       <NavOne />
       <PageHeader title="Các khoá học yêu thích" />
-      <LikeCourses dataLike={likeCourses} />
+      <LikeCourses
+        dataLike={likeCourses}
+        deleteLikeCourse={(e) => handleDeleteLikeCourse(e)}
+      />
       <Footer />
-    </>
+    </Spin>
   );
 }
 

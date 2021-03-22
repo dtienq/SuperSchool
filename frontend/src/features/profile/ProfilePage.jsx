@@ -59,16 +59,6 @@ function ProfilePage() {
                         <span className="fas fa-unlock" /> Thay đổi mật khẩu
                       </StyledNavLink>
                     </li>
-                    <li>
-                      <StyledNavLink to={`/profile/add-courses`} exact>
-                        <span className="fas fa-upload" /> Đăng khoá học mới
-                      </StyledNavLink>
-                    </li>
-                    <li>
-                      <StyledNavLink to={`/profile/update-courses`} exact>
-                        <span className="fas fa-edit" /> Cập nhật khoá học
-                      </StyledNavLink>
-                    </li>
                   </ul>
                 </nav>
               </div>

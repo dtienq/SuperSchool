@@ -65,7 +65,7 @@ function EnrollCoursesItem({ data }) {
             alt=""
           />
           by{' '}
-          <Link href="/teacher-details">
+          <Link>
             <a>{data?.teacherName}</a>
           </Link>
         </div>
@@ -73,7 +73,7 @@ function EnrollCoursesItem({ data }) {
           className="course-one__title"
           style={{ height: '55px', textOverflow: 'ellipsis', fontSize: '18px' }}
         >
-          <Link to={`/courses/detail/${data?.courseid}`}>
+          <Link to={`/courses/detail/${data?.courseId}`}>
             <a>{data?.courseName}</a>
           </Link>
         </h2>
@@ -81,18 +81,11 @@ function EnrollCoursesItem({ data }) {
           <div>
             <span className="course-one__stars-wrap">
               Rating
-              {renderStar(Math.round(data?.averageStar))}
+              {renderStar(Math.round(data?.averagestar))}
             </span>
             <span className="course-one__count">{data?.averageStar}</span>
           </div>
-          <span className="course-one__stars-count">View {data?.views}</span>
-        </div>
-        <div className="course-one__meta">
-          <a href="/course-details">
-            <i className="fas fa-user"></i>
-            {data?.totalstudents}
-          </a>
-          <a>{data?.price}$</a>
+          <div style={{backgroundColor: "yellow", fontWeight: "bold", color: "green"}}>{data?.courseStatus}</div>
         </div>
         <Link
           to={`/courses/detail/${data?.courseid}`}

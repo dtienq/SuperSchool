@@ -29,6 +29,7 @@ module.exports = {
         "c.title as courseName",
         "c.imagePath as imagePath",
         "c.description",
+        "c.status as courseStatus",
         "sc.status",
         'ca.name as categoryName',
         't.fullname as teacherName',
