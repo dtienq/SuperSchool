@@ -6,7 +6,7 @@ function CoursesItem({ data }) {
   const renderStar = (n) => {
     const arr = [];
     for (let i = 1; i <= n; i++) {
-      arr.push(<i className="fa fa-star"></i>);
+      arr.push(<i className="fa fa-star" key={i}></i>);
     }
     return arr;
   };
@@ -64,10 +64,7 @@ function CoursesItem({ data }) {
             }
             alt=""
           />
-          by{' '}
-          <Link href="/teacher-details">
-            <a>{data?.teacherName}</a>
-          </Link>
+          <div>{data?.teacherName}</div>
         </div>
         <h2
           className="course-one__title"

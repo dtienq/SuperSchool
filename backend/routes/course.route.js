@@ -13,6 +13,7 @@ const constant = require("../utils/constant");
 const db = require("../utils/db");
 const loginValidation = require("../middlewares/validation.login");
 const commonUtils = require("../utils/common");
+const jwt = require('jsonwebtoken');
 
 //top 3 khóa học nổi bật nhất trong tuần qua (nhiều lượt đăng kí nhất)
 router.get("/top-highlight", function (req, res, next) {
@@ -287,7 +288,10 @@ router.get(
   loginValidation(["NOT_NEED_LOGIN"]),
   (req, res, next) => {
     let { id } = req.params;
-    let { userId } = commonUtils.currentUser;
+    const access_token = req.headers.authorization;
+    const { userId } = jwt.verify(access_token, constant.SECRET_KEY, {
+      ignoreExpiration: true,
+    });
     courseModel
       .findById(id)
       .then(async (course) => {
@@ -295,38 +299,29 @@ router.get(
           throw "Not found";
         } else {
           await courseModel.updateViews(course.courseid, +course.views + 1);
-
           course.favorite = false;
-          console.info('hihihi', course);
           if (userId) {
             let data = await favoriteCourseModel.findByStudentAndCourse({
               courseId: course.courseid,
               studentId: userId,
             });
-
             if (data && data.favoritecourseid) {
               course.favorite = true;
             }
           }
-
           course.registered = false;
-
-          if (commonUtils.currentUser.userId) {
+          if (userId) {
             let temp1 = await studentCourseModel.findByStudentAndCourse({
-              studentId: commonUtils.currentUser.userId,
+              studentId: userId,
               courseId: course.courseid,
             });
-
             if (temp1 && temp1.studentcourseid) {
               course.registered = true;
             }
           }
           let courseVideo = { courseId: course.courseid };
-
           let result = await courseVideoModel.findByCourseId(courseVideo);
-
           course.videos = result;
-
           res.json({
             data: course,
           });

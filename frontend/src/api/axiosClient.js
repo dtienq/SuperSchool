@@ -17,15 +17,6 @@ const axiosClient = axios.create({
   paramsSerializer: (params) => queryString.stringify(params),
 });
 
-let isRefreshing = false;
-let subscribers = [];
-function subscribeTokenRefresh(cb) {
-  subscribers.push(cb);
-}
-function onRefreshed(token) {
-  subscribers.map((cb) => cb(token));
-}
-
 axiosClient.interceptors.request.use(
   (config) => {
     const token = getLocalToken();
@@ -45,32 +36,16 @@ axiosClient.interceptors.response.use(
   },
   (error) => {
     const { config: originalRequest, response } = error;
-    const status = response?.status;
-    if (status === 401 && !originalRequest._retry) {
-      if (!isRefreshing) {
-        isRefreshing = true;
-        originalRequest._retry = true;
-        return refreshToken()
-          .then((result) => {
-            isRefreshing = false;
-            const token = result?.data?.access_token;
-            localStorage.setItem('token', token);
-            originalRequest.headers.Authorization = token;
-            axiosClient(originalRequest);
-            onRefreshed(token);
-            subscribers = [];
-          })
-          .catch((err) => {
-            dispatch(logout());
-            console.log(err);
-          });
-      }
-      return new Promise((resolve) => {
-        subscribeTokenRefresh((token) => {
+    if (response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      return refreshToken()
+        .then((result) => {
+          const token = result?.data?.access_token;
+          localStorage.setItem('token', token);
           originalRequest.headers.Authorization = token;
-          resolve(axiosClient(originalRequest));
-        });
-      });
+          return axiosClient(originalRequest);
+        })
+        .catch((err) => dispatch(logout()));
     }
   }
 );

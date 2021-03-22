@@ -48,7 +48,7 @@ const CoursesDetail = ({ coursesId }) => {
   const renderStar = (n) => {
     const arr = [];
     for (let i = 1; i <= n; i++) {
-      arr.push(<i className="fa fa-star"></i>);
+      arr.push(<i className="fa fa-star" key={i}></i>);
     }
     return arr;
   };
@@ -56,8 +56,8 @@ const CoursesDetail = ({ coursesId }) => {
     if (!detailCourses?.registered)
       return message.error('Không thể đánh giá khoá học khi chưa ghi danh');
     await coursesApi.reviewCourses(data);
-    fetchReview({ courseId: +coursesId });
     dispatch(getDetailCourses(coursesId));
+    fetchReview({ courseId: +coursesId });
   };
   const handleSubmitForm = (e) => {
     e.preventDefault();
