@@ -45,7 +45,7 @@ function BestViewCategory({ data }) {
           {data?.length ? (
             <Swiper {...params} shouldSwiperUpdate>
               {data?.map((item, index) => (
-                <div className="item">
+                <div className="item" key={index}>
                   <div className="course-category-one__single color-1">
                     <div className="course-category-one__icon">
                       <Category item={item} key={index} />

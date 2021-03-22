@@ -6,7 +6,7 @@ function CoursesItem({ data }) {
   const renderStar = (n) => {
     const arr = [];
     for (let i = 1; i <= n; i++) {
-      arr.push(<i className="fa fa-star"></i>);
+      arr.push(<i className="fa fa-star" key={i}></i>);
     }
     return arr;
   };
