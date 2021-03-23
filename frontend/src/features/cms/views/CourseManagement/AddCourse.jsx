@@ -74,7 +74,8 @@ function AddCourse(props) {
     });
   };
   const successAlert = () => {
-    this.setState({
+    setState({
+      ...state,
       alert: (
         <SweetAlert
           success
@@ -83,7 +84,7 @@ function AddCourse(props) {
           onConfirm={() => hideAlert()}
           onCancel={() => hideAlert()}
           confirmBtnCssClass={
-            this.props.classes.button + ' ' + this.props.classes.success
+            props.classes.button + ' ' + props.classes.success
           }
         >
           Chúc mừng bạn đã đăng ký khoá học thành công!
