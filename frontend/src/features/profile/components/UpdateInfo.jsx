@@ -21,7 +21,7 @@ const UpdateInfoEndValSchema = Yup.object().shape({
 
 function UpdateInfo() {
   const [loading, setLoading] = useState(false);
-  const { handleSubmit, control, errors, reset } = useForm({
+  const { handleSubmit, control, errors } = useForm({
     validationSchema: UpdateInfoEndValSchema,
   });
   const onSubmit = async (data, e) => {
