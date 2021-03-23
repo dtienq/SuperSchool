@@ -13,7 +13,7 @@ const constant = require("../utils/constant");
 const db = require("../utils/db");
 const loginValidation = require("../middlewares/validation.login");
 const commonUtils = require("../utils/common");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 //top 3 khóa học nổi bật nhất trong tuần qua (nhiều lượt đăng kí nhất)
 router.get("/top-highlight", function (req, res, next) {
@@ -289,9 +289,11 @@ router.get(
   (req, res, next) => {
     let { id } = req.params;
     const access_token = req.headers.authorization;
-    const { userId } = jwt.verify(access_token, constant.SECRET_KEY, {
-      ignoreExpiration: true,
-    });
+    const userId = access_token
+      ? jwt.verify(access_token, constant.SECRET_KEY, {
+          ignoreExpiration: true,
+        }).userId
+      : null;
     courseModel
       .findById(id)
       .then(async (course) => {
@@ -507,16 +509,17 @@ router.get(
   }
 );
 
-router.get("findById/:id", (req, res, next) => {
-  courseModel
-    .findById(req.params.id)
-    .then((course) => {
-      res.json({
-        data: course,
-      });
-    })
-    .catch(next);
-});
+// router.get("findById/:id", (req, res, next) => {
+//   console.log(1111111);
+//   courseModel
+//     .findById(req.params.id)
+//     .then((course) => {
+//       res.json({
+//         data: course,
+//       });
+//     })
+//     .catch(next);
+// });
 
 router.post(
   "/create",
