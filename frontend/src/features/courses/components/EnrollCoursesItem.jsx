@@ -64,16 +64,13 @@ function EnrollCoursesItem({ data }) {
             }
             alt=""
           />
-          by{' '}
-          <Link>
-            <a>{data?.teacherName}</a>
-          </Link>
+          <div> {data?.teacherName} </div>
         </div>
         <h2
           className="course-one__title"
           style={{ height: '55px', textOverflow: 'ellipsis', fontSize: '18px' }}
         >
-          <Link to={`/courses/detail/${data?.courseId}`}>
+          <Link to={`/courses/detail/${data?.courseid}`}>
             <a>{data?.courseName}</a>
           </Link>
         </h2>
@@ -85,7 +82,15 @@ function EnrollCoursesItem({ data }) {
             </span>
             <span className="course-one__count">{data?.averageStar}</span>
           </div>
-          <div style={{backgroundColor: "yellow", fontWeight: "bold", color: "green"}}>{data?.courseStatus}</div>
+          <div
+            style={{
+              backgroundColor: 'yellow',
+              fontWeight: 'bold',
+              color: 'green',
+            }}
+          >
+            {data?.courseStatus}
+          </div>
         </div>
         <Link
           to={`/courses/detail/${data?.courseid}`}

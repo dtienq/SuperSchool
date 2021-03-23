@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 let commonUtils = require('../utils/common');
 const constant = require('../utils/constant');
-const studentCourseModel = require('../models/student-course.model');
 
 module.exports = (roles = []) => async (req, res, next) => {
   try {
