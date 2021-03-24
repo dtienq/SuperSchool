@@ -106,10 +106,14 @@ module.exports = {
       .where({ 'u.userid': userId, 'u.refresh_token': refreshToken })
       .first();
   },
-  updateInfo: (user, currentUser) => {
-    return db('user').where('userid', currentUser.userId).update({
-      email: user.email,
-      fullname: user.fullname,
+  updateInfo: (userId, fullname) => {
+    return db('user').where('userid', userId).update({
+      fullname: fullname,
+    });
+  },
+  updateAvatar: (userId, picture) => {
+    return db('user').where('userid', userId).update({
+      picture: picture,
     });
   },
   changePassword: (user) => {

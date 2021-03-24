@@ -15,28 +15,33 @@ router.post(
   loginValidation(),
   validation(require("../schemas/updateInfo.json")),
   (req, res, next) => {
-    let user = req.body;
-    let {userId} = commonUtils.currentUser;
-
-    db.transaction(async (transaction) => {
-      if (user.userId != commonUtils.currentUser.userId) {
-        res.status(403).json({
-          message: "You are not have permission to access this function",
-        });
-      }
-
-      if(user.email) {
-        let data = await userModel.checkMailDuplicate(userId, user.email);
-        if(data && data.userid) {
-          return res.status(500).json({
-            code: 'DUPLICATE_EMAIL',
-            message: 'Email đã tồn tại'
-          })
-        }
-      }
-
+    let { userId, fullname }  = req.body;
+    db.transaction( (transaction) => {
       userModel
-        .updateInfo(user, commonUtils.currentUser)
+        .updateInfo(userId, fullname)
+        .then((result) => {
+          res.json({
+            message: "Success",
+          });
+          transaction.commit();
+        })
+        .catch((err) => {
+          next(err);
+          transaction.rollback();
+        });
+    });
+  }
+);
+
+router.post(
+  "/updateAvatar",
+  loginValidation(),
+  validation(require("../schemas/updateAvatar.json")),
+  (req, res, next) => {
+    let { userId, picture }  = req.body;
+    db.transaction( (transaction) => {
+      userModel
+        .updateAvatar(userId, picture)
         .then((result) => {
           res.json({
             message: "Success",
