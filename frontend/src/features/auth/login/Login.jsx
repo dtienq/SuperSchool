@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import AuthLayout from '../base/layout';
 import RedirectHome from '@features/auth/base/use-home';
 import { useForm } from 'react-hook-form';
-import { Row, Col, Divider, Spin } from 'antd';
+import { Row, Col, Divider, Spin, message } from 'antd';
 import styled from 'styled-components';
 import { LogInEndValSchemaOne } from '@features/auth/base/yup';
 import LoginGG from './LoginGG';
 import { Suggest, Input, Form, Button } from '@features/auth/base/components';
 import userApi from '@api/userApi';
-// import { login } from '@app/userSlice';
 const { FormItem } = Form;
 
 const SPadding = styled.div`
@@ -19,13 +18,6 @@ const SBottom = styled.div`
     margin-bottom: 0px !important;
   }
 `;
-
-const SForgot = styled.p`
-  font-size: 16px;
-  text-align: right;
-  margin-bottom: 0px !important;
-`;
-
 const SDivider = styled(Divider)`
   color: rgba(0, 0, 0, 0.87);
   font-size: 16px;
@@ -42,19 +34,12 @@ const SDivider = styled(Divider)`
     font-weight: normal;
   }
 `;
-
 const SButton = styled(Button)`
   font-weight: bold;
   border-radius: 6px;
 `;
 
-// const SMesgPassword = styled.span`
-//   color: #d20000;
-//   position: absolute;
-//   top: 30%;
-// `;
 function Login() {
-  // const [messageServerPassword, setMessageServerPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
 
@@ -62,7 +47,6 @@ function Login() {
     validationSchema: LogInEndValSchemaOne,
   });
   const onSubmit = async (data) => {
-    // dispatch(login(data));
     setLoginLoading(true);
     try {
       const res = await userApi.login(data);
@@ -70,8 +54,11 @@ function Login() {
         localStorage.setItem('token', res?.access_token);
         localStorage.setItem('refresh_token', res?.refresh_token);
         window.location.href = '/';
+      } else {
+        message.error(res?.message);
       }
     } catch (error) {
+      message.error('Đăng nhập thất baij');
       throw error;
     }
     setLoginLoading(false);
@@ -102,14 +89,6 @@ function Login() {
                   defaultValue=""
                 />
               </SBottom>
-              {/* <Row>
-                  {messageServerPassword !== '' && (
-                    <SMesgPassword>{messageServerPassword}</SMesgPassword>
-                  )}
-                </Row> */}
-              <SForgot>
-                {/* <Link to="/recover">Quên mật khẩu</Link> */}
-              </SForgot>
               <Row></Row>
               <SPadding size="32px" />
               <SButton htmlType="submit" block loading={loginLoading}>

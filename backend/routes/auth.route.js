@@ -39,7 +39,6 @@ const loginValidation = require("../middlewares/validation.login");
  */
 router.post("/login", validation(loginSchema), function (req, res, next) {
   let userInfo = req.body;
-
   userModel
     .getByUserEmail(userInfo.email)
     .then((data) => {
@@ -47,31 +46,40 @@ router.post("/login", validation(loginSchema), function (req, res, next) {
         let isValid = bcrypt.compareSync(userInfo.password, data.password);
         //check password
         if (isValid) {
-          data.password = undefined;
-          const access_token = jwt.sign(
-            commonUtils.parse2Plain(data),
-            constant.SECRET_KEY,
-            {
-              expiresIn: "2h",
-            }
-          );
-          const refresh_token = data.refresh_token;
-          data.refresh_token = undefined;
-
-          res.json({
-            status: true,
-            access_token: access_token,
-            refresh_token: refresh_token,
-            user: data,
-          });
+          if (data.status) {
+            data.password = undefined;
+            const access_token = jwt.sign(
+              commonUtils.parse2Plain(data),
+              constant.SECRET_KEY,
+              {
+                expiresIn: "2h",
+              }
+            );
+            const refresh_token = data.refresh_token;
+            data.refresh_token = undefined;
+            res.json({
+              status: true,
+              access_token: access_token,
+              refresh_token: refresh_token,
+              user: data,
+            });
+          } else {
+            res.json({
+              status: false,
+              message:
+                "Tài khoản của bạn đang bị khoá, hãy liên hệ quản trị viên!",
+            });
+          }
         } else {
-          res.status(401).json({
-            message: "Email or password are not correct",
+          res.json({
+            status: false,
+            message: "Email hoặc mật khẩu không chính xác",
           });
         }
       } else {
-        res.status(401).json({
-          message: "Email or password are not correct",
+        res.json({
+          status: false,
+          message: "Email hoặc mật khẩu không chính xác",
         });
       }
     })
@@ -159,18 +167,27 @@ router.post("/google-login", (req, res) => {
           .getByUserEmail(email)
           .then((data) => {
             if (data) {
-              const access_token = jwt.sign(
-                commonUtils.parse2Plain(data),
-                constant.SECRET_KEY,
-                { expiresIn: "2h" }
-              );
-              const refresh_token = data.refresh_token;
-              data.refresh_token = undefined;
-              res.json({
-                access_token: access_token,
-                refresh_token: refresh_token,
-                user: data,
-              });
+              if (data.status) {
+                const access_token = jwt.sign(
+                  commonUtils.parse2Plain(data),
+                  constant.SECRET_KEY,
+                  { expiresIn: "2h" }
+                );
+                const refresh_token = data.refresh_token;
+                data.refresh_token = undefined;
+                res.json({
+                  status: true,
+                  access_token: access_token,
+                  refresh_token: refresh_token,
+                  user: data,
+                });
+              } else {
+                res.json({
+                  status: false,
+                  message:
+                    "Tài khoản của bạn đang bị khoá, hãy liên hệ quản trị viên!",
+                });
+              }
             } else {
               // This email not existed
               // Register account with email from google
@@ -203,27 +220,38 @@ router.post("/google-login", (req, res) => {
                     constant.SECRET_KEY
                   );
                   res.json({
+                    status: true,
                     access_token,
                     refresh_token: rfToken,
                     user: omit(userInfo, ["refresh_token", "password"]),
                   });
                 })
                 .catch((err) => {
-                  console.log(err);
+                  res.json({
+                    status: false,
+                    message: "Đăng nhập bằng google thất bại",
+                  });
                 });
             }
           })
           .catch((err) => {
-            console.log(err);
+            res.json({
+              status: false,
+              message: "Đăng nhập bằng google thất bại",
+            });
           });
       } else {
-        res.status(401).json({
-          error: "Google login failed. Try again",
+        res.json({
+          status: false,
+          message: "Đăng nhập bằng google thất bại",
         });
       }
     })
     .catch((err) => {
-      console.log(err);
+      res.json({
+        status: false,
+        message: "Đăng nhập bằng google thất bại",
+      });
     });
 });
 

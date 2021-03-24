@@ -7,7 +7,7 @@ import React, { Suspense, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Spin } from 'antd';
-
+import PrivateRoute from '@utils/PrivateRoute';
 const NotFoundPage = React.lazy(() => import('@components/NotFound'));
 const CoursesPage = React.lazy(() => import('@features/courses/index'));
 const LoginPage = React.lazy(() => import('@features/auth/login'));
@@ -51,7 +51,9 @@ function App() {
             <Route path="/register" exact component={RegisterPage} />
             <Route path="/contact" exact component={ContactPage} />
             <Route path="/search" component={SearchPage} />
-            <Route path="/profile" component={ProfilePage} />
+            <PrivateRoute path="/profile">
+              <ProfilePage />
+            </PrivateRoute>
             <Route path="/upload" component={TestUploadPage} />
             <Route component={NotFoundPage} />
           </Switch>
