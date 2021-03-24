@@ -79,7 +79,9 @@ class Step3 extends React.Component {
       userApi
         .adminCreateAccount(user)
         .then((data) => {
-          if (data) this.successAlert();
+          if (data.message)
+            alert('Không thể đăng ký tài khoản, vui lòng kiểm tra lại Email');
+          else if (data) this.successAlert();
         })
         .catch((err) => alert('Không thể đăng ký tài khoản'));
       return true;
