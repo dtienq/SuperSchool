@@ -54,6 +54,7 @@ module.exports = {
         'u.fullname',
         'u.email',
         'u.refresh_token',
+        'u.status',
         'g.code as groupCode',
         'u.password',
         'u.picture'
