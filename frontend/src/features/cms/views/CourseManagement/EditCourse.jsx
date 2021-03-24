@@ -302,7 +302,7 @@ function EditCourse(props) {
       data.videos = coursevid.chapters;
       delete data.courseid;
       console.log(data);
-      let result = await coursesApi.updateCourse(id, data);
+      let result = await coursesApi.updateCourse(data.teacherId, data);
       if (result.data) {
         htmlAlert(
           'Sửa thông tin thành công!',
