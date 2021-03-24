@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
 import FormLabel from 'material-ui/Form/FormLabel';
@@ -41,6 +41,7 @@ import { useSelector } from 'react-redux';
 function AddCourse(props) {
   const currentUser = useSelector(({ userReducer }) => userReducer?.user);
   console.log(currentUser.userId);
+  let history = useHistory();
   const [state, setState] = useState({
     alert: null,
     show: false,
@@ -62,7 +63,7 @@ function AddCourse(props) {
         <SweetAlert
           style={{ display: 'block', marginTop: '-100px' }}
           title={value}
-          onConfirm={() => <Link to="/manager/teachercourses" />}
+          onConfirm={() => hideAlert()}
           onCancel={() => hideAlert()}
           confirmBtnCssClass={
             props.classes.button + ' ' + props.classes.success
@@ -73,6 +74,9 @@ function AddCourse(props) {
       ),
     });
   };
+  const moveToCourses = () => {
+    history.push('/manager/teachercourses');
+  };
   const successAlert = () => {
     setState({
       ...state,
@@ -81,7 +85,7 @@ function AddCourse(props) {
           success
           style={{ display: 'block', marginTop: '-100px' }}
           title="Đăng ký hoàn tất!"
-          onConfirm={() => hideAlert()}
+          onConfirm={moveToCourses}
           onCancel={() => hideAlert()}
           confirmBtnCssClass={
             props.classes.button + ' ' + props.classes.success
