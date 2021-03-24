@@ -1,9 +1,9 @@
 import profileApi from '@api/profileApi';
-import { REGEX_EMAIL } from '@constants';
 import { Button, Form, Input } from '@features/auth/base/components';
 import React, { useState } from 'react';
 import { message, Spin } from 'antd';
 import { useForm } from 'react-hook-form';
+import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
 const { FormItem } = Form;
 
@@ -11,15 +11,12 @@ const UpdateInfoEndValSchema = Yup.object().shape({
   username: Yup.string()
     .min(3, 'Tên người dùng có ít nhất 3 ký tự')
     .required('Trường mật khẩu không thể bỏ trống'),
-  email: Yup.string()
-    .matches(REGEX_EMAIL, {
-      message: 'Vui lòng nhập đúng định dạng email',
-      excludeEmptyString: true,
-    })
-    .required('Trường email không thể bỏ trống'),
 });
 
 function UpdateInfo() {
+  const userId = useSelector(
+    ({ userReducer }) => userReducer?.user?.userId
+  );
   const [loading, setLoading] = useState(false);
   const { handleSubmit, control, errors } = useForm({
     validationSchema: UpdateInfoEndValSchema,
@@ -27,15 +24,16 @@ function UpdateInfo() {
   const onSubmit = async (data, e) => {
     setLoading(true);
     const dataToSend = {
-      userId: 84,
+      userId: +userId,
       fullname: data?.username,
-      email: data?.email,
     };
     const res = await profileApi.updateInfo(dataToSend);
     setLoading(false);
     if (res?.message === 'Success') {
       message.success('Cập nhật thông tin thành công');
-      e.target.reset()
+      setTimeout(() => {
+        window.location.reload()
+      }, 1000);
     } else {
       message.error('Cập nhật thông tin thất bại');
     }
@@ -58,18 +56,6 @@ function UpdateInfo() {
                   name="username"
                   control={control}
                   error={errors.username?.message}
-                  defaultValue=""
-                />
-              </div>
-            </div>
-            <div className="form-group">
-              <div className="col-md-10 col-sm-9 col-xs-12">
-                <FormItem
-                  as={<Input />}
-                  label="Email"
-                  name="email"
-                  control={control}
-                  error={errors.email?.message}
                   defaultValue=""
                 />
               </div>
