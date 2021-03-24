@@ -1,10 +1,10 @@
 import Footer from '@components/Footer';
 import TopBar from '@components/TopBar';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { NavLink, Route, Switch, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
 import UpdateInfo from './components/UpdateInfo';
+import UserInfo from './components/UserInfo';
 import('../profile/profileStyle.css');
 const AddCourses = React.lazy(() => import('./components/AddCouses'));
 const ChangePassword = React.lazy(() => import('./components/ChangePassword'));
@@ -24,7 +24,6 @@ const StyledNavLink = styled(NavLink)`
 `;
 function ProfilePage() {
   const match = useRouteMatch();
-  const currentUser = useSelector(({ userReducer }) => userReducer?.user);
   return (
     <>
       <TopBar />
@@ -33,20 +32,7 @@ function ProfilePage() {
           <section className="module">
             <div className="module-inner">
               <div className="side-bar">
-                <div className="user-info">
-                  <img
-                    className="img-profile img-circle img-responsive center-block"
-                    src={currentUser?.picture?currentUser?.picture:"https://bootdey.com/img/Content/avatar/avatar1.png"}
-                    alt=""
-                  />
-                  <ul className="meta list list-unstyled">
-                    <li className="name">
-                      {currentUser?.username}
-                      <br />
-                      <label className="label label-info">{currentUser?.groupCode}</label>
-                    </li>
-                  </ul>
-                </div>
+                <UserInfo />
                 <nav className="side-menu">
                   <ul className="nav">
                     <li>

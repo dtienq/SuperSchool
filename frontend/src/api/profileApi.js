@@ -8,6 +8,10 @@ const profileApi = {
   updateInfo: (data)=>{
     const url = '/users/updateInfo';
     return axiosClient.post(url, data);
+  },
+  updateAvatar: (data)=>{
+    const url = '/users/updateAvatar';
+    return axiosClient.post(url, data);
   }
 };
 
